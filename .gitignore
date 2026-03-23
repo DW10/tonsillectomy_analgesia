@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.RDA
+*.Rproj
+*rmarkdown
+
+data/*
+!data/placeholder.md
+
+scripts/settings.R
