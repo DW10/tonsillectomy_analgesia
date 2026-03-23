@@ -1059,7 +1059,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 demo_all 
 #gtsave(demo_all, "publications/tonsillectomy/export/table.png")
-gtsave(demo_all, paste0(root_path,"/export/table_1.docx"))
+gtsave(demo_all, paste0(root_path,"/export/table_2.docx"))
 ```
 
 *Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented.*
@@ -1087,7 +1087,7 @@ demo_adults <- draw_table(  explanatory = demograpic_explanatory,
 #| output: true
 demo_adults
 
-gtsave(demo_adults, paste0(root_path,"/export/table_2.docx"))
+gtsave(demo_adults, paste0(root_path,"/export/table_3.docx"))
 
 ```
 
@@ -1152,7 +1152,7 @@ anes_adult_all_meds <- draw_table(explanatory = analgesia_explanatory,
 anes_adult_all_meds
 
 
-gtsave(anes_adult_all_meds,paste0(root_path,"/export/table_3.docx"))
+gtsave(anes_adult_all_meds,paste0(root_path,"/export/table_4.docx"))
 
 
 ```
@@ -1409,7 +1409,7 @@ outcome_adult <- draw_table(explanatory = explanatory_outcomes,
 
 outcome_adult
 
-gtsave(outcome_adult, paste0(root_path,"/export/table_4.docx"))
+gtsave(outcome_adult, paste0(root_path,"/export/table_5.docx"))
 
 ```
 
