@@ -435,7 +435,7 @@ sens_analysis_rescue
 
 ### Figure S6 - Cumulative density of opioid administration times in recovery
 
-![](export/figure_S6.png)
+![](../export/figure_S6.png)
 
 *Cumulative density plot of the administration times of opioid medications from the end of surgery to the first dose given for patient that received an opioid within 6 hours of surgery. Gray filled area depicts the density distribution and dotted line denotes the time cut off point of 3 hours. *
 
@@ -557,7 +557,7 @@ sens_analysis_ed
 
 ### Figure S7 - Cumulative density of time to presentation to the emergency department
 
-![](export/figure_S7.png)
+![](../export/figure_S7.png)
 *Cumulative density plot of the of the time to presentation at the emergency department (ED) from the discharge date to the ED visit time. Gray filled area depicts the density distribution and dotted line denotes the time point of 7,14 and 30 days.*
 
 ## S4.3 – Multi-level modelling group size threshold
@@ -724,7 +724,7 @@ sens_analysis_multi_level_theshold
 
 ### Figure S8 - Plot of sensativity analysis of mutli-level threshold
 
-![](export/figure_S8.png)
+![](../export/figure_S8.png)
 
 *Upper plot, line chart of odds ratio with 95% confidence interval bands for differing clinical group size threshold values.Lower plot, line chart of AIC over threshold values with number of clinicians included shower per point.*
 {{< pagebreak >}}

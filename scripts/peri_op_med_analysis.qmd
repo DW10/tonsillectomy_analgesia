@@ -4,6 +4,9 @@ execute:
   output: false
   echo: false
 format: docx
+knitr:
+  opts_knit:
+    root.dir: "~/data/dwhitake/tonsillectomy_analgesia/scripts"
 ---
 
 ```{r set up}
@@ -980,7 +983,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 ```
 
-![](export/figure_1.png)
+![](../export/figure_1.png)
 
 *Flowchart describing logic for eligibility for the treatment groups depending on the medications received.*
 
@@ -1233,7 +1236,7 @@ ggsave(plot=adult_venns, filename =paste0(root_path, "/export/figure_2.png"), he
 
 ```
 
-![](export/figure_2.png)
+![](../export/figure_2.png)
 
 *Distributions of complete intra-operative simple analgesia and intraoperative opioid administration in adults (A). Venn diagram to show the breakdown of the simple analgesia (B) and opioids given (C)*
 
@@ -1264,7 +1267,7 @@ ggsave(plot=paed_venns, filename =paste0(root_path, "/export/figure_S1.png"), he
 
 ```
 
-![](export/figure_S1.png)
+![](../export/figure_S1.png)
 
 *Distributions of complete intra-operative simple analgesia and intraoperative opioid administration in paediatrics (A). Venn diagram to show the breakdown of the simple analgesia (B) and opioids given (C)*
 
@@ -1289,7 +1292,7 @@ venns_supplament <- patchwork::wrap_plots(venn_adult, venn_paed)
 ggsave(plot=venns_supplament, filename =paste0(root_path, "/export/figure_S2.png"), height=4, width=6, scale=2)
 ```
 
-![](export/figure_S2.png)
+![](../export/figure_S2.png)
 
 *Venn diagram of distributions of paracetamol given intraoperatively as defined as being given on the intraoperative medication administration record compared to doses of paracetamol given in the 3 hours pre-operatively for the adult cohort (A) and paediatric cohorts (B) respectively.*
 
@@ -1312,7 +1315,7 @@ ggsave(plot=venns_supplament, filename =paste0(root_path, "/export/figure_S3.png
 
 ```
 
-![](export/figure_S3.png)
+![](../export/figure_S3.png)
 
 *Distributions of magnesium, ketamine and clonidine given intraoperatively for the adult cohort (A) and paediatric cohorts (B) respectively.*
 
@@ -1327,7 +1330,9 @@ ggsave(plot = ome_histogram_adult,  filename = paste0(root_path,"/export/figure_
 
 ```
 
-![](export/figure_3.png) *Histogram with marginal rug plot of individual doses of total intra-operative OME doses across adult patients in treatment groups 2,3 and 4.*
+![](../export/figure_3.png)
+
+*Histogram with marginal rug plot of individual doses of total intra-operative OME doses across adult patients in treatment groups 2,3 and 4.*
 
 ## Figure S4 – Distribution of paediatric intraoperative opioid dose:
 
@@ -1340,7 +1345,7 @@ ome_histogram_paed <-  plot_treatment_group_ome_histogram(data_set = df %>% filt
 ggsave(plot = ome_histogram_paed,  filename = paste0(root_path,"/export/figure_S4.png"), height=5, width=10)
 ```
 
-![](export/figure_S4.png)
+![](../export/figure_S4.png)
 
 *Histogram with marginal rug plot of individual doses of total intra-operative OME doses across paediatric patients in treatment groups 2,3 and 4.*
 
@@ -1356,7 +1361,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "/export/figure_4.p
 
 ```
 
-![](export/figure_4.png)
+![](../export/figure_4.png)
 
 *Distribution of the different analgesic combinations for adults patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication.*
 
@@ -1370,7 +1375,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "/export/figure_S5.
 
 ```
 
-![](export/figure_S5.png)
+![](../export/figure_S5.png)
 
 *Distribution of different analgesic combinations for paediatric patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication.*
 
@@ -1635,7 +1640,7 @@ ggsave(plot = consort, paste0(root_path,"/export/figure_5.png"),bg = "white", he
 
 ## Figure 5 - Consort diagram demonstrating patient inclusion for modelling
 
-![](export/figure_5.png)
+![](../export/figure_5.png)
 
 *Consort diagram demonstrating the eligibility of patient groups for modelling*
 
@@ -1943,6 +1948,6 @@ ggsave(plot=adult_forrest_composite, filename =paste0(root_path, "/export/figure
 
 ```
 
-![](export/figure_6.png)
+![](../export/figure_6.png)
 
 *Left to right: 1) unadjusted association between treatment group and rescue opioid administration (model 1), 2) adjusted association between treatment group and rescue opioid administration (model 2), 3) adjusted association between treatment group and time spent in recovery, 4) adjusted association between treatment group and same day discharge from hospital.*
