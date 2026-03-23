@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>peri_op_med_dataset</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="peri_op_med_dataset_files/libs/clipboard/clipboard.min.js"></script>
+<script src="peri_op_med_dataset_files/libs/quarto-html/quarto.js"></script>
+<script src="peri_op_med_dataset_files/libs/quarto-html/popper.min.js"></script>
+<script src="peri_op_med_dataset_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="peri_op_med_dataset_files/libs/quarto-html/anchor.min.js"></script>
+<link href="peri_op_med_dataset_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="peri_op_med_dataset_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="peri_op_med_dataset_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="peri_op_med_dataset_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="peri_op_med_dataset_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="generate-study-dataset" class="level1">
+<h1>Generate study Dataset</h1>
+<section id="set-up" class="level2">
+<h2 class="anchored" data-anchor-id="set-up">Set up</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Matrix</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'arrow'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:utils':
+
+    timestamp</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cli)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(functions_paths, source, <span class="at">verbose=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        /home/dwhitake/data/dwhitake/opioid_dataset/functions/cohort_encounter_selection.R
+value   ?                                                                                 
+visible FALSE                                                                             
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/describe_medication_extract.R
+value   ?                                                                                  
+visible FALSE                                                                              
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/diagnosis_status.R
+value   ?                                                                       
+visible FALSE                                                                   
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/drug_given.R
+value   ?                                                                 
+visible FALSE                                                             
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/drug_ordered.R
+value   ?                                                                   
+visible FALSE                                                               
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/extract_specific_ingredient_exposure.r
+value   ?                                                                                           
+visible FALSE                                                                                       
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/find_mortality.R
+value   ?                                                                     
+visible FALSE                                                                 
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/find_opioid_equivelence.R
+value   ?                                                                              
+visible FALSE                                                                          
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/find_readmission.R
+value   ?                                                                       
+visible FALSE                                                                   
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/find_return_to_theatre.R
+value   ?                                                                             
+visible FALSE                                                                         
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/flowsheet_data.R
+value   ?                                                                     
+visible FALSE                                                                 
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_all_drug_given.R
+value   ?                                                                         
+visible FALSE                                                                     
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_all_drug_ordered.R
+value   ?                                                                           
+visible FALSE                                                                       
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_all_intraop_drug_given.R
+value   ?                                                                                 
+visible FALSE                                                                             
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_concept_id.r
+value   ?                                                                     
+visible FALSE                                                                 
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_db_procedure_SNOMED.r
+value   ?                                                                              
+visible FALSE                                                                          
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_demographic_table.r
+value   ?                                                                            
+visible FALSE                                                                        
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_diagnosis_status.R
+value   ?                                                                           
+visible FALSE                                                                       
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_drug_exposure.r
+value   ?                                                                        
+visible FALSE                                                                    
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_flowsheet_data.R
+value   ?                                                                         
+visible FALSE                                                                     
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_observation_measurement_status.r
+value   ?                                                                                         
+visible FALSE                                                                                     
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_patient_observation.r
+value   ?                                                                              
+visible FALSE                                                                          
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_procedure_details.r
+value   ?                                                                            
+visible FALSE                                                                        
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/get_procedures_from_cohort.R
+value   ?                                                                                 
+visible FALSE                                                                             
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/intraop_drug_given.R
+value   ?                                                                         
+visible FALSE                                                                     
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/load_dataset.R
+value   ?                                                                   
+visible FALSE                                                               
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/omop_relations_multiple.R
+value   ?                                                                              
+visible FALSE                                                                          
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/read_cohort_details.R
+value   ?                                                                          
+visible FALSE                                                                      
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/search_drug_names.R
+value   ?                                                                        
+visible FALSE                                                                    
+        /home/dwhitake/data/dwhitake/opioid_dataset/functions/unit_conversion.R
+value   ?                                                                      
+visible FALSE                                                                  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_set_details <span class="ot">&lt;-</span> <span class="fu">load_dataset</span>(<span class="at">data_set=</span>data_set, <span class="at">root_path =</span> root_path, <span class="at">output_folder_path =</span> dataset_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="select-cases-from-full-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="select-cases-from-full-dataset">Select cases from full dataset</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>make_cohort <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>rest_of_chapter <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"F0"</span>, <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>), <span class="fu">paste0</span>(<span class="st">"F"</span>, <span class="dv">10</span><span class="sc">:</span><span class="dv">33</span>),  <span class="fu">paste0</span>(<span class="st">"F"</span>, <span class="dv">36</span><span class="sc">:</span><span class="dv">99</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> <span class="fu">cohort_encounter_selection</span>(<span class="at">cohort_name =</span> <span class="st">"Tonsillectomy"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">include_OPCS =</span>  <span class="fu">c</span>(<span class="st">"F34"</span>, <span class="st">"F35"</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">exclude_OPCS =</span> <span class="fu">c</span>(<span class="st">"E20"</span>,rest_of_chapter),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">min_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">max_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">case_priority =</span> <span class="st">"elective"</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return_index_procedures_only=</span><span class="cn">TRUE</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> <span class="fu">cohort_encounter_selection</span>(<span class="at">cohort_name =</span> <span class="st">"Adenoidectomy"</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                          <span class="at">include_OPCS =</span>  <span class="fu">c</span>(<span class="st">"E20"</span>),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>                          <span class="at">exclude_OPCS =</span> <span class="fu">c</span>(<span class="st">"F34"</span>, <span class="st">"F35"</span>,rest_of_chapter),</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>                          <span class="at">min_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>                          <span class="at">max_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>                          <span class="at">case_priority =</span> <span class="st">"elective"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return_index_procedures_only=</span><span class="cn">TRUE</span>,</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>q3 <span class="ot">&lt;-</span> <span class="fu">cohort_encounter_selection</span>(<span class="at">cohort_name =</span> <span class="st">"Adenotonsillectomy"</span>,</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>                          <span class="at">include_OPCS =</span>  <span class="fu">c</span>(<span class="st">"F34"</span>, <span class="st">"F35"</span>, <span class="st">"E20"</span>),</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>                          <span class="at">exclude_OPCS =</span> <span class="fu">c</span>(rest_of_chapter),</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>                          <span class="at">min_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>                          <span class="at">max_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>                          <span class="at">case_priority =</span> <span class="st">"elective"</span>,</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>                          <span class="at">return_index_procedures_only=</span><span class="cn">TRUE</span>,</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>q3 <span class="ot">&lt;-</span> q3 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>EncounterKey <span class="sc">%in%</span> q1<span class="sc">$</span>EncounterKey) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>EncounterKey <span class="sc">%in%</span> q2<span class="sc">$</span>EncounterKey)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>coblation <span class="ot">&lt;-</span> <span class="fu">cohort_encounter_selection</span>(<span class="at">cohort_name =</span> <span class="st">"Coblation"</span>,</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>                          <span class="at">include_OPCS =</span>  <span class="fu">c</span>(<span class="st">"Y10.1"</span>, <span class="st">"F34.7"</span>, <span class="st">"F35.2"</span>),</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>                          <span class="at">min_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>                          <span class="at">max_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>                         <span class="at">case_priority =</span> <span class="st">"elective"</span>,</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>                         <span class="at">return_index_procedures_only=</span><span class="cn">TRUE</span>,</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>electrocautery <span class="ot">&lt;-</span> <span class="fu">cohort_encounter_selection</span>(<span class="at">cohort_name =</span> <span class="st">"Electrocautery"</span>,</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>                          <span class="at">include_OPCS =</span>  <span class="fu">c</span>(<span class="st">"Y10.2"</span>, <span class="st">"Y11.1"</span>),</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>                          <span class="at">exclude_OPCS =</span> <span class="fu">c</span>(<span class="st">"Y10.1"</span>),</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>                          <span class="at">min_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>                          <span class="at">max_age =</span> <span class="cn">NA</span>,</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>                         <span class="at">case_priority =</span> <span class="st">"elective"</span>,</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>                         <span class="at">return_index_procedures_only=</span><span class="cn">TRUE</span>,</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>                          <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>full_cohort <span class="ot">&lt;-</span> <span class="fu">rbind</span>(q1,q2,q3) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>full_cohort <span class="ot">&lt;-</span> full_cohort <span class="sc">%&gt;%</span></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">coblation =</span> <span class="fu">ifelse</span>(SurgicalCaseKey <span class="sc">%in%</span> coblation<span class="sc">$</span>SurgicalCaseKey,<span class="cn">TRUE</span>,<span class="cn">FALSE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">electrocautery =</span> <span class="fu">ifelse</span>(SurgicalCaseKey <span class="sc">%in%</span> electrocautery<span class="sc">$</span>SurgicalCaseKey,<span class="cn">TRUE</span>,<span class="cn">FALSE</span>)) </span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(full_cohort)</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>full_cohort <span class="ot">&lt;-</span> <span class="fu">make_cohort</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Generating `Tonsillectomy` ──────────────────────────────────────────────────</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Checking cache for master cohort file</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✖ Master cohort not found,generating</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lubridate</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:arrow':
+
+    duration</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Filtering by case priority</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Filtering by specilaity</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Filtering by case priority
+✔ Filtering by case priority [1.1s]
+
+ℹ Filtering by age
+✔ Filtering by age [16ms]
+
+ℹ Filtering by death and return to theatre
+✔ Filtering by death and return to theatre [1.3s]
+
+ℹ Applying inclsuion OPSC codes
+✔ Applying inclsuion OPSC codes [1.3s]
+
+ℹ Applying exclusion OPSC codes
+✔ Applying exclusion OPSC codes [499ms]
+
+
+── Generating `Adenoidectomy` ──────────────────────────────────────────────────
+ℹ Checking cache for master cohort file</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: tz(): Don't know how to compute timezone for object of class numeric;
+returning "UTC".</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Master cohort found, generated within the last hour
+ℹ Filtering by case priority
+ℹ Filtering by specilaity
+ℹ Filtering by case priority
+✔ Filtering by case priority [1.3s]
+
+ℹ Filtering by age
+✔ Filtering by age [14ms]
+
+ℹ Filtering by death and return to theatre
+✔ Filtering by death and return to theatre [648ms]
+
+ℹ Applying inclsuion OPSC codes
+✔ Applying inclsuion OPSC codes [1.2s]
+
+ℹ Applying exclusion OPSC codes
+✔ Applying exclusion OPSC codes [290ms]
+
+
+── Generating `Adenotonsillectomy` ─────────────────────────────────────────────
+ℹ Checking cache for master cohort file</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: tz(): Don't know how to compute timezone for object of class numeric;
+returning "UTC".</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Master cohort found, generated within the last hour
+ℹ Filtering by case priority
+ℹ Filtering by specilaity
+ℹ Filtering by case priority
+✔ Filtering by case priority [1.5s]
+
+ℹ Filtering by age
+✔ Filtering by age [14ms]
+
+ℹ Filtering by death and return to theatre
+✔ Filtering by death and return to theatre [639ms]
+
+ℹ Applying inclsuion OPSC codes
+✔ Applying inclsuion OPSC codes [1.4s]
+
+ℹ Applying exclusion OPSC codes
+✔ Applying exclusion OPSC codes [575ms]
+
+
+── Generating `Coblation` ──────────────────────────────────────────────────────
+ℹ Checking cache for master cohort file</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: tz(): Don't know how to compute timezone for object of class numeric;
+returning "UTC".</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Master cohort found, generated within the last hour
+ℹ Filtering by case priority
+ℹ Filtering by specilaity
+ℹ Filtering by case priority
+✔ Filtering by case priority [758ms]
+
+ℹ Filtering by age
+✔ Filtering by age [14ms]
+
+ℹ Filtering by death and return to theatre
+✔ Filtering by death and return to theatre [672ms]
+
+ℹ Applying inclsuion OPSC codes
+✔ Applying inclsuion OPSC codes [1.7s]
+
+ℹ Applying exclusion OPSC codes
+✔ Applying exclusion OPSC codes [25ms]
+
+
+── Generating `Electrocautery` ─────────────────────────────────────────────────
+ℹ Checking cache for master cohort file</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: tz(): Don't know how to compute timezone for object of class numeric;
+returning "UTC".</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Master cohort found, generated within the last hour
+ℹ Filtering by case priority
+ℹ Filtering by specilaity
+ℹ Filtering by case priority
+✔ Filtering by case priority [859ms]
+
+ℹ Filtering by age
+✔ Filtering by age [14ms]
+
+ℹ Filtering by death and return to theatre
+✔ Filtering by death and return to theatre [659ms]
+
+ℹ Applying inclsuion OPSC codes
+✔ Applying inclsuion OPSC codes [1.5s]
+
+ℹ Applying exclusion OPSC codes
+✔ Applying exclusion OPSC codes [25ms]</code></pre>
+</div>
+</div>
+</section>
+<section id="data-extraction" class="level2">
+<h2 class="anchored" data-anchor-id="data-extraction">Data extraction</h2>
+<p>For the selected encounters a range of patient factors, surgical factors and anaesthetic factors where extracted.</p>
+<section id="patient-factors" class="level3">
+<h3 class="anchored" data-anchor-id="patient-factors">Patient factors</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> full_cohort <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(anthropometric <span class="sc">%&gt;%</span> <span class="fu">collect</span>() <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">"PatientDurableKey"</span> ,<span class="st">"patient_id"</span> , <span class="st">"INDEX"</span>))) , <span class="fu">join_by</span>(<span class="st">"EncounterKey"</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Convert Height in cm</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Height =</span> Height<span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cohort =</span> <span class="fu">factor</span>(cohort, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"Tonsillectomy"</span>,<span class="st">"Adenoidectomy"</span>,<span class="st">"Adenotonsillectomy"</span>)))</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">adult =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(age<span class="sc">&gt;=</span><span class="dv">18</span>,<span class="dv">1</span>,<span class="dv">0</span>)))</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>patient_id_list <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="fu">select</span>(patient_id) <span class="sc">%&gt;%</span> <span class="fu">unique</span>() <span class="sc">%&gt;%</span> <span class="fu">pull</span>()</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_diagnosis_status</span>(patient_id_list, </span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">icd_to_include =</span> <span class="fu">c</span>(<span class="st">"R52"</span>), </span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">icd_to_exclude =</span> <span class="fu">c</span>(<span class="st">"R52.0"</span>),</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"hx_chronic_pain"</span>, </span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"binary"</span> )</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>, <span class="fu">join_by</span>(patient_id))</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_diagnosis_status</span>(patient_id_list, </span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>                       <span class="at">icd_to_include =</span> <span class="fu">c</span>(<span class="st">"F11"</span>), </span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"hx_opioid_dependance"</span>, </span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"binary"</span> )</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>, <span class="fu">join_by</span>(patient_id))</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_diagnosis_status</span>(patient_id_list, </span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>                       <span class="at">icd_to_include =</span> <span class="fu">c</span>(<span class="st">"J35"</span>), </span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>                       <span class="at">icd_to_exclude =</span> <span class="fu">c</span>(<span class="st">"J35.8"</span>),</span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"hx_chronic_tonsillitis"</span>, </span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"binary"</span> )</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>, <span class="fu">join_by</span>(patient_id))</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_diagnosis_status</span>(patient_id_list, </span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>                       <span class="at">icd_to_include =</span> <span class="fu">c</span>(<span class="st">"G47.3"</span>), </span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"hx_sleep_apnoea"</span>, </span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"binary"</span> )</span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>, <span class="fu">join_by</span>(patient_id))</span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a><span class="co"># The default behavior of `get_diagnosis_status` is to return a 0 if the patients PMH is found but the diagnosis code of intrest is not found, this is to ensure an NA is assinged if there is an issues with the function. </span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">any</span>(df <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"hx"</span>), <span class="sc">~</span> <span class="fu">any</span>(<span class="fu">is.na</span>(.)))))){<span class="fu">cli_abort</span>(<span class="st">"There are some patients who's PMH itens are not returning correctly "</span>)}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="anaesthetic-factors" class="level3">
+<h3 class="anchored" data-anchor-id="anaesthetic-factors">Anaesthetic factors</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 4
+# Groups:   Name, GenericName [32]
+   Name                                     GenericName SimpleGenericName   rows
+   &lt;chr&gt;                                    &lt;chr&gt;       &lt;chr&gt;              &lt;int&gt;
+ 1 CO-CODAMOL (CODEINE  30MG AND PARACETAM… "co-codamo… co-codamol (code… 1.24e2
+ 2 PARACETAMOL  500MG TABLETS               "paracetam… paracetamol       1.21e6
+ 3 PARACETAMOL  1G/100ML SOLUTION FOR INFU… "paracetam… paracetamol       2.42e4
+ 4 PARACETAMOL 1G/100ML SOLUTION FOR INFUS… "paracetam… paracetamol       2.35e5
+ 5 CO-CODAMOL (CODEINE  30MG AND PARACETAM… "co-codamo… co-codamol (code… 1.43e3
+ 6 PARACETAMOL  500MG/50ML SOLUTION FOR IN… "paracetam… paracetamol       3.69e3
+ 7 PARACETAMOL IV ORDERABLE                 ""          &lt;NA&gt;              5.85e2
+ 8 PARACETAMOL  120MG/5ML ORAL SUSPENSION … "paracetam… paracetamol       6.58e2
+ 9 PARACETAMOL  500MG SOLUBLE TABLET        "paracetam… paracetamol       8.19e3
+10 PARACETAMOL  500MG SUPPOSITORY           "paracetam… paracetamol       1.71e2
+# ℹ 22 more rows</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1 
+  71 3249 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Each strong opioid</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(strong_opioid_list)){</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(strong_opioid_list[i] <span class="sc">==</span> <span class="st">"remifentanil"</span>){</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  opioid_string <span class="ot">&lt;-</span> <span class="fu">search_drug_names</span>(anes_medication, <span class="st">"remi"</span>)<span class="sc">$</span>Name</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  search_col <span class="ot">&lt;-</span> <span class="st">"Name"</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  variable_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"intra_op_"</span>, <span class="st">"remifentanil"</span>, <span class="st">"_dose"</span>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  given_variable_name <span class="ot">&lt;-</span>  <span class="fu">paste0</span>(<span class="st">"intra_op_"</span>, <span class="st">"remifentanil"</span>, <span class="st">"_given"</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  opioid_string <span class="ot">&lt;-</span> strong_opioid_list[i]</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  variable_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"intra_op_"</span>, <span class="fu">str_replace_all</span>(opioid_string, <span class="st">" "</span>, <span class="st">"_"</span>), <span class="st">"_dose"</span>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  given_variable_name <span class="ot">&lt;-</span>  <span class="fu">paste0</span>(<span class="st">"intra_op_"</span>, <span class="fu">str_replace_all</span>(opioid_string, <span class="st">" "</span>, <span class="st">"_"</span>), <span class="st">"_given"</span>)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>   search_col <span class="ot">&lt;-</span> <span class="st">"SimpleGenericName"</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>  doses <span class="ot">&lt;-</span> <span class="fu">get_all_intraop_drug_given</span>(surgical_case_keys,</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">drug_generic_name =</span> opioid_string,</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">format =</span> <span class="st">"total_dose"</span>,</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable_name =</span> variable_name,</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">search_column =</span> search_col)</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>  doses<span class="sc">$</span>given <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(doses[,<span class="dv">2</span>]),<span class="dv">0</span>,<span class="dv">1</span>)</span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>  doses <span class="ot">&lt;-</span> doses <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="sc">!!</span><span class="at">given_variable_name :=</span> given)</span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(doses)</span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">intra_op_morphine_sulfate_dose_per_kg =</span> intra_op_morphine_sulfate_dose<span class="sc">/</span>Weight)</span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">intra_op_fentanyl_dose =</span> intra_op_fentanyl_dose<span class="sc">*</span><span class="dv">1000</span>)</span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">intra_op_fentanyl_dose_per_kg =</span> intra_op_fentanyl_dose<span class="sc">/</span>Weight)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="outcomes">Outcomes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">find_mortality</span>(df<span class="sc">$</span>EncounterKey, <span class="at">cut_off =</span> <span class="dv">90</span>, <span class="at">variable_name =</span> <span class="st">"mortality_90d"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✖ Caution: You have selected a mortality interval beyond the last data collection point. 
+This means patient may still die within the cutoff but not be counted (as this is in the future). 
+Returning the NA value for these patients </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(EncounterKey)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">find_mortality</span>(df<span class="sc">$</span>EncounterKey, <span class="at">cut_off =</span> <span class="dv">365</span>, <span class="at">variable_name =</span> <span class="st">"mortality_1y"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✖ Caution: You have selected a mortality interval beyond the last data collection point. 
+This means patient may still die within the cutoff but not be counted (as this is in the future). 
+Returning the NA value for these patients 
+Joining with `by = join_by(EncounterKey)`</code></pre>
+</div>
+</div>
+</section>
+<section id="return-to-theatre" class="level3">
+<h3 class="anchored" data-anchor-id="return-to-theatre">Return to theatre</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">find_return_to_theatre</span>(df<span class="sc">$</span>SurgicalCaseKey, </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cutoff =</span> <span class="dv">7</span>,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">return_types =</span> <span class="st">"any"</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"table"</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"return_to_theatre_7d"</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■                                 5% (150/3320) …</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■                              11% (380/3320) …</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■■■■■■■                        29% (950/3320) …</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■■■■■■■■■■■■                   45% (1500/3320)…</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■              62% (2060/3320)…</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■         79% (2610/3320)…</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% (3160/3320)…</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% (3320/3320)…</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(SurgicalCaseKey)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">find_return_to_theatre</span>(df<span class="sc">$</span>SurgicalCaseKey, </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cutoff =</span> <span class="dv">14</span>,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">return_types =</span> <span class="st">"any"</span>,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"table"</span>,</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"return_to_theatre_14d"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■                                 5% (160/3320) …
+Searching Returns to theatre: ■■■■■■■                           20% (680/3320) …
+Searching Returns to theatre: ■■■■■■■■■■■■                      36% (1210/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■                 52% (1740/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■            68% (2270/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% (2800/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% (3320/3320)…
+Joining with `by = join_by(SurgicalCaseKey)`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">find_return_to_theatre</span>(df<span class="sc">$</span>SurgicalCaseKey, </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cutoff =</span> <span class="dv">30</span>,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">return_types =</span> <span class="st">"any"</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format =</span> <span class="st">"table"</span>,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variable_name =</span> <span class="st">"return_to_theatre_30d"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Searching Returns to theatre: ■■■■                               9% (310/3320) …
+Searching Returns to theatre: ■■■■■■■■■                         25% (840/3320) …
+Searching Returns to theatre: ■■■■■■■■■■■■■                     42% (1380/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■                58% (1910/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■           74% (2450/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% (2970/3320)…
+Searching Returns to theatre: ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% (3320/3320)…
+Joining with `by = join_by(SurgicalCaseKey)`</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">get_all_drug_given</span>(<span class="at">encounter_keys =</span>  df<span class="sc">$</span>EncounterKey,</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">drug_generic_name =</span> opioid_generic_names,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">search_column =</span> <span class="st">"GenericName"</span>,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surgery_end_datetime =</span> df<span class="sc">$</span>OperationInstant <span class="sc">+</span> df<span class="sc">$</span>ProcedureLengthMinutes,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">post_op_length =</span> recovery_time_cutoff<span class="sc">*</span><span class="dv">60</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">timeframe =</span> <span class="st">"post_op"</span>,</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"number_of_doses"</span>,</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable_name =</span> <span class="st">"number_of_opioid_doses_post_op"</span>,</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">get_all_drug_given</span>(<span class="at">encounter_keys =</span>  df<span class="sc">$</span>EncounterKey,</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>                   <span class="at">drug_generic_name =</span> opioid_generic_names,</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">search_column =</span> <span class="st">"GenericName"</span>,</span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surgery_end_datetime =</span> df<span class="sc">$</span>OperationInstant <span class="sc">+</span> df<span class="sc">$</span>ProcedureLengthMinutes,</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>                  <span class="at">post_op_length =</span> recovery_time_cutoff<span class="sc">*</span><span class="dv">60</span>,</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">timeframe =</span> <span class="st">"post_op"</span>,</span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"total_ome"</span>,</span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable_name =</span> <span class="st">"ome_post_op"</span>,</span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">get_all_drug_given</span>(<span class="at">encounter_keys =</span>  df<span class="sc">$</span>EncounterKey,</span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>                   <span class="at">drug_generic_name =</span> opioid_generic_names,</span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>                    <span class="at">search_column =</span> <span class="st">"GenericName"</span>,</span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surgery_end_datetime =</span> df<span class="sc">$</span>OperationInstant <span class="sc">+</span> df<span class="sc">$</span>ProcedureLengthMinutes,</span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a>                  <span class="at">post_op_length =</span> recovery_time_cutoff<span class="sc">*</span><span class="dv">60</span>,</span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>                   <span class="at">timeframe =</span> <span class="st">"post_op"</span>,</span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"binary_if_given"</span>,</span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable_name =</span> <span class="st">"opioid_given_post_op"</span>,</span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-34"><a href="#cb56-34" aria-hidden="true" tabindex="-1"></a>morphine_strings <span class="ot">&lt;-</span> <span class="fu">search_drug_names</span>(medication, <span class="st">"morphine sulfate"</span>)</span>
+<span id="cb56-35"><a href="#cb56-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-36"><a href="#cb56-36" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">get_all_drug_given</span>(<span class="at">encounter_keys =</span>  df<span class="sc">$</span>EncounterKey,</span>
+<span id="cb56-37"><a href="#cb56-37" aria-hidden="true" tabindex="-1"></a>                   <span class="at">drug_generic_name =</span> morphine_strings<span class="sc">$</span>Name,</span>
+<span id="cb56-38"><a href="#cb56-38" aria-hidden="true" tabindex="-1"></a>                    <span class="at">search_column =</span> <span class="st">"Name"</span>,</span>
+<span id="cb56-39"><a href="#cb56-39" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surgery_end_datetime =</span> df<span class="sc">$</span>OperationInstant <span class="sc">+</span> df<span class="sc">$</span>ProcedureLengthMinutes,</span>
+<span id="cb56-40"><a href="#cb56-40" aria-hidden="true" tabindex="-1"></a>                  <span class="at">post_op_length =</span> recovery_time_cutoff<span class="sc">*</span><span class="dv">60</span>,</span>
+<span id="cb56-41"><a href="#cb56-41" aria-hidden="true" tabindex="-1"></a>                   <span class="at">timeframe =</span> <span class="st">"post_op"</span>,</span>
+<span id="cb56-42"><a href="#cb56-42" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"binary_if_given"</span>,</span>
+<span id="cb56-43"><a href="#cb56-43" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable_name =</span> <span class="st">"opioid_given_post_op_morphine"</span>,</span>
+<span id="cb56-44"><a href="#cb56-44" aria-hidden="true" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-45"><a href="#cb56-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-46"><a href="#cb56-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-47"><a href="#cb56-47" aria-hidden="true" tabindex="-1"></a>fentanyl_strings <span class="ot">&lt;-</span> <span class="fu">search_drug_names</span>(medication, <span class="st">"fentanyl"</span>)</span>
+<span id="cb56-48"><a href="#cb56-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-49"><a href="#cb56-49" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">get_all_drug_given</span>(<span class="at">encounter_keys =</span>  df<span class="sc">$</span>EncounterKey,</span>
+<span id="cb56-50"><a href="#cb56-50" aria-hidden="true" tabindex="-1"></a>                   <span class="at">drug_generic_name =</span> fentanyl_strings<span class="sc">$</span>Name,</span>
+<span id="cb56-51"><a href="#cb56-51" aria-hidden="true" tabindex="-1"></a>                    <span class="at">search_column =</span> <span class="st">"Name"</span>,</span>
+<span id="cb56-52"><a href="#cb56-52" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surgery_end_datetime =</span> df<span class="sc">$</span>OperationInstant <span class="sc">+</span> df<span class="sc">$</span>ProcedureLengthMinutes,</span>
+<span id="cb56-53"><a href="#cb56-53" aria-hidden="true" tabindex="-1"></a>                  <span class="at">post_op_length =</span> recovery_time_cutoff<span class="sc">*</span><span class="dv">60</span>,</span>
+<span id="cb56-54"><a href="#cb56-54" aria-hidden="true" tabindex="-1"></a>                   <span class="at">timeframe =</span> <span class="st">"post_op"</span>,</span>
+<span id="cb56-55"><a href="#cb56-55" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"binary_if_given"</span>,</span>
+<span id="cb56-56"><a href="#cb56-56" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable_name =</span> <span class="st">"opioid_given_post_op_fentanyl"</span>,</span>
+<span id="cb56-57"><a href="#cb56-57" aria-hidden="true" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-58"><a href="#cb56-58" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-59"><a href="#cb56-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-60"><a href="#cb56-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-61"><a href="#cb56-61" aria-hidden="true" tabindex="-1"></a>recovery_meds <span class="ot">&lt;-</span> <span class="fu">get_all_drug_given</span>(<span class="at">encounter_keys =</span>  df<span class="sc">$</span>EncounterKey,</span>
+<span id="cb56-62"><a href="#cb56-62" aria-hidden="true" tabindex="-1"></a>                   <span class="at">drug_generic_name =</span> opioid_generic_names,</span>
+<span id="cb56-63"><a href="#cb56-63" aria-hidden="true" tabindex="-1"></a>                    <span class="at">search_column =</span> <span class="st">"GenericName"</span>,</span>
+<span id="cb56-64"><a href="#cb56-64" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surgery_end_datetime =</span> df<span class="sc">$</span>OperationInstant <span class="sc">+</span> df<span class="sc">$</span>ProcedureLengthMinutes,</span>
+<span id="cb56-65"><a href="#cb56-65" aria-hidden="true" tabindex="-1"></a>                  <span class="at">post_op_length =</span> recovery_time_cutoff<span class="sc">*</span><span class="dv">60</span>,</span>
+<span id="cb56-66"><a href="#cb56-66" aria-hidden="true" tabindex="-1"></a>                   <span class="at">timeframe =</span> <span class="st">"post_op"</span>,</span>
+<span id="cb56-67"><a href="#cb56-67" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"all_rows"</span>,</span>
+<span id="cb56-68"><a href="#cb56-68" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variable_name =</span> <span class="st">"opioid_given_post_op"</span>,</span>
+<span id="cb56-69"><a href="#cb56-69" aria-hidden="true" tabindex="-1"></a>                  <span class="at">verbose =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb56-70"><a href="#cb56-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-71"><a href="#cb56-71" aria-hidden="true" tabindex="-1"></a>recovery_meds <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(SimpleGenericName) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  SimpleGenericName           n
+  &lt;chr&gt;                   &lt;int&gt;
+1 fentanyl                 3082
+2 morphine sulfate           82
+3 oxycodone hydrochloride     2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">opioid_given_post_op =</span> <span class="fu">ifelse</span>(opioid_given_post_op<span class="sc">==</span><span class="dv">1</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>))</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">ome_post_op =</span> <span class="fu">ifelse</span>(ome_post_op<span class="sc">==</span><span class="dv">0</span>, <span class="cn">NA</span>, ome_post_op)) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">ome_post_op_per_kg =</span> ome_post_op<span class="sc">/</span>Weight)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recovery_time =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(RecoveryCareCompleteInstantTracking, TouchTimeEndInstant, <span class="at">units=</span><span class="st">"mins"</span>)))</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Quick error check to see the data being produced. </span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co">#df %&gt;% select(number_of_opioid_doses_post_op, ome_post_op, opioid_given_post_op) %&gt;% filter(opioid_given_post_op==1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="treatment-arm" class="level2">
+<h2 class="anchored" data-anchor-id="treatment-arm">Treatment arm</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>treatment_arm <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">simple_analgesia_given =</span> <span class="fu">case_when</span>(</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>    intra_op_and_pre_paracetamol_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>      intra_op_diclofenac_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>      intra_op_dexamethasone_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span>L,</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">opioid_given =</span> <span class="fu">case_when</span>(</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>    intra_op_morphine_sulfate_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>      intra_op_fentanyl_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="dv">1</span>L,</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="dv">0</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_arm =</span> <span class="fu">case_when</span>(</span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Exclusion drugs → NA</span></span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>     <span class="co"># intra_op_clonidine_given == 1 |</span></span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  intra_op_ketamine_given == 1 |</span></span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  intra_op_magnesium_given == 1 ~ NA_integer_,</span></span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Group 1</span></span>
+<span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a>      intra_op_and_pre_paracetamol_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-24"><a href="#cb59-24" aria-hidden="true" tabindex="-1"></a>      intra_op_diclofenac_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-25"><a href="#cb59-25" aria-hidden="true" tabindex="-1"></a>      intra_op_dexamethasone_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-26"><a href="#cb59-26" aria-hidden="true" tabindex="-1"></a>      intra_op_morphine_sulfate_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-27"><a href="#cb59-27" aria-hidden="true" tabindex="-1"></a>      intra_op_fentanyl_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-28"><a href="#cb59-28" aria-hidden="true" tabindex="-1"></a>      intra_op_clonidine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-29"><a href="#cb59-29" aria-hidden="true" tabindex="-1"></a>      intra_op_ketamine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-30"><a href="#cb59-30" aria-hidden="true" tabindex="-1"></a>      intra_op_magnesium_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span>L,</span>
+<span id="cb59-31"><a href="#cb59-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-32"><a href="#cb59-32" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Group 2</span></span>
+<span id="cb59-33"><a href="#cb59-33" aria-hidden="true" tabindex="-1"></a>      intra_op_and_pre_paracetamol_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-34"><a href="#cb59-34" aria-hidden="true" tabindex="-1"></a>      intra_op_diclofenac_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-35"><a href="#cb59-35" aria-hidden="true" tabindex="-1"></a>      intra_op_dexamethasone_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-36"><a href="#cb59-36" aria-hidden="true" tabindex="-1"></a>      intra_op_morphine_sulfate_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-37"><a href="#cb59-37" aria-hidden="true" tabindex="-1"></a>      intra_op_fentanyl_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-38"><a href="#cb59-38" aria-hidden="true" tabindex="-1"></a>      intra_op_clonidine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-39"><a href="#cb59-39" aria-hidden="true" tabindex="-1"></a>      intra_op_ketamine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-40"><a href="#cb59-40" aria-hidden="true" tabindex="-1"></a>      intra_op_magnesium_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">2</span>L,</span>
+<span id="cb59-41"><a href="#cb59-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-42"><a href="#cb59-42" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Group 3</span></span>
+<span id="cb59-43"><a href="#cb59-43" aria-hidden="true" tabindex="-1"></a>      intra_op_and_pre_paracetamol_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-44"><a href="#cb59-44" aria-hidden="true" tabindex="-1"></a>      intra_op_diclofenac_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-45"><a href="#cb59-45" aria-hidden="true" tabindex="-1"></a>      intra_op_dexamethasone_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-46"><a href="#cb59-46" aria-hidden="true" tabindex="-1"></a>      intra_op_morphine_sulfate_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-47"><a href="#cb59-47" aria-hidden="true" tabindex="-1"></a>      intra_op_fentanyl_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-48"><a href="#cb59-48" aria-hidden="true" tabindex="-1"></a>      intra_op_clonidine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-49"><a href="#cb59-49" aria-hidden="true" tabindex="-1"></a>      intra_op_ketamine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-50"><a href="#cb59-50" aria-hidden="true" tabindex="-1"></a>      intra_op_magnesium_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">3</span>L,</span>
+<span id="cb59-51"><a href="#cb59-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-52"><a href="#cb59-52" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Group 4</span></span>
+<span id="cb59-53"><a href="#cb59-53" aria-hidden="true" tabindex="-1"></a>      intra_op_and_pre_paracetamol_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-54"><a href="#cb59-54" aria-hidden="true" tabindex="-1"></a>      intra_op_diclofenac_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-55"><a href="#cb59-55" aria-hidden="true" tabindex="-1"></a>      intra_op_dexamethasone_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-56"><a href="#cb59-56" aria-hidden="true" tabindex="-1"></a>      intra_op_morphine_sulfate_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-57"><a href="#cb59-57" aria-hidden="true" tabindex="-1"></a>      intra_op_fentanyl_given <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb59-58"><a href="#cb59-58" aria-hidden="true" tabindex="-1"></a>      intra_op_clonidine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-59"><a href="#cb59-59" aria-hidden="true" tabindex="-1"></a>      intra_op_ketamine_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb59-60"><a href="#cb59-60" aria-hidden="true" tabindex="-1"></a>      intra_op_magnesium_given <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">4</span>L,</span>
+<span id="cb59-61"><a href="#cb59-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-62"><a href="#cb59-62" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Anything else</span></span>
+<span id="cb59-63"><a href="#cb59-63" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_integer_</span></span>
+<span id="cb59-64"><a href="#cb59-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb59-65"><a href="#cb59-65" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb59-66"><a href="#cb59-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-67"><a href="#cb59-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-68"><a href="#cb59-68" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>treatment_arm <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(df<span class="sc">$</span>treatment_arm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="write-dataset" class="level1">
+<h1>Write dataset</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(df, <span class="at">file=</span><span class="fu">paste0</span>(root_path, <span class="st">"/data/dataset.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

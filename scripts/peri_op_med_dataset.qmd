@@ -1,0 +1,695 @@
+# Generate study Dataset
+
+## Set up
+```{r}
+library(lme4)
+library(broom.mixed)
+library(dplyr)
+library(ggplot2)
+library(arrow)
+library(cli)
+library(stringr)
+library(gt)
+
+source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
+sapply(functions_paths, source, verbose=FALSE)
+data_set_details <- load_dataset(data_set=data_set, root_path = root_path, output_folder_path = dataset_path)
+
+
+```
+
+
+## Select cases from full dataset
+```{r cohort generation}
+make_cohort <- function(){
+rest_of_chapter <- c(paste0("F0", 0:9), paste0("F", 10:33),  paste0("F", 36:99))
+
+q1 <- cohort_encounter_selection(cohort_name = "Tonsillectomy",
+                          include_OPCS =  c("F34", "F35"),
+                          exclude_OPCS = c("E20",rest_of_chapter),
+                          min_age = NA,
+                          max_age = NA,
+                          case_priority = "elective",
+                          return_index_procedures_only=TRUE,
+                          verbose = TRUE
+                          )
+
+q2 <- cohort_encounter_selection(cohort_name = "Adenoidectomy",
+                          include_OPCS =  c("E20"),
+                          exclude_OPCS = c("F34", "F35",rest_of_chapter),
+                          min_age = NA,
+                          max_age = NA,
+                          case_priority = "elective",
+                          return_index_procedures_only=TRUE,
+                          verbose = TRUE
+                          )
+
+q3 <- cohort_encounter_selection(cohort_name = "Adenotonsillectomy",
+                          include_OPCS =  c("F34", "F35", "E20"),
+                          exclude_OPCS = c(rest_of_chapter),
+                          min_age = NA,
+                          max_age = NA,
+                          case_priority = "elective",
+                          return_index_procedures_only=TRUE,
+                          verbose = TRUE
+                          )
+
+q3 <- q3 %>% filter(!EncounterKey %in% q1$EncounterKey) %>% filter(!EncounterKey %in% q2$EncounterKey)
+
+
+coblation <- cohort_encounter_selection(cohort_name = "Coblation",
+                          include_OPCS =  c("Y10.1", "F34.7", "F35.2"),
+                          min_age = NA,
+                          max_age = NA,
+                         case_priority = "elective",
+                         return_index_procedures_only=TRUE,
+                          verbose = TRUE
+                          )
+
+electrocautery <- cohort_encounter_selection(cohort_name = "Electrocautery",
+                          include_OPCS =  c("Y10.2", "Y11.1"),
+                          exclude_OPCS = c("Y10.1"),
+                          min_age = NA,
+                          max_age = NA,
+                         case_priority = "elective",
+                         return_index_procedures_only=TRUE,
+                          verbose = TRUE
+                          )
+
+
+full_cohort <- rbind(q1,q2,q3) %>% ungroup()
+
+full_cohort <- full_cohort %>%
+  mutate(coblation = ifelse(SurgicalCaseKey %in% coblation$SurgicalCaseKey,TRUE,FALSE)) %>%
+  mutate(electrocautery = ifelse(SurgicalCaseKey %in% electrocautery$SurgicalCaseKey,TRUE,FALSE)) 
+
+return(full_cohort)
+}
+
+full_cohort <- make_cohort()
+
+```
+
+## Data extraction
+
+For the selected encounters a range of patient factors, surgical factors and anaesthetic factors where extracted.
+
+### Patient factors
+
+```{r extract - patient factors}
+#| message: false
+#| echo: true
+
+df <- full_cohort %>% left_join(anthropometric %>% collect() %>% dplyr::select(-any_of(c("PatientDurableKey" ,"patient_id" , "INDEX"))) , join_by("EncounterKey"))
+
+
+#Convert Height in cm
+df <- df %>% mutate(Height = Height*100)
+
+df <- df %>% mutate(cohort = factor(cohort, levels=c("Tonsillectomy","Adenoidectomy","Adenotonsillectomy")))
+
+df <- df %>% mutate(adult = factor(ifelse(age>=18,1,0)))
+
+patient_id_list <- df %>% ungroup() %>% select(patient_id) %>% unique() %>% pull()
+
+
+df <- df %>% left_join(
+  get_diagnosis_status(patient_id_list, 
+                       icd_to_include = c("R52"), 
+                       icd_to_exclude = c("R52.0"),
+                       variable_name = "hx_chronic_pain", 
+                       format = "binary" )
+, join_by(patient_id))
+
+df <- df %>% left_join(
+  get_diagnosis_status(patient_id_list, 
+                       icd_to_include = c("F11"), 
+                       variable_name = "hx_opioid_dependance", 
+                       format = "binary" )
+, join_by(patient_id))
+
+df <- df %>% left_join(
+  get_diagnosis_status(patient_id_list, 
+                       icd_to_include = c("J35"), 
+                       icd_to_exclude = c("J35.8"),
+                       variable_name = "hx_chronic_tonsillitis", 
+                       format = "binary" )
+, join_by(patient_id))
+
+df <- df %>% left_join(
+  get_diagnosis_status(patient_id_list, 
+                       icd_to_include = c("G47.3"), 
+                       variable_name = "hx_sleep_apnoea", 
+                       format = "binary" )
+, join_by(patient_id))
+
+# The default behavior of `get_diagnosis_status` is to return a 0 if the patients PMH is found but the diagnosis code of intrest is not found, this is to ensure an NA is assinged if there is an issues with the function. 
+
+if(any(df %>% summarise(across(starts_with("hx"), ~ any(is.na(.)))))){cli_abort("There are some patients who's PMH itens are not returning correctly ")}
+
+
+```
+
+
+### Anaesthetic factors
+
+```{r extract - anaesthetic factors}
+#| echo: false
+#| code-fold: true
+#| warning: false
+#| error: false
+
+surgical_case_keys <- df  %>% ungroup() %>% filter(index_surgery_per_encounter == 1) %>% select(SurgicalCaseKey) %>% pull()
+
+if(any(surgical_case_keys %>% duplicated())){
+  cli_abort(c("There is duplication in the surgical case keys.", "i" = "This means that when we search the intra-op MAR there will be an issue with the joins"))
+  df[which(duplicated(df$SurgicalCaseKey)),] %>% View(
+  )
+}
+
+encounter_keys <- df %>% ungroup() %>% filter(index_surgery_per_encounter == 1) %>% select(EncounterKey) %>% pull()
+operation_instant <- df %>% ungroup() %>% filter(index_surgery_per_encounter == 1) %>% select(OperationInstant) %>% pull()
+
+df <- df %>% mutate(FirstAnesthesiaProviderDurableKey = as.factor(FirstAnesthesiaProviderDurableKey))
+
+search_drug_names(medication, "paracetamol")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = "paracetamol",
+  format = "binary_if_given",
+  variable_name = "intra_op_paracetamol_given"
+))
+
+
+df <- df %>% left_join(pre_op_paracetamol <- get_all_drug_given(encounter_keys = encounter_keys,
+  drug_generic_name = "paracetamol",
+  search_column = "SimpleGenericName",
+  format = "binary_if_given",
+  variable_name = "pre_op_paracetamol_given", 
+  timeframe="pre_op",
+  surgery_start_datetime = operation_instant,
+  pre_op_length = 4*60,
+  verbose = FALSE
+))
+
+
+
+#If a patient receive a dose of pre-op paracetamol but not intra-op paracetamol then overwrite their intra-op value to be 1
+
+df <- df%>%  ungroup() %>% mutate(intra_op_and_pre_paracetamol_given = ifelse(intra_op_paracetamol_given==0 & pre_op_paracetamol_given==1, 1, intra_op_paracetamol_given))
+
+table(df$intra_op_and_pre_paracetamol_given)
+
+anes_diclofenac_strings <- search_drug_names(anes_medication, "diclofenac")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = anes_diclofenac_strings$Name,
+  search_column = "Name",
+  format = "binary_if_given",
+  variable_name = "intra_op_diclofenac_given"
+))
+
+#search_drug_names(anes_medication, "dexamethasone")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = "dexamethasone",
+  format = "binary_if_given",
+  variable_name = "intra_op_dexamethasone_given"
+))
+
+#search_drug_names(anes_medication, "tramadol")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = "tramadol",
+  format = "binary_if_given",
+  variable_name = "intra_op_tramadol_given"
+))
+
+anes_clonidine_strings <- search_drug_names(anes_medication, "clonidine")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = anes_clonidine_strings$Name,
+  search_column = "Name",
+  format = "binary_if_given",
+  variable_name = "intra_op_clonidine_given"
+))
+
+anes_ketamine_strings <- search_drug_names(anes_medication, "ketamine")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = anes_ketamine_strings$Name,
+  search_column = "Name",
+  format = "binary_if_given",
+  variable_name = "intra_op_ketamine_given"
+))
+
+
+
+#Proof to check the drug name is listed correctly
+
+anes_mag_strings <- search_drug_names(anes_medication, "Magnesium")
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = anes_mag_strings$Name,
+  search_column = "Name",
+  format = "binary_if_given",
+  variable_name = "intra_op_magnesium_given"
+)
+)
+
+i_ome <- anes_medication %>% group_by(SurgicalCaseKey) %>% summarise(intra_op_ome = sum(ome, na.rm = TRUE)) %>% collect() %>% mutate(intra_op_ome = ifelse(intra_op_ome==0, NA, intra_op_ome))
+
+df <- df %>% left_join(i_ome) %>% mutate(intra_op_ome_per_kg = intra_op_ome/Weight)
+
+
+#Generate a list of all of the `SimpleGenericName` for strong opioids. 
+strong_opioid_list <- c("morphine sulfate", "oxycodone hydrochloride", "fentanyl", "diamorphine hydrochloride")
+
+
+med_drug_names <- medication %>% filter(SimpleGenericName %in% strong_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
+
+med_order_drug_names <- medication_order %>% filter(SimpleGenericName %in% strong_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
+opioid_generic_names <- c(med_drug_names$GenericName, med_order_drug_names$GenericName) %>% unique()
+
+### Generate a list of weak opioid for the revovery/discahrge list
+
+
+#x <- search_drug_names(medication, "codeine")
+
+weak_opioid_list <- c("codeine phosphate", "dihydrocodeine","co-dydramol (dihydrocodeine and paracetamol)", "co-codamol (codeine and paracetamol)",  "tramadol")
+
+#med_drug_names <- medication %>% filter(SimpleGenericName %in% weak_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
+
+#med_order_drug_names <- medication_order %>% filter(SimpleGenericName %in% weak_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
+
+#weak_opioid_names <- c(med_drug_names$GenericName, med_order_drug_names$GenericName) %>% unique()
+
+df <- df %>% left_join(
+  get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = strong_opioid_list,
+  format = "binary_if_given",
+  variable_name = "intra_op_opioid_given"
+))
+
+## Check for OME sums and opioids given 
+
+for (i in 1:nrow(df)){
+  
+  if(is.na(df[i, "intra_op_ome"])){
+    #no ome calcualted
+    if(df[i,"intra_op_opioid_given"]==1){cli_abort("OME is NA but there was an opioid given")}
+  }
+  
+    if(!is.na(df[i, "intra_op_ome"])){
+    #no ome calcualted
+    if(df[i,"intra_op_opioid_given"]==0){cli_abort("OME has been calcualted but no string opioid given")
+      
+      
+      
+      }
+  }
+  
+}
+
+
+df <- df %>% mutate(intra_op_non_opioid_given = ifelse(intra_op_ketamine_given == 1| intra_op_clonidine_given == 1| intra_op_magnesium_given ==1, 1, 0))
+```
+
+```{r extract - Intra-op opioids}
+#| message: false
+
+#Each strong opioid
+
+for (i in 1:length(strong_opioid_list)){
+  
+  if(strong_opioid_list[i] == "remifentanil"){
+  opioid_string <- search_drug_names(anes_medication, "remi")$Name
+  search_col <- "Name"
+  variable_name <- paste0("intra_op_", "remifentanil", "_dose")
+  given_variable_name <-  paste0("intra_op_", "remifentanil", "_given")
+  }else{
+  opioid_string <- strong_opioid_list[i]
+  variable_name <- paste0("intra_op_", str_replace_all(opioid_string, " ", "_"), "_dose")
+  given_variable_name <-  paste0("intra_op_", str_replace_all(opioid_string, " ", "_"), "_given")
+   search_col <- "SimpleGenericName"
+  }
+  
+  
+  doses <- get_all_intraop_drug_given(surgical_case_keys,
+  drug_generic_name = opioid_string,
+  format = "total_dose",
+  variable_name = variable_name,
+  search_column = search_col)
+
+  
+  doses$given <- ifelse(is.na(doses[,2]),0,1)
+  doses <- doses %>% rename(!!given_variable_name := given)
+
+  df <- df %>% left_join(doses)
+  
+}
+
+df <- df %>% mutate(intra_op_morphine_sulfate_dose_per_kg = intra_op_morphine_sulfate_dose/Weight)
+df <- df %>% mutate(intra_op_fentanyl_dose = intra_op_fentanyl_dose*1000)
+df <- df %>% mutate(intra_op_fentanyl_dose_per_kg = intra_op_fentanyl_dose/Weight)
+
+```
+
+### Outcomes
+
+
+```{r extract - outcomes}
+#| warning: false
+#| message: false
+#| echo: false
+
+df <- df %>% left_join(
+  get_flowsheet_data(cohort_encounter_keys = encounter_keys,
+                   flowsheet_Epic_id = 3040104280,
+                   format = "median",
+                   variable_name = "pain_score_rest_24hr_post_op_mean",
+                   timespan = "post_op_24hrs",
+                   t1 = df$TouchTimeEndInstant
+                   )
+                   )
+
+df <- df %>% left_join(
+  get_flowsheet_data(cohort_encounter_keys = encounter_keys,
+                   flowsheet_Epic_id = 3040104280,
+                   format = "median",
+                   variable_name = "pain_score_rest_3hr_post_op_median",
+                   timespan = "recovery",
+                   t1 = df$TouchTimeEndInstant,
+                   t2= df$TouchTimeEndInstant + hours(3)
+                   )
+                   )
+
+
+df <- df %>% left_join(get_all_drug_ordered(encounter_keys,
+                     drug_generic_name = opioid_generic_names,
+                     search_column = "GenericName",
+                     phase="discharge",
+                     format = "binary_if_ordered",
+                     variable_name = "opioid_on_discharge")
+                     )
+
+df <- df %>% left_join(get_all_drug_ordered(encounter_keys,
+                     drug_generic_name = weak_opioid_list,
+                     search_column = "SimpleGenericName",
+                     phase="discharge",
+                     format = "binary_if_ordered",
+                     variable_name = "weak_opioid_on_discharge")
+                     )
+
+#Proof for paeds discharge opioids:
+
+# ek_list <- df%>%filter(adult==0)%>% filter(weak_opioid_on_discharge==1)%>%pull(EncounterKey)
+# medication_order %>% filter(EncounterKey %in% ek_list) %>% filter(type == "discharge") %>% filter(!is.na(morphine_eq)) %>% collect() %>% left_join(df %>% select(EncounterKey, age)) %>% select(GenericName, age, EncounterKey) %>% View()
+
+#Proof for paeds discharge medications:
+
+# ek_list <- df%>%filter(adult==0)%>% filter(weak_opioid_on_discharge==FALSE, opioid_on_discharge==FALSE, nsaid_on_discharge==FALSE, paracetamol_on_discharge==FALSE)%>%pull(EncounterKey)
+# medication_order %>% filter(EncounterKey %in% ek_list) %>% filter(type == "discharge") %>% collect() %>% group_by(Name) %>% summarise(n=n()) %>% arrange(desc(n)) %>% View()
+
+
+nsaid_string_list = c("ibuprofen", "diclofenac sodium", "etoricoxib", "celecoxib", "naproxen")
+
+
+df <- df %>% left_join(get_all_drug_ordered(encounter_keys,
+                     drug_generic_name = nsaid_string_list,
+                     search_column = "SimpleGenericName",
+                     phase="discharge",
+                     format = "binary_if_ordered",
+                     variable_name = "nsaid_on_discharge")
+                     )
+
+#search_drug_names(medication_order, "paracetamol")
+
+paracetamol_strings <- medication_order %>% filter(SimpleGenericName == "paracetamol") %>% pull(GenericName) %>% unique()
+
+df <- df %>% left_join(get_all_drug_ordered(encounter_keys,
+                     drug_generic_name = "paracetamol",
+                     search_column = "SimpleGenericName",
+                     phase="discharge",
+                     format = "binary_if_ordered",
+                     variable_name = "paracetamol_on_discharge")
+                     )
+
+df <- df %>% left_join(get_all_drug_ordered(encounter_keys,
+                     drug_generic_name = opioid_generic_names,
+                     search_column = "GenericName",
+                     phase="pta",
+                     format = "binary_if_ordered",
+                     variable_name = "opioid_on_admission")
+                     )
+
+df <- df %>% mutate(new_opioids_on_discharge = ifelse(opioid_on_discharge == TRUE & opioid_on_admission == FALSE, TRUE, FALSE ))
+
+df <- df %>% left_join(
+  find_readmission(index_encounter_keys = encounter_keys,
+                 encounter_types = "ed",
+                 format="table",
+                 variable_name = "ed_visit_in_7d",
+                 cutoff = 7)
+)
+
+df <- df %>% left_join(
+  find_readmission(index_encounter_keys = encounter_keys,
+                 encounter_types = "ed",
+                 format="table",
+                 variable_name = "ed_visit_in_14d",
+                 cutoff = 14)
+)
+
+df <- df %>% left_join(
+  find_readmission(index_encounter_keys = encounter_keys,
+                 encounter_types = "ed",
+                 format="table",
+                 variable_name = "ed_visit_in_30d",
+                 cutoff = 30)
+)
+
+
+df <- df %>% mutate(same_day_discharge = ifelse(as.Date(OperationInstant)+days(1) <= as.Date(EndInstant), FALSE, TRUE))
+
+df$length_of_admission <- as.numeric(df$length_of_admission)/60/60/24
+df$ProcedureLengthMinutes <- as.numeric(df$ProcedureLengthMinutes)/60
+
+df <- df %>% mutate(died = ifelse(died == 2, TRUE, FALSE))
+df <- df %>% mutate(alive_at_discharge = !died)
+
+```
+
+```{r extract - mortality}
+
+df <- df %>% left_join(find_mortality(df$EncounterKey, cut_off = 90, variable_name = "mortality_90d"))
+df <- df %>% left_join(find_mortality(df$EncounterKey, cut_off = 365, variable_name = "mortality_1y"))
+
+```
+
+### Return to theatre
+
+```{r extract - return to theatre}
+
+df <- df %>% left_join(
+  find_return_to_theatre(df$SurgicalCaseKey, 
+                       cutoff = 7,
+                       return_types = "any",
+                       format = "table",
+                       variable_name = "return_to_theatre_7d")
+  )
+
+df <- df %>% left_join(find_return_to_theatre(df$SurgicalCaseKey, 
+                       cutoff = 14,
+                       return_types = "any",
+                       format = "table",
+                       variable_name = "return_to_theatre_14d"))
+
+df <- df %>% left_join(find_return_to_theatre(df$SurgicalCaseKey, 
+                       cutoff = 30,
+                       return_types = "any",
+                       format = "table",
+                       variable_name = "return_to_theatre_30d"))
+
+```
+
+
+```{r extract - recovery medications }
+#| message: false
+
+df <- df %>% left_join(get_all_drug_given(encounter_keys =  df$EncounterKey,
+                  drug_generic_name = opioid_generic_names,
+                  search_column = "GenericName",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = recovery_time_cutoff*60,
+                   timeframe = "post_op",
+                  format = "number_of_doses",
+                  variable_name = "number_of_opioid_doses_post_op",
+                  verbose = FALSE)
+)
+
+df <- df %>% left_join(get_all_drug_given(encounter_keys =  df$EncounterKey,
+                   drug_generic_name = opioid_generic_names,
+                    search_column = "GenericName",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = recovery_time_cutoff*60,
+                   timeframe = "post_op",
+                  format = "total_ome",
+                  variable_name = "ome_post_op",
+                  verbose = FALSE)
+)
+
+df <- df %>% left_join(get_all_drug_given(encounter_keys =  df$EncounterKey,
+                   drug_generic_name = opioid_generic_names,
+                    search_column = "GenericName",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = recovery_time_cutoff*60,
+                   timeframe = "post_op",
+                  format = "binary_if_given",
+                  variable_name = "opioid_given_post_op",
+                  verbose = FALSE)
+)
+
+morphine_strings <- search_drug_names(medication, "morphine sulfate")
+
+df <- df %>% left_join(get_all_drug_given(encounter_keys =  df$EncounterKey,
+                   drug_generic_name = morphine_strings$Name,
+                    search_column = "Name",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = recovery_time_cutoff*60,
+                   timeframe = "post_op",
+                  format = "binary_if_given",
+                  variable_name = "opioid_given_post_op_morphine",
+                  verbose = FALSE)
+)
+
+fentanyl_strings <- search_drug_names(medication, "fentanyl")
+
+df <- df %>% left_join(get_all_drug_given(encounter_keys =  df$EncounterKey,
+                   drug_generic_name = fentanyl_strings$Name,
+                    search_column = "Name",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = recovery_time_cutoff*60,
+                   timeframe = "post_op",
+                  format = "binary_if_given",
+                  variable_name = "opioid_given_post_op_fentanyl",
+                  verbose = FALSE)
+)
+
+
+recovery_meds <- get_all_drug_given(encounter_keys =  df$EncounterKey,
+                   drug_generic_name = opioid_generic_names,
+                    search_column = "GenericName",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = recovery_time_cutoff*60,
+                   timeframe = "post_op",
+                  format = "all_rows",
+                  variable_name = "opioid_given_post_op",
+                  verbose = FALSE) 
+
+recovery_meds %>% group_by(SimpleGenericName) %>% summarise(n = n())
+
+df <- df %>% mutate(opioid_given_post_op = ifelse(opioid_given_post_op==1, TRUE, FALSE))
+df <- df %>% mutate(ome_post_op = ifelse(ome_post_op==0, NA, ome_post_op)) %>% mutate(ome_post_op_per_kg = ome_post_op/Weight)
+df <- df %>% mutate(recovery_time = as.numeric(difftime(RecoveryCareCompleteInstantTracking, TouchTimeEndInstant, units="mins")))
+
+#Quick error check to see the data being produced. 
+
+#df %>% select(number_of_opioid_doses_post_op, ome_post_op, opioid_given_post_op) %>% filter(opioid_given_post_op==1)
+
+```
+
+## Treatment arm
+
+```{r treatment arm labelling}
+
+df$treatment_arm <- NA
+
+df <- df %>%
+  mutate(simple_analgesia_given = case_when(
+    intra_op_and_pre_paracetamol_given == 1 &
+      intra_op_diclofenac_given == 1 &
+      intra_op_dexamethasone_given == 1 ~ 1L,
+      .default = 0)) %>%
+  mutate(
+    opioid_given = case_when(
+    intra_op_morphine_sulfate_given == 1 |
+      intra_op_fentanyl_given == 1 ~ 1L,
+      .default = 0))%>%
+  mutate(
+    treatment_arm = case_when(
+
+      # Exclusion drugs → NA
+     # intra_op_clonidine_given == 1 |
+    #  intra_op_ketamine_given == 1 |
+    #  intra_op_magnesium_given == 1 ~ NA_integer_,
+
+      # Group 1
+      intra_op_and_pre_paracetamol_given == 1 &
+      intra_op_diclofenac_given == 1 &
+      intra_op_dexamethasone_given == 1 &
+      intra_op_morphine_sulfate_given == 0 &
+      intra_op_fentanyl_given == 0 &
+      intra_op_clonidine_given == 0 &
+      intra_op_ketamine_given == 0 &
+      intra_op_magnesium_given == 0 ~ 1L,
+
+      # Group 2
+      intra_op_and_pre_paracetamol_given == 1 &
+      intra_op_diclofenac_given == 1 &
+      intra_op_dexamethasone_given == 1 &
+      intra_op_morphine_sulfate_given == 1 &
+      intra_op_fentanyl_given == 0 &
+      intra_op_clonidine_given == 0 &
+      intra_op_ketamine_given == 0 &
+      intra_op_magnesium_given == 0 ~ 2L,
+
+      # Group 3
+      intra_op_and_pre_paracetamol_given == 1 &
+      intra_op_diclofenac_given == 1 &
+      intra_op_dexamethasone_given == 1 &
+      intra_op_morphine_sulfate_given == 0 &
+      intra_op_fentanyl_given == 1 &
+      intra_op_clonidine_given == 0 &
+      intra_op_ketamine_given == 0 &
+      intra_op_magnesium_given == 0 ~ 3L,
+
+      # Group 4
+      intra_op_and_pre_paracetamol_given == 1 &
+      intra_op_diclofenac_given == 1 &
+      intra_op_dexamethasone_given == 1 &
+      intra_op_morphine_sulfate_given == 1 &
+      intra_op_fentanyl_given == 1 &
+      intra_op_clonidine_given == 0 &
+      intra_op_ketamine_given == 0 &
+      intra_op_magnesium_given == 0 ~ 4L,
+
+      # Anything else
+      TRUE ~ NA_integer_
+    )
+  )
+
+
+df$treatment_arm <- as.factor(df$treatment_arm)
+
+```
+
+# Write dataset
+
+```{r write dataset}
+
+saveRDS(df, file=paste0(root_path, "/data/dataset.rds"))
+
+```
+
+
+
+
+
