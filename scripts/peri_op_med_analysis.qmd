@@ -3,7 +3,12 @@ title: "Figures and Tables"
 execute:
   output: false
   echo: false
-format: docx
+format: 
+  docx:
+    number-sections: false
+crossref:
+  tbl-prefix: ""
+  tbl-title: ""
 knitr:
   opts_knit:
     root.dir: "~/data/dwhitake/tonsillectomy_analgesia/scripts"
@@ -69,7 +74,9 @@ data_set<-data_set %>% mutate(across(starts_with("return_to_theatre"),~factor(.,
 data_set<-data_set %>% mutate(new_opioids_on_discharge = factor(new_opioids_on_discharge, levels=c(1, 0)))  
 data_set<-data_set %>% mutate(across(starts_with("opioid_given"),~factor(., levels=c(TRUE, FALSE)))) 
 data_set<-data_set %>% mutate(across(ends_with("on_discharge"),~factor(., levels=c(TRUE, FALSE)))) 
-data_set<-data_set %>% mutate(across(starts_with("coblation"),~factor(., levels=c(TRUE, FALSE)))) 
+data_set<-data_set %>% mutate(across(ends_with("same_day_discharge"),~factor(., levels=c(TRUE, FALSE)))) 
+data_set<- data_set %>% mutate(across(starts_with("coblation"),~if_else(. == TRUE, "Yes", "No"))) 
+data_set<- data_set %>% mutate(across(starts_with("coblation"),~factor(., levels=c("Yes", "No"))))  
 data_set<-data_set %>% mutate(across(starts_with("electrocautery"),~factor(., levels=c(TRUE, FALSE)))) 
   
   #Number of digits to round to (1) mean/median, (2) standard deviation / interquartile range, (3) p-value, (4) count percentage, (5) weighted count.
@@ -135,7 +142,7 @@ data_set<-data_set %>% mutate(across(starts_with("electrocautery"),~factor(., le
     
     if(demographic_table){
       table_1 <- table_1 %>% filter(levels != "No")
-      table_1 <- table_1 %>% filter(levels != FALSE)
+      table_1 <- table_1 %>% filter(levels != FALSE| label %in% c("coblation"))
     }
     
     if(cohort == "adult"){
@@ -157,7 +164,7 @@ data_set<-data_set %>% mutate(across(starts_with("electrocautery"),~factor(., le
       table_1 <- table_1 %>% filter(levels != 0)
       table_1 <- table_1 %>% filter(levels != FALSE | label %in% c("died", "same_day_discharge"))
       table_1$levels <- ifelse(table_1$levels==1, "N (%)",table_1$levels)
-      table_1$levels <- ifelse(table_1$levels==TRUE & !table_1$label %in% c("died", "same_day_discharge"), "N (%)",table_1$levels)
+      table_1$levels <- ifelse(table_1$levels==TRUE & !table_1$label %in% c("died"), "N (%)",table_1$levels)
     }
     
     
@@ -856,8 +863,7 @@ if(OR){
   )}else{
      gt_table <-  table %>% select(-outcome, -effect) %>%
   gt() %>%
-  tab_header(
-    title = paste0("Fixed effect results - Model: ",   deparse(substitute(model))),
+  tab_header(title = "",
     subtitle = paste0("Cohort: ", cohort_label, " Outcome: ", outcome_label)
   ) %>%
   cols_label(
@@ -865,15 +871,17 @@ if(OR){
     estimate = "Coefficient",
     std.error = "Standard error",
     statistic = "z value",
-  #  p.value = "p value",
-  #  odds_ratio = "Odds Ratio",
+    p.value = "p value",
+    df = "Degrees of freedom",
     conf.low = "95% CI Lower",
-    conf.high = "OR 95% CI Upper"
+    conf.high =  "95% CI Upper"
   ) %>%
   fmt_number(
-    columns = c(estimate, std.error, statistic, conf.low, conf.high),
+    columns = c(estimate, std.error, statistic, conf.low, conf.high, df, p.value),
     decimals = 3
-  ) 
+  ) %>%
+  tab_footnote(footnote = "p value's calculated using Satterthwaite's approximation ") %>%
+       tab_style(style = cell_text(weight = "bold"), locations = cells_body(columns = p.value, rows = p.value < 0.05))
   }
   
   return(gt_table)
@@ -1495,28 +1503,28 @@ df <- df %>% left_join(eligable_anes_paeds, by="EncounterKey")
   cohort_define(
     adult = .full %>% filter(adult== 1),
     adult_eligable_anes = adult %>% filter(!is.na(eligable_anes_id_adult)),
-    adult_excluded_anes = anti_join(adult, adult_eligable_anes, by = "patient_id"),
-    adult_got_treatment_group = adult_eligable_anes %>% filter(!is.na(treatment_arm)),
-    adult_group_0 = anti_join(adult, adult_got_treatment_group, by = "patient_id"),
-    adult_treatment_1 = adult_got_treatment_group %>% filter(treatment_arm==1),
-    adult_treatment_2 = adult_got_treatment_group %>% filter(treatment_arm==2),
-    adult_treatment_3 = adult_got_treatment_group %>% filter(treatment_arm==3),
-    adult_treatment_4 = adult_got_treatment_group %>% filter(treatment_arm==4),
+    adult_excluded_anes = anti_join(adult, adult_eligable_anes, by = "EncounterKey"),
+    adult_group_0 = adult_eligable_anes %>% filter(is.na(treatment_arm)),
+    adult_treatment_1 = adult_eligable_anes %>% filter(treatment_arm==1),
+    adult_treatment_2 = adult_eligable_anes %>% filter(treatment_arm==2),
+    adult_treatment_3 = adult_eligable_anes %>% filter(treatment_arm==3),
+    adult_treatment_4 = adult_eligable_anes %>% filter(treatment_arm==4),
+    adult_modelling = anti_join(adult_eligable_anes, adult_group_0, by = "EncounterKey"),
     paed = .full %>% filter(adult== 0),
     paed_eligable_anes = paed %>% filter(!is.na(eligable_anes_id_paed)),
-    paed_excluded_anes = anti_join(paed, paed_eligable_anes, by = "patient_id"),
-    paed_got_treatment_group = paed_eligable_anes %>% filter(!is.na(treatment_arm)),
-    paed_group_0 = anti_join(paed, paed_got_treatment_group, by = "patient_id"),
-    paed_treatment_1 = paed_got_treatment_group %>% filter(treatment_arm==1),
-    paed_treatment_2 = paed_got_treatment_group %>% filter(treatment_arm==2),
-    paed_treatment_3 = paed_got_treatment_group %>% filter(treatment_arm==3),
-    paed_treatment_4 = paed_got_treatment_group %>% filter(treatment_arm==4),
+    paed_excluded_anes = anti_join(paed, paed_eligable_anes, by = "EncounterKey"),
+    paed_group_0 = paed_eligable_anes %>% filter(is.na(treatment_arm)),
+    paed_treatment_1 = paed_eligable_anes %>% filter(treatment_arm==1),
+    paed_treatment_2 = paed_eligable_anes %>% filter(treatment_arm==2),
+    paed_treatment_3 = paed_eligable_anes %>% filter(treatment_arm==3),
+    paed_treatment_4 = paed_eligable_anes %>% filter(treatment_arm==4),
+    paed_modelling = anti_join(paed_eligable_anes, paed_group_0, by = "EncounterKey"),
   ) %>%
    cohort_label(
     adult = "Adult patients",
     adult_eligable_anes = "5 or more cases per<br>primary anaesthetist",
     adult_excluded_anes = "Less than 5 cases for<br>primary anaesthetist",
-    adult_got_treatment_group = "Included in modelling",
+    adult_modelling = "Included in modelling",
     adult_group_0 = "Not met treatment<br>group criteria",
     adult_treatment_1 = "Simple analgesia",
     adult_treatment_2 = "Simple analgesia + morphine",
@@ -1525,7 +1533,7 @@ df <- df %>% left_join(eligable_anes_paeds, by="EncounterKey")
     paed = "Paediatric patients",
     paed_eligable_anes = "5 or more cases per<br>primary anaesthetist",
     paed_excluded_anes = paste0("Less than 5 cases for<br> primary anaesthetist "),
-    paed_got_treatment_group = "Included in modelling",
+    paed_modelling = "Included in modelling",
     paed_group_0 = "Not met treatment<br>group criteria",
     paed_treatment_1 = "Simple analgesia",
     paed_treatment_2 = "Simple analgesia + morphine",
@@ -1533,10 +1541,10 @@ df <- df %>% left_join(eligable_anes_paeds, by="EncounterKey")
     paed_treatment_4 = "Simple analgesia + morphine + fentanyl"
    )
    
-adult_data <- modelling_cohort$data$adult_got_treatment_group
+adult_data <- modelling_cohort$data$adult_modelling
 adult_data <- adult_data %>% mutate(treatment_arm = factor(treatment_arm, levels = c(1,2,3,4))) %>% mutate(intra_op_ome = ifelse(is.na(intra_op_ome), 0, intra_op_ome))
 
-paed_data <- modelling_cohort$data$paed_got_treatment_group
+paed_data <- modelling_cohort$data$paed_modelling
 paed_data <- paed_data %>% mutate(treatment_arm = factor(treatment_arm, levels = c(1,2,3,4)))%>% mutate(intra_op_ome = ifelse(is.na(intra_op_ome), 0, intra_op_ome))
 
 ```
@@ -1571,11 +1579,11 @@ consort <- modelling_cohort %>%
     start_x =-10,start_y=30,  end = "adult_group_0", end_side = "right"
   )%>%
   consort_box_add(
-    "adult_got_treatment_group", -10, 0, glue::glue(
-      '{cohort_count_adorn(modelling_cohort, adult_got_treatment_group)}'
+    "adult_modelling", -10, 0, glue::glue(
+      '{cohort_count_adorn(modelling_cohort, adult_modelling)}'
       )
   ) %>% consort_arrow_add(
-    start ="adult_eligable_anes",  end = "adult_got_treatment_group", end_side = "top"
+    start ="adult_eligable_anes",  end = "adult_modelling", end_side = "top"
   )%>% consort_box_add(
     "adult_group_0", -20, 30, glue::glue(
       '{cohort_count_adorn(modelling_cohort, adult_group_0)}'
@@ -1702,6 +1710,8 @@ model_2_gt <- model_2_fixed_eff %>%
 ```
 
 ```{r}
+library(lmerTest)
+
 model_3  <- lmer(
   recovery_time ~ treatment_arm +
     age +
@@ -1781,8 +1791,8 @@ model_6  <- glmer(
   family = binomial(link = "logit")
 )
 
-model_6_fixed_eff <- extract_fixed_effects(model_6, outcome = "same_day_discharge")
-model_6_gt <- fixed_effects_gt_table(model_6_fixed_eff, cohort_label = "Adult (adjusted)", outcome_label = "Presintation to emergency department within 7 days", model_numb = 6)
+model_6_fixed_eff <- extract_fixed_effects(model_6, outcome = "ed_visit_in_7d")
+model_6_gt <- fixed_effects_gt_table(model_6_fixed_eff, cohort_label = "Adult (adjusted)", outcome_label = "Presentation to emergency department within 7 days", model_numb = 6)
 
 
 models <- list(model_0, 

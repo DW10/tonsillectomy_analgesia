@@ -3,7 +3,15 @@ title: "Supplementary materials"
 execute:
   output: false
   echo: false
-format: docx
+format: 
+  docx:
+    fig-width: 6
+    fig-height: 3
+    number-sections: false
+crossref:
+  tbl-prefix: "aaa"
+  tbl-title: ""
+  tbl-labels: alpha
 ---
 
 ```{r}
@@ -246,9 +254,10 @@ Specific formulations of discharge medications have not been provided as clinici
 | Medication group | Medications generic name |
 | :--- | :--- |
 | Paracetamol | paracetamol |
-| NSAID’s | Ibuprofen, Diclofenac sodium, Naproxen, Etoricoxib, Celecoxib, *Note: Asprin was not included as the primary intention is usually not for post-operative analgesia |
+| NSAID’s* | Ibuprofen, Diclofenac sodium, Naproxen, Etoricoxib, Celecoxib |
 | Strong opioid | morphine sulfate, oxycodone hydrochloride, buprenorphine, fentanyl, diamorphine hydrochloride |
 | Weak opioid | codeine phosphate, dihydrocodeine, co-dydramol (dihydrocodeine and paracetamol), co-codamol (codeine and paracetamol), tramadol |
+* Aspirin was not included as the primary intention is usually not for post-operative analgesia
 
 {{< pagebreak >}}
 # Supplementary materials S2 - Missing data
@@ -258,41 +267,93 @@ The level of missing data for each of the key variables were assessed as reporte
 ### Table S8
 
 ```{r}
-#| output: true
 
-# 1. Define target columns (example)
-cols <- c( "Sex", "GenderIdentity", "ethnicity_5_group","Height", "Weight", "AsaPhysicalStatus", "treatment_arm",
-                          "ome_post_op",
-                          "recovery_time",
-                          "pain_score_rest_3hr_post_op_median",
-                          "mortality_90d", 
-                          "mortality_1y") 
+# Define your columns of interest
+cols_of_interest <- c(
+                      "Height",
+                      "Weight",
+                      "Sex",
+                      "GenderIdentity",
+                      "ethnicity_5_group",
+                      "AsaPhysicalStatus",
+                      "intra_op_fentanyl_dose",
+                      "intra_op_fentanyl_dose_per_kg",
+                      "intra_op_morphine_sulfate_dose",
+                      "intra_op_morphine_sulfate_dose_per_kg",
+                      "intra_op_ome",
+                      "treatment_arm",
+                      "ome_post_op",
+                      "recovery_time",
+                      "pain_score_rest_3hr_post_op_median",
+                      "mortality_90d",
+                      "mortality_1y")
 
-# 2. Define a helper function for modularity
-summarize_missing <- function(data) {
-  data %>%
-    summarise(across(all_of(cols), list(
-      n_miss = ~sum(is.na(.x)),
-      p_miss = ~round(mean(is.na(.x)) * 100, digits = 2)
-    ))) %>%
-    pivot_longer(
-      everything(),
-      names_to = c("variable", ".value"),
-      names_pattern = "(.*)_(n_miss|p_miss)"
-    )
-}
+# Calculate missingness
+missing_summary <- df %>%
+  mutate(across(all_of(cols_of_interest), as.character)) %>%
+  select(adult, all_of(cols_of_interest)) %>%
+  pivot_longer(
+    cols = all_of(cols_of_interest), 
+    names_to = "variable", 
+    values_to = "value"
+  ) %>%
+  group_by(variable, adult) %>%
+  summarise(na_count = sum(is.na(value)), .groups = "drop") %>%
+  pivot_wider(
+    names_from = adult, 
+    values_from = na_count,
+    names_prefix = "temp_"
+  ) %>%
+  rename(paediatric = temp_0, adult = temp_1) %>%
+  mutate(adult_percent = adult / nrow(df%>%filter(adult==1)),
+         paediatric_percent = paediatric / nrow(df%>%filter(adult==0)))
 
-# 3. Generate and combine the subsets
-missing_report <- bind_rows(
-  summarize_missing(df),
-) %>%
-  select( variable, n_miss, p_miss)
+ordered_summary <- missing_summary %>%
+  mutate(variable = factor(variable, levels = cols_of_interest)) %>%
+  arrange(variable)
 
-matches <- match(missing_report$variable, col_name_lookup)
-missing_report$variable[!is.na(matches)] <- names(col_name_lookup)[matches[!is.na(matches)]]
+totals <- data.frame(variable = "Total count", adult = nrow(df%>%filter(adult==1)), adult_percent = NA,  paediatric = nrow(df%>%filter(adult==0)), paediatric_percent = NA)
 
-missing_report %>% gt() %>%
-cols_label(.list = setNames(c("Variable", "Missing (count)", "Missing (%)"), names(missing_report)))
+missing_data <- rbind(totals, ordered_summary)
+
+matches <- match(missing_data$variable, col_name_lookup)
+missing_data$variable[!is.na(matches)] <- names(col_name_lookup)[matches[!is.na(matches)]]
+
+gt(missing_data) %>%
+  tab_spanner(
+    label = "Adults",
+    columns = c(adult, adult_percent)
+  ) %>%
+  tab_spanner(
+    label = "Paediatrics",
+    columns = c(paediatric, paediatric_percent)
+  ) %>%
+  
+  # 4. Rename columns within the groups
+  
+  # 5. Format percentages to 2 decimal places
+  fmt_percent(
+  columns = c(adult_percent, paediatric_percent),
+    decimals = 2
+  ) %>%
+  
+  # 6. Handling the 'Total count' row (Optional: bolding the first row for emphasis)
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(rows = 1)
+  ) %>%
+  
+  # Clean up missing values (e.g., for Total count percentages)
+  sub_missing(
+    columns = everything(),
+    missing_text = "---"
+  ) %>%
+    cols_label(
+    adult = "Count",
+    adult_percent = "Percentage (%)",
+    paediatric = "Count",
+    paediatric_percent = "Percentage (%)"
+  ) 
 
 ```
 
@@ -790,7 +851,7 @@ gtsave(file=paste0(root_path, "/export/table_S13.docx" ))
 
 ```
 
-
+{{< pagebreak >}}
 ## S5.3 - Results of Model 1
 
 In Model 1 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_1)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
@@ -801,15 +862,18 @@ In Model 1 the variance explained by the anaesthetist ID was `r data.frame(VarCo
 gt_tables[[1]]
 ```
 
-### Table S15 - Random effects of model 1
+### Figure S9 - Random effects of model 1
 
 ```{r}
 #| output: true
+#| fig-width: 6
+#| fig-height: 3
+
 plot_rand_effects(model_1, outcome_label = "Recovery opioids", cohort = "Adult (unadjusted) ")
 
 ```
 
-
+{{< pagebreak >}}
 ## S5.4 - Results of Model 2
 
 In Model 1 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_2)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
@@ -820,88 +884,85 @@ In Model 1 the variance explained by the anaesthetist ID was `r data.frame(VarCo
 gt_tables[[2]]
 ```
 
-### Table S17 - Random effects of model 2
+### Figure S10 - Random effects of model 2
 
 ```{r}
 #| output: true
 plot_rand_effects(model_2, outcome_label = "Recovery opioids", cohort = "Adult (adjusted) ")
 
 ```
-
+{{< pagebreak >}}
 ## S5.4 - Results of Model 3
 
 In Model 3 the standard deviation of the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_3))[1,] %>% pull(sdcor) %>% round(digits=2) ` minutes.
 
-### Table S18 - Fixed effects of model 3
+### Table S17 - Fixed effects of model 3
 ```{r}
 #| output: true
 gt_tables[[3]]
 ```
 
-### Table S19 - Random effects of model 3
+### Figure S11 - Random effects of model 3
 
 ```{r}
 #| output: true
 plot_rand_effects(model_3, outcome_label = "Time in recovery (minutes)", cohort = "Adult (unadjusted) ", OR = FALSE, rand_eff_x_lim = c(-5, 5))
 
 ```
-
+{{< pagebreak >}}
 ## S5.5 - Results of Model 4
 
 In Model 4 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_4)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
 
-### Table S20 - Fixed effects of model 4
+### Table S18 - Fixed effects of model 4
 ```{r}
 #| output: true
 gt_tables[[4]]
 ```
 
-### Table S21 - Random effects of model 
+### Figure S12 - Random effects of model 4
 
 ```{r}
 #| output: true
-plot_rand_effects(model_4, outcome_label = "Same day discharge", cohort = "Adult (adjusted) ", rand_eff_x_lim = c(0, 2.5))
+plot_rand_effects(model_4, outcome_label = " Same day discharge", cohort = "Adult (adjusted) ", rand_eff_x_lim = c(0, 2.5))
 
 ```
-
+{{< pagebreak >}}
 ## S5.3 - Results of Model 5
 
 In Model 5 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_5)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
 
-### Table S22 - Fixed effects of model 5
+### Table S19 - Fixed effects of model 5
 ```{r}
 #| output: true
 gt_tables[[5]]
 ```
 
-### Table S23 - Random effects of model 5
+### Figure S13 - Random effects of model 5
 
 ```{r}
 #| output: true
-plot_rand_effects(model_5, outcome_label = "Same day discharge", cohort = "Adult (unadjusted) ")
+plot_rand_effects(model_5, outcome_label = " Opioids on discharge", cohort = "Adult (adjusted) ")
 
 ```
-
+{{< pagebreak >}}
 ## S5.3 - Results of Model 6
 
 In Model 6 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_6)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
 
-### Table S24 - Fixed effects of model 6
+### Table S20 - Fixed effects of model 6
 ```{r}
 #| output: true
 gt_tables[[6]]
 ```
 
-### Table S25 - Random effects of model 6
+### Figure S14 - Random effects of model 6
 
 ```{r}
 #| output: true
-plot_rand_effects(model_6, outcome_label = "Recovery opioids", cohort = "Adult (unadjusted) ")
+plot_rand_effects(model_6, outcome_label = " Presintation to emergency department within 7 days", cohort = "Adult (adjusted) ")
 
 ```
-
-
-
 
 
 
