@@ -13,7 +13,10 @@ library(gt)
 
 source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
 sapply(functions_paths, source, verbose=FALSE)
-data_set_details <- load_dataset(data_set=data_set, root_path = root_path, output_folder_path = dataset_path)
+
+data_set_details <- load_dataset(data_set = data_set,
+                                 root_path = root_path,
+                                 output_folder_path = dataset_path)
 
 
 ```
@@ -681,11 +684,205 @@ df$treatment_arm <- as.factor(df$treatment_arm)
 
 ```
 
+## Sensitvity Analysis
+
+```{r sensititivty analysis recovery_opioids}
+#| message: false
+
+strong_opioid_list <- c("morphine sulfate", "oxycodone hydrochloride", "fentanyl", "diamorphine hydrochloride")
+
+med_drug_names <- medication %>% filter(SimpleGenericName %in% strong_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
+
+med_order_drug_names <- medication_order %>% filter(SimpleGenericName %in% strong_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
+
+opioid_generic_names <- c(med_drug_names$GenericName, med_order_drug_names$GenericName) %>% unique()
+
+recovery_meds <-  get_all_drug_given(encounter_keys =  df$EncounterKey,
+                   drug_generic_name = opioid_generic_names,
+                   search_column = "GenericName",
+                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
+                  post_op_length = 24*60,
+                  timeframe = "post_op",
+                  format = "all_rows",
+                  variable_name = "ome_post_op",
+                  verbose = FALSE) 
+
+surg_times <- data.frame(EncounterKey =  df$EncounterKey,surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes)
+
+sensititvity_df <- recovery_meds %>% select(EncounterKey, AdministrationInstant) %>% left_join(surg_times) %>% mutate(med_time = as.numeric(difftime(AdministrationInstant,surgery_end_datetime, units = "mins")))
+
+opioid_sensititvity_df <- sensititvity_df %>% group_by(EncounterKey) %>% slice_min(med_time) %>% ungroup() %>%select( med_time) 
+
+```
+
+```{r sensititivty analysis readmission}
+#| message: false
+
+readmissions <-  find_readmission(index_encounter_keys = df$EncounterKey,
+                 encounter_types = "ed",
+                 format="all_rows",
+                 variable_name = "ed_visit_in_30d",
+                 cutoff = 40) 
+
+readmissions <- readmissions %>%
+  rename(ed_encounterkey = EncounterKey)%>%
+  group_by(index_encounter_key) %>%
+  slice_min(Date) %>%
+  select(index_encounter_key, ed_encounterkey, Date)
+
+discharge_times <- data.frame(PatientDurableKey  =  df$PatientDurableKey,
+                              Index_encounter_discharge = df$EndInstant,
+                              index_encounter_key = df$EncounterKey) 
+
+readmit_sensititvity_df <- readmissions %>%
+  rename(ED_visit_date = Date) %>%
+  left_join(discharge_times ) %>%
+  mutate(readmit_time = as.numeric(difftime(ED_visit_date,Index_encounter_discharge, units = "days")))  %>%
+  filter(readmit_time >=0)%>% group_by(PatientDurableKey) %>% slice_min(readmit_time) %>% ungroup() %>% select(readmit_time)
+
+
+```
+
+# Anonymise dataset
+
+Anonmyised to the critera of SAFEHR.
+
+Prior to anonymisation the dataset is de-identified with the following columns:
+
+```{r}
+
+column_info <- df %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), 
+               names_to = "column_name", 
+               values_to = "data_type")
+
+```
+
+All of the columns up to and include `hx_sleep_apnoea` are derived from the source dataset (bu joining dataframe), the following columns are derived metrics. 
+
+
+
+## Removal of Identifiers
+
+```{r}
+
+cols_to_drop <- c(
+   "patient_id", "INDEX.x", "BirthDate", 
+  "DeathDate", "Ethnicity", "PreferredLanguage", "INDEX.y", "SurgicalCaseKey", 
+  "OperationInstant", "SurgicalPrioritisationCode", "PrimaryAnesthesiaTypeCode", 
+  "PrimaryAnesthesiaType", "IsElectiveSurgery", "PatientDurableKey", 
+  "PrimaryProcedureKey", "PrimaryProcedureCodeKey", "PrimaryService", 
+  "SurgeryEncounterKey", "ProcedureName", "IsElectiveSurgery", "PrimarySurgeonDurableKey", "specialty", "primary_surgeon_grade", 
+  "coded_procedures_df", "first_anaesthesia_grade", "responsible_anaesthesia_grade", "INDEX", "index_surgery_per_encounter", "number_of_operations", "PostOperativeDestination"
+  
+)
+
+anon_df <- df %>% select(-all_of(cols_to_drop))
+
+```
+
+## Masking of Identifiers
+
+The `Anesthatist_ID` columns have been masked prior to this step by using the `DurableKey` of the staff member and renaming with an integer list. 
+
+We require `EncounterKey` as we use it for subsetting and joins in the analysis script. We will replace with a randomised Interger. 
+
+```{r}
+
+#Sample the unique encounterkeys, randomise the order then add an index. 
+mapping_table <- data.frame(EncounterKey = unique(anon_df$EncounterKey)) %>%
+  slice(sample(1:n())) %>%
+  mutate(masked_id = row_number())
+
+# 2. Join, drop original, and rename
+anon_df <- anon_df %>%
+  left_join(mapping_table, by = "EncounterKey") %>%
+  select(-EncounterKey) %>%
+  rename(EncounterKey = masked_id)
+
+
+# Repeate 
+
+```
+
+All other ID numbers including the patient ID has been dropped. 
+
+
+## Shifting of dates
+
+We use the various date columns to derive important time durations (Length of surgery, length of admission). We will shift dates by a random duration sampled from a uniform distribution. We will then apply the same duration to each date column in that row. 
+
+We use this approach to preserve the time based features (eg rate of cobaliton by year) as opposed to anchoring to dates. 
+
+```{r}
+
+gen_interval <- function(weeks){
+  # Sample the scalar value
+  sampled_value <- runif(1, min = -weeks, max = weeks)
+  # Return as a lubridate duration (defaults to seconds)
+  return(dweeks(sampled_value))
+}
+
+
+# Generate a random interval for each row
+
+date_cols <- c("TouchTimeStartInstant", "TouchTimeEndInstant",
+              "InRecoveryInstantTracking","InRecoveryInstantTracking",
+              "RecoveryCareCompleteInstantTracking","OutofRecoveryInstantTracking"  )
+
+anon_df <- anon_df %>%
+  rowwise() %>%
+  mutate(
+    diff_time = gen_interval(5), # Assumes your function returns a duration
+    across(all_of(date_cols), ~ .x + diff_time)
+  ) %>%
+  ungroup() %>%
+  select(-diff_time)
+
+```
+
+
+## Jittering of numerics
+
+We do not require to jitter the demographics listed in the SAFEHR website (Weight, BMI, etc).
+
+The remaining numerics are as follows:
+Length of admission
+Procedure length
+
+
+
+## High risk item checklist
+
+A check of the high risk item check-list as per the (SAFEHR slab)[https://uclh.slab.com/posts/high-risk-items-3pezmyef].
+
+Mental health diagnosis -> Clear
+Sexual health diagnosis/tests/referals -> Clear
+Safeguarding referrals-> Clear
+DALT referrals -> clear
+
+The flagged releases are:
+
+- *Gender identity and Sex* This may be used to detect a mismatch and assumed gender different to sex at birth. 
+
+- *History of opioid dependance*
+
+## Minimum group size supression
+
+This is not applicable to this stage. This is a process completed at the review of the analysis to ensure that the demographics (and others) are not reporting values <5 that may reveal identifiable features.. 
+
+
 # Write dataset
 
 ```{r write dataset}
 
-saveRDS(df, file=paste0(root_path, "/data/dataset.rds"))
+saveRDS(anon_df, file=paste0(root_path, "/data/dataset.rds"))
+
+saveRDS(opioid_sensititvity_df, file=paste0(root_path, "/data/opioid_sensititvity_df.rds"))
+
+saveRDS(readmit_sensititvity_df, file=paste0(root_path, "/data/readmit_sensititvity_df.rds"))
+
 
 ```
 

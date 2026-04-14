@@ -30,7 +30,10 @@ library(tidyr)
 source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
 sapply(functions_paths, source, verbose=FALSE)
 df <- readRDS(file=paste0(root_path, "/data/dataset.rds"))
-data_set_details <- load_dataset(data_set=data_set, root_path = root_path, output_folder_path = dataset_path)
+
+opioid_sensititvity_df <-  readRDS(file=paste0(root_path, "/data/opioid_sensititvity_df.rds"))
+readmit_sensititvity_df <-  readRDS(file=paste0(root_path, "/data/readmit_sensititvity_df.rds"))
+
 
 ```
 
@@ -392,53 +395,28 @@ The code is held at the following github repository [https://github.com/DW10/ton
 
 ## S4.1 – Rescue opioid administration
 
-```{r sensititivty analysis recovery_opioids}
-#| message: false
 
-strong_opioid_list <- c("morphine sulfate", "oxycodone hydrochloride", "fentanyl", "diamorphine hydrochloride")
+```{r}
 
-med_drug_names <- medication %>% filter(SimpleGenericName %in% strong_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
-
-med_order_drug_names <- medication_order %>% filter(SimpleGenericName %in% strong_opioid_list) %>% select(GenericName, SimpleGenericName) %>% unique() %>% collect() 
-
-opioid_generic_names <- c(med_drug_names$GenericName, med_order_drug_names$GenericName) %>% unique()
-
-recovery_meds <-  get_all_drug_given(encounter_keys =  df$EncounterKey,
-                   drug_generic_name = opioid_generic_names,
-                   search_column = "GenericName",
-                  surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes,
-                  post_op_length = 24*60,
-                  timeframe = "post_op",
-                  format = "all_rows",
-                  variable_name = "ome_post_op",
-                  verbose = FALSE) 
-
-surg_times <- data.frame(EncounterKey =  df$EncounterKey,surgery_end_datetime = df$OperationInstant + df$ProcedureLengthMinutes)
-
-sensititvity_df <- recovery_meds %>% select(EncounterKey, AdministrationInstant) %>% left_join(surg_times) %>% mutate(med_time = as.numeric(difftime(AdministrationInstant,surgery_end_datetime, units = "mins")))
-
-sensititvity_df <- sensititvity_df %>% group_by(EncounterKey) %>% slice_min(med_time) %>% select(EncounterKey, med_time) 
-
-sensititvity_df <- df['EncounterKey'] %>% full_join(sensititvity_df)
 
 cutoffs <- seq(0.5,6,0.5)
-n_total_patients <- length(unique(sensititvity_df$EncounterKey))
+n_total_patients <- length(unique(opioid_sensititvity_df$EncounterKey))
 
 # Calculate proportion for each time point
-prop_table <- data.frame(
+rescue_opioid_prop_table <- data.frame(
   Hours = cutoffs,
   N_Patients = sapply(cutoffs, function(t) {
-    length(unique(sensititvity_df$EncounterKey[sensititvity_df$med_time <= t*60]))
+    length(unique(opioid_sensititvity_df$EncounterKey[opioid_sensititvity_df$med_time <= t*60]))
   }),
    Proportion_of_reciving = sapply(cutoffs, function(t) {
-    round((length(unique(sensititvity_df$EncounterKey[sensititvity_df$med_time <= t*60])) / length(unique(sensititvity_df$EncounterKey[!is.na(sensititvity_df$med_time)])))*100, 2)
+    round((length(unique(opioid_sensititvity_df$EncounterKey[opioid_sensititvity_df$med_time <= t*60])) / length(unique(opioid_sensititvity_df$EncounterKey[!is.na(opioid_sensititvity_df$med_time)])))*100, 2)
   }),
     Proportion = sapply(cutoffs, function(t) {
-    round((length(unique(sensititvity_df$EncounterKey[sensititvity_df$med_time <= t*60])) / n_total_patients)*100, 2)
+    round((length(unique(opioid_sensititvity_df$EncounterKey[opioid_sensititvity_df$med_time <= t*60])) / n_total_patients)*100, 2)
   })
 )
 
-sens_analysis_rescue <- prop_table %>% gt() %>%
+sens_analysis_rescue <- rescue_opioid_prop_table %>% gt() %>%
   tab_header(
     title = "Sensitivity analysis for Rescue opioid administration",
   ) %>%
@@ -449,15 +427,16 @@ sens_analysis_rescue <- prop_table %>% gt() %>%
     Proportion = "Proportion of all patients (%)"
   ) 
 
+
 gtsave(sens_analysis_rescue, file=paste0(root_path, "/export/table_S9.docx" ))
 
 recovery_time_cutoff <- 3
 
 # 1. Calculate the total number of unique patients (the denominator)
-total_n <- n_distinct(sensititvity_df$EncounterKey)
+total_n <- n_distinct(opioid_sensititvity_df$EncounterKey)
 
 # 2. Create a summary dataframe for the ECDF line
-ecdf_data <- sensititvity_df %>%
+ecdf_data <- opioid_sensititvity_df %>%
   filter(!is.na(med_time)) %>%
   arrange(med_time) %>%
   mutate(
@@ -466,7 +445,7 @@ ecdf_data <- sensititvity_df %>%
     cumulative_prop = row_number() / total_n 
   )
 
-sens_analysis_rescue_plot <- ggplot(sensititvity_df, aes(x=med_time/60))+
+sens_analysis_rescue_plot <- ggplot(opioid_sensititvity_df, aes(x=med_time/60))+
   geom_density(fill="gray", alpha = 0.5, adjust=0.5, na.rm = TRUE)+
   geom_step(data = ecdf_data, aes(x = time_hours, y = cumulative_prop))+
   labs(
@@ -506,30 +485,7 @@ sens_analysis_rescue
 ## S4.2 – Presentation to the emergency department
 
 
-```{r sensititivty analysis readmission}
-#| message: false
-
-readmissions <-  find_readmission(index_encounter_keys = df$EncounterKey,
-                 encounter_types = "ed",
-                 format="all_rows",
-                 variable_name = "ed_visit_in_30d",
-                 cutoff = 40) 
-
-readmissions <- readmissions %>%
-  rename(ed_encounterkey = EncounterKey)%>%
-  group_by(index_encounter_key) %>%
-  slice_min(Date) %>%
-  select(index_encounter_key, ed_encounterkey, Date)
-
-discharge_times <- data.frame(PatientDurableKey  =  df$PatientDurableKey,
-                              Index_encounter_discharge = df$EndInstant,
-                              index_encounter_key = df$EncounterKey) 
-
-readmit_sensititvity_df <- readmissions %>%
-  rename(ED_visit_date = Date) %>%
-  left_join(discharge_times ) %>%
-  mutate(readmit_time = as.numeric(difftime(ED_visit_date,Index_encounter_discharge, units = "days")))  %>%
-  filter(readmit_time >=0)%>% group_by(PatientDurableKey) %>% slice_min(readmit_time)
+```{r}
 
 cutoffs <- c(1,2,3,4,5,6,7,14,30, 35)
 n_total_patients <- length(unique(df$EncounterKey))
@@ -562,7 +518,7 @@ readmit_time_cutoff <- c(7,14,30)
 
 total_n <- n_distinct(df$EncounterKey)
 
-readmit_sensititvity_df <- readmit_sensititvity_df %>% full_join(df %>% select(EncounterKey) %>% rename(index_encounter_key  = EncounterKey))
+#readmit_sensititvity_df <- readmit_sensititvity_df %>% full_join(df %>% select(EncounterKey) %>% rename(index_encounter_key  = EncounterKey))
 
 # 2. Create a summary dataframe for the ECDF line
 ecdf_data <- readmit_sensititvity_df %>% ungroup() %>%
@@ -575,6 +531,7 @@ ecdf_data <- readmit_sensititvity_df %>% ungroup() %>%
   )
 
 readmit_time_cutoff <- c(7,14,30)
+
 sens_analysis_readmit_plot <- ggplot(readmit_sensititvity_df, aes(x=readmit_time))+
   geom_density(fill="gray", alpha = 0.5, adjust=0.5, na.rm = TRUE)+
   geom_step(data = ecdf_data, aes(x = time_hours, y = cumulative_prop))+
@@ -591,11 +548,11 @@ sens_analysis_readmit_plot <- ggplot(readmit_sensititvity_df, aes(x=readmit_time
 
 ggsave(plot=sens_analysis_readmit_plot, device="png", file=paste0(root_path, "/export/figure_S7.png"), width=12, height=8 )
 
-hand_audit_ed_presintations <- df %>% filter(ed_visit_in_30d == 1) %>% select(PatientDurableKey, Date, EndInstant, adult, cohort) %>% left_join(readmit_sensititvity_df %>% group_by(PatientDurableKey)%>% slice_min(readmit_time)) %>% left_join(patient_key_mapping %>% collect(), join_by(PatientDurableKey == AnonymizedKey)) %>% mutate(PatientDurableKey = OriginalKey) %>% select(-INDEX, -OriginalKey)
-
-hand_audit_ed_presintations$audit <- NA
-
-hand_audit_ed_presintations$audit[sample(nrow(hand_audit_ed_presintations), 50)] <- 1
+# hand_audit_ed_presintations <- df %>% filter(ed_visit_in_30d == 1) %>% select(PatientDurableKey, Date, EndInstant, adult, cohort) %>% left_join(readmit_sensititvity_df %>% group_by(PatientDurableKey)%>% slice_min(readmit_time)) %>% left_join(patient_key_mapping %>% collect(), join_by(PatientDurableKey == AnonymizedKey)) %>% mutate(PatientDurableKey = OriginalKey) %>% select(-INDEX, -OriginalKey)
+# 
+# hand_audit_ed_presintations$audit <- NA
+# 
+# hand_audit_ed_presintations$audit[sample(nrow(hand_audit_ed_presintations), 50)] <- 1
 
 #write_csv(hand_audit_ed_presintations, "/data/ed_visits.csv")
 
