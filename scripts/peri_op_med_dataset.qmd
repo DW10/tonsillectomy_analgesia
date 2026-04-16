@@ -851,7 +851,7 @@ The remaining numerics are as follows:
 Length of admission
 Procedure length
 
-
+We have not jittered them.
 
 ## High risk item checklist
 
@@ -882,7 +882,6 @@ saveRDS(anon_df, file=paste0(root_path, "/data/dataset.rds"))
 saveRDS(opioid_sensititvity_df, file=paste0(root_path, "/data/opioid_sensititvity_df.rds"))
 
 saveRDS(readmit_sensititvity_df, file=paste0(root_path, "/data/readmit_sensititvity_df.rds"))
-
 
 ```
 
