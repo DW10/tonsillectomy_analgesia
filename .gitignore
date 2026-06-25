@@ -10,3 +10,4 @@ data/*
 !data/placeholder.md
 
 scripts/settings.R
+functions/*

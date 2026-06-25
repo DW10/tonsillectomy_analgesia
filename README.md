@@ -13,7 +13,7 @@ To fully complete the analysis pipeline you will need the following components t
 2) Dataset cleaning and extraction pipeline - Not publicly available as contains IP of the EPR provider.
 3) Functions package - Not published as currently under development under the name `IMPACTfunctions`
 
-If you feel you require any parts of this data/code please contact the [Dylan](https://github.com/DW10)
+If you feel you require any parts of this data/code please contact [Dylan](https://github.com/DW10)
 
 # How to use
 
