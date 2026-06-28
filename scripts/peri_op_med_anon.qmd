@@ -1,0 +1,210 @@
+# Anonymise dataset
+
+To allow research on an anonymised dataset we need to anonymise our data. We will use the [SAFEHR policy](https://www.safehr-data.org/anonymisation-policy) in line with our local DAPR approval
+
+## Step 1 - Read in data
+
+```{r}
+library(dplyr)
+library(lubridate)
+
+
+source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
+
+df <- readRDS(file=paste0(root_path, "/data/id_dataset.rds"))
+opioid_sensititvity_df <- readRDS( file=paste0(root_path, "/data/id_opioid_sensititvity_df.rds"))
+readmit_sensititvity_df <- readRDS(file=paste0(root_path, "/data/id_readmit_sensititvity_df.rds"))
+
+```
+
+## Step 2 - Anonymise main dataset
+
+Prior to anonymisation the dataset is de-identified with the following columns:
+
+```{r}
+
+column_info <- df %>%
+  summarise(across(everything(), ~ class(.x)[1])) %>%
+  tidyr::pivot_longer(cols = everything(), 
+               names_to = "column_name", 
+               values_to = "data_type")
+
+tibble(column_info)
+
+```
+
+All of the columns up to `hx_sleep_apnoea` are derived from the source dataset (by joining dataframe), the following columns are derived metrics. 
+
+
+## Step 2A - Removal of Identifiers
+
+Drop identifying columns that are not needed for the subsequent analysis.
+
+`patient_id` was the `mrn` replaced with an integer in the prior data processing step so is kept. 
+
+```{r}
+
+cols_to_drop <- c(
+   "INDEX.x", "BirthDate", 
+  "DeathDate", "Ethnicity", "PreferredLanguage", "INDEX.y", "SurgicalCaseKey", 
+  "OperationInstant", "SurgicalPrioritisationCode", "PrimaryAnesthesiaTypeCode", 
+  "PrimaryAnesthesiaType", "IsElectiveSurgery", "PatientDurableKey", 
+  "PrimaryProcedureKey", "PrimaryProcedureCodeKey", "PrimaryService", 
+  "SurgeryEncounterKey", "ProcedureName", "IsElectiveSurgery", "PrimarySurgeonDurableKey", "specialty", "primary_surgeon_grade", 
+  "coded_procedures_df", "first_anaesthesia_grade", "responsible_anaesthesia_grade", "INDEX", "index_surgery_per_encounter", "number_of_operations", "PostOperativeDestination"
+  
+)
+
+anon_df <- df %>% select(-all_of(cols_to_drop))
+
+```
+
+## Step 2B - Masking of Identifiers with random ID's
+
+The `Anesthatist_ID` columns have been masked prior to this step by using the `DurableKey` of the staff member and renaming with an integer list. 
+
+We require `EncounterKey` as we use it for subsetting and joins in the analysis script. We will replace with a randomised Integer. 
+
+We will re-assign the patient_id column with a new interger that is now sampled randomly (as opposed to the sample in order of the database order.
+
+```{r}
+
+#Sample the unique encounterkeys, randomise the order then add an index. 
+mapping_table_encounter <- data.frame(EncounterKey = unique(anon_df$EncounterKey)) %>%
+  slice(sample(1:n())) %>%
+  mutate(masked_id = row_number())
+
+# 2. Join, drop original, and rename
+anon_df <- anon_df %>%
+  left_join(mapping_table_encounter, by = "EncounterKey") %>%
+  select(-EncounterKey) %>%
+  rename(EncounterKey = masked_id)
+
+# repeat for Patient ID
+
+mapping_table_patient_id <- data.frame(patient_id = unique(anon_df$patient_id)) %>%
+  slice(sample(1:n())) %>%
+  mutate(masked_id = row_number())
+
+anon_df <- anon_df %>%
+  left_join(mapping_table_patient_id, by = "patient_id") %>%
+  select(-patient_id) %>%
+  rename(patient_id = masked_id)
+
+
+
+
+```
+
+All other ID numbers including the patient ID have been dropped. 
+
+## Step 2C Shifting of dates
+
+We use the various date columns to derive important time durations (Length of surgery, length of admission). We will shift dates by a random duration sampled from a uniform distribution. We will then apply the same duration to each date column in that row using `rowwise()` to ensure that the time intervals are kept consistant. We will use +/- 5 weeks as the duration to sample from.  
+
+We use this approach to preserve the time based features (eg rate of cobaliton by year) as opposed to anchoring to dates. 
+
+```{r}
+
+gen_interval <- function(weeks){
+  # Sample the scalar value
+  sampled_value <- runif(1, min = -weeks, max = weeks)
+  # Return as a lubridate duration (defaults to seconds)
+  return(dweeks(sampled_value))
+}
+
+
+# Generate a random interval for each row
+
+date_cols <- c("TouchTimeStartInstant", "TouchTimeEndInstant",
+              "InRecoveryInstantTracking","InRecoveryInstantTracking",
+              "RecoveryCareCompleteInstantTracking","OutofRecoveryInstantTracking"  )
+
+anon_df <- anon_df %>%
+  rowwise() %>%
+  mutate(
+    diff_time = gen_interval(5), 
+    across(all_of(date_cols), ~ .x + diff_time)
+  ) %>%
+  ungroup() %>%
+  select(-diff_time)
+
+```
+
+
+## Step 2D - Jittering of numerics
+
+We do not require to jitter the demographics listed in the SAFEHR website (Weight, BMI, etc).
+
+The remaining numerics are as follows:
+
+- `Length of admission`
+
+- `Procedure length`
+
+We have not jittered them as we determine they are not identifiable.
+
+## Step 2E - High risk item checklist
+
+A check of the high risk item check-list as per the (SAFEHR slab)[https://uclh.slab.com/posts/high-risk-items-3pezmyef].
+
+- Mental health diagnosis -> Clear
+
+- Sexual health diagnosis/tests/referals -> Clear
+
+- Safeguarding referrals-> Clear
+
+- DALT referrals -> clear
+
+The high risk data items included are:
+
+- *Gender identity and Sex* This may be used to detect a mismatch and assumed gender different to sex at birth. 
+
+- *History of opioid dependance*
+
+We will leave this in as they core to the dataset. 
+
+> FOR REVIEW
+> 
+> Stef, do we need a specific justification to use the above (gender + opioids) or is it covered by the DAPR?
+
+## Step 2F - Minimum group size supression
+
+This is not applicable to this stage. This is a process completed at the review of the analysis to ensure that the demographics (and others) are not reporting values <5 that may reveal identifiable features.. 
+
+
+# Step 3 - Anonymisation of sensativity datasets
+
+As part of the primary analysis we produce two sensativity analysis. 
+First the the time from discharge to readmission, the second was the time from recovery to the first opioid dose. 
+
+In these datasets we only record a vector of difftimes with no other features avalible as these analysis are patient agnostic. 
+
+We will not therefor perform any additional anonmysiation or jittering. 
+
+```{r}
+
+head(opioid_sensititvity_df)
+head(readmit_sensititvity_df)
+
+```
+
+
+# Step 4 - Write dataset
+
+We now write the dataset, with the `anon_` prefix.
+
+```{r write dataset}
+
+saveRDS(anon_df, file=paste0(root_path, "/data/anon_dataset.rds"))
+
+saveRDS(opioid_sensititvity_df, file=paste0(root_path, "/data/anon_opioid_sensititvity_df.rds"))
+
+saveRDS(readmit_sensititvity_df, file=paste0(root_path, "/data/anon_readmit_sensititvity_df.rds"))
+
+```
+
+
+
+
+

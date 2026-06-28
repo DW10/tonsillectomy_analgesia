@@ -19,6 +19,7 @@ If you feel you require any parts of this data/code please contact [Dylan](https
 
 1) Complete the fields in `scripts/settings_EXAMPLE.R` and rename to `settings.R`
 2) Run `peri_op_med_dataset.qmd` to produce the study dataset (`df`) that is saved to `/data`
+3) Run `peri_op_med_anon.qmd` to anonmyise the study dataset. 
 3) Run `peri_op_med_analysis.qmd` and `peri_op_med_supp_matt.qmd` to generate the main tables/figures and supplementary materials respectively. 
 
 

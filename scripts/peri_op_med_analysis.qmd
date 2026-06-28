@@ -30,8 +30,7 @@ library(ggpubr)
 
 source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
 sapply(functions_paths, source, verbose=FALSE)
-df <- readRDS(file=paste0(root_path, "/data/dataset.rds"))
-
+df <- readRDS(file=paste0(root_path, "/data/anon_dataset.rds"))
 
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(message = FALSE)
