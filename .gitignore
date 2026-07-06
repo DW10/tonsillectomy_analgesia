@@ -6,6 +6,9 @@
 *.Rproj
 *rmarkdown
 *.tar
+*.png
+*.html
+*.docx
 
 data/*
 !data/placeholder.md
