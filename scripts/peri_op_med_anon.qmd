@@ -175,16 +175,30 @@ This is not applicable to this stage. This is a process completed at the review 
 
 # Step 3 - Anonymisation of sensativity datasets
 
-As part of the primary analysis we produce two sensativity analysis. 
+As part of the primary analysis we produce two sensitivity analysis. 
 First the the time from discharge to readmission, the second was the time from recovery to the first opioid dose. 
 
-In these datasets we only record a vector of difftimes with no other features avalible as these analysis are patient agnostic. 
+In these datasets we only record a vector of difftimes with the patient ID number (to identify repeat doses/admissions for a given patient). 
 
-We will not therefor perform any additional anonmysiation or jittering. 
+We will use the mapping tables produced earlier. 
 
 ```{r}
 
+opioid_sensititvity_df <- opioid_sensititvity_df %>%
+  left_join(mapping_table_encounter, by = "EncounterKey") %>%
+  ungroup() %>%
+  select(-EncounterKey) %>%
+  rename(EncounterKey = masked_id)
+
+
 head(opioid_sensititvity_df)
+
+readmit_sensititvity_df <- readmit_sensititvity_df %>%
+  left_join(mapping_table_patient_id, by = c("PatientDurableKey" = "patient_id")) %>%
+  ungroup() %>%
+  select(-PatientDurableKey) %>%
+  rename(PatientDurableKey = masked_id)
+
 head(readmit_sensititvity_df)
 
 ```

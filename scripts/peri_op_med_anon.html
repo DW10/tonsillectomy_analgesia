@@ -268,33 +268,46 @@ Attaching package: 'lubridate'</code></pre>
 </section>
 <section id="step-3---anonymisation-of-sensativity-datasets" class="level1">
 <h1>Step 3 - Anonymisation of sensativity datasets</h1>
-<p>As part of the primary analysis we produce two sensativity analysis. First the the time from discharge to readmission, the second was the time from recovery to the first opioid dose.</p>
-<p>In these datasets we only record a vector of difftimes with no other features avalible as these analysis are patient agnostic.</p>
-<p>We will not therefor perform any additional anonmysiation or jittering.</p>
+<p>As part of the primary analysis we produce two sensitivity analysis. First the the time from discharge to readmission, the second was the time from recovery to the first opioid dose.</p>
+<p>In these datasets we only record a vector of difftimes with the patient ID number (to identify repeat doses/admissions for a given patient).</p>
+<p>We will use the mapping tables produced earlier.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(opioid_sensititvity_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>opioid_sensititvity_df <span class="ot">&lt;-</span> opioid_sensititvity_df <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mapping_table_encounter, <span class="at">by =</span> <span class="st">"EncounterKey"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>EncounterKey) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">EncounterKey =</span> masked_id)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(opioid_sensititvity_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 1
-  med_time
-     &lt;dbl&gt;
-1     60.6
-2     71.6
-3    315. 
-4    399. 
-5    108. 
-6     86.4</code></pre>
+<pre><code># A tibble: 6 × 2
+  med_time EncounterKey
+     &lt;dbl&gt;        &lt;int&gt;
+1     60.6         3178
+2     71.6         3115
+3    315.          3393
+4    399.           276
+5    108.          1435
+6     86.4         2886</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(readmit_sensititvity_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>readmit_sensititvity_df <span class="ot">&lt;-</span> readmit_sensititvity_df <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mapping_table_patient_id, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"PatientDurableKey"</span> <span class="ot">=</span> <span class="st">"patient_id"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>PatientDurableKey) <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">PatientDurableKey =</span> masked_id)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(readmit_sensititvity_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 1
-  readmit_time
-         &lt;dbl&gt;
-1        38.8 
-2         3.68
-3         3.87
-4        19.7 
-5         5.40
-6         6.15</code></pre>
+<pre><code># A tibble: 6 × 2
+  readmit_time PatientDurableKey
+         &lt;dbl&gt;             &lt;int&gt;
+1        38.8               1702
+2         3.68              2148
+3         3.87              1643
+4        19.7               1035
+5         5.40              2092
+6         6.15              2239</code></pre>
 </div>
 </div>
 </section>
