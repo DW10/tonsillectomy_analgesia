@@ -5,6 +5,7 @@
 *.RDA
 *.Rproj
 *rmarkdown
+*.tar
 
 data/*
 !data/placeholder.md
