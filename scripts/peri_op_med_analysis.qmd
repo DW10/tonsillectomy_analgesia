@@ -308,8 +308,7 @@ geom_histogram(binwidth = 2.5,boundary = 0,alpha = 1,position = "identity"
     vjust = 1.1,
     inherit.aes = FALSE,
     size = 3.5
-  )+
-  coord_cartesian(xlim=c(0,40))
+  )+  coord_cartesian(xlim=c(0,60))
   
 return(plot)
 }
