@@ -1,13 +1,13 @@
 ---
 title: "Supplementary materials"
-execute:
-  output: false
-  echo: false
 format: 
   docx:
     fig-width: 6
     fig-height: 3
     number-sections: false
+execute:
+  output: false
+  echo: false
 crossref:
   tbl-prefix: "aaa"
   tbl-title: ""
@@ -262,14 +262,14 @@ Specific formulations of discharge medications have not been provided as clinici
 | Weak opioid | codeine phosphate, dihydrocodeine, co-dydramol (dihydrocodeine and paracetamol), co-codamol (codeine and paracetamol), tramadol |
 * Aspirin was not included as the primary intention is usually not for post-operative analgesia
 
-{{< pagebreak >}}
+\newpage
 # Supplementary materials S2 - Missing data
 
 The level of missing data for each of the key variables were assessed as reported in **Table S8**. All other variables had no missing values. Extracted variables for past medical history and medications administered required a past medical history and medication administration record to be able to assess, there was no missing records so these fields have no missing variables. It is noted by the authors the limitations of accuracy of the medical record. Where missing data exists for computed variables there was a missing variable during the computation, hence the resulting value being `NA` (for example if a patient did not have any pain scores recorded within 3 hours post-op the median value is not computable and thus missing).
 
 ### Table S8
 
-```{r}
+```{r }
 
 # Define your columns of interest
 cols_of_interest <- c(
@@ -360,7 +360,7 @@ gt(missing_data) %>%
 
 ```
 
-{{< pagebreak >}}
+\newpage
 # Supplementary materials S2 - Oral Morphine Equivalence
 
 For each medication the routes were grouped and a conversion value attributed using the standard equivalence table provided by Neilsen et al.
@@ -377,7 +377,7 @@ $$
 \end{aligned}
 $$
 Distributions and mean dose sum of each opioid within each treatment group are described within the results.
-{{< pagebreak >}}
+\newpage
 # Supplementary materials S3 - Analysis code
 
 Data was extracted from the EPR and stored in a proprietary data model in the parquet format. Extraction code is not provided as it contains intellectual property of the EPR provider Epic, Wisconsin.
@@ -390,7 +390,7 @@ The analysis was performed by the script `peri_op_med_analysis.qmd` and suppleme
 
 
 The code is held at the following github repository [https://github.com/DW10/tonsillectomy_analgesia](https://github.com/DW10/tonsillectomy_analgesia)
-{{< pagebreak >}}
+\newpage
 # Supplementary materials S4 – Sensitivity analysis
 
 ## S4.1 – Rescue opioid administration
@@ -479,7 +479,7 @@ sens_analysis_rescue
 
 *Cumulative density plot of the administration times of opioid medications from the end of surgery to the first dose given for patient that received an opioid within 6 hours of surgery. Gray filled area depicts the density distribution and dotted line denotes the time cut off point of 3 hours. *
 
-{{< pagebreak >}}
+\newpage
 
 
 ## S4.2 – Presentation to the emergency department
@@ -745,7 +745,7 @@ sens_analysis_multi_level_theshold
 ![](../export/figure_S8.png)
 
 *Upper plot, line chart of odds ratio with 95% confidence interval bands for differing clinical group size threshold values.Lower plot, line chart of AIC over threshold values with number of clinicians included shower per point.*
-{{< pagebreak >}}
+\newpage
 # Supplementary materials S5 – Modelling
 
 ## S5.1 – Models parameters
@@ -808,7 +808,7 @@ gtsave(file=paste0(root_path, "/export/table_S13.docx" ))
 
 ```
 
-{{< pagebreak >}}
+\newpage
 ## S5.3 - Results of Model 1
 
 In Model 1 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_1)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
@@ -830,7 +830,7 @@ plot_rand_effects(model_1, outcome_label = "Recovery opioids", cohort = "Adult (
 
 ```
 
-{{< pagebreak >}}
+\newpage
 ## S5.4 - Results of Model 2
 
 In Model 1 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_2)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
@@ -848,7 +848,7 @@ gt_tables[[2]]
 plot_rand_effects(model_2, outcome_label = "Recovery opioids", cohort = "Adult (adjusted) ")
 
 ```
-{{< pagebreak >}}
+\newpage
 ## S5.4 - Results of Model 3
 
 In Model 3 the standard deviation of the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_3))[1,] %>% pull(sdcor) %>% round(digits=2) ` minutes.
@@ -866,7 +866,7 @@ gt_tables[[3]]
 plot_rand_effects(model_3, outcome_label = "Time in recovery (minutes)", cohort = "Adult (unadjusted) ", OR = FALSE, rand_eff_x_lim = c(-5, 5))
 
 ```
-{{< pagebreak >}}
+\newpage
 ## S5.5 - Results of Model 4
 
 In Model 4 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_4)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
@@ -884,7 +884,7 @@ gt_tables[[4]]
 plot_rand_effects(model_4, outcome_label = " Same day discharge", cohort = "Adult (adjusted) ", rand_eff_x_lim = c(0, 2.5))
 
 ```
-{{< pagebreak >}}
+\newpage
 ## S5.3 - Results of Model 5
 
 In Model 5 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_5)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
@@ -902,7 +902,7 @@ gt_tables[[5]]
 plot_rand_effects(model_5, outcome_label = " Opioids on discharge", cohort = "Adult (adjusted) ")
 
 ```
-{{< pagebreak >}}
+\newpage
 ## S5.3 - Results of Model 6
 
 In Model 6 the variance explained by the anaesthetist ID was `r data.frame(VarCorr(model_6)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)`
