@@ -7,13 +7,13 @@ To allow research on an anonymised dataset we need to anonymise our data. We wil
 ```{r}
 library(dplyr)
 library(lubridate)
+library(here)
 
+source(here("scripts/settings.R"))
 
-source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
-
-df <- readRDS(file=paste0(root_path, "/data/id_dataset.rds"))
-opioid_sensititvity_df <- readRDS( file=paste0(root_path, "/data/id_opioid_sensititvity_df.rds"))
-readmit_sensititvity_df <- readRDS(file=paste0(root_path, "/data/id_readmit_sensititvity_df.rds"))
+df <- readRDS(file=here(root_path, "data/id_dataset.rds"))
+opioid_sensititvity_df <- readRDS( file=here(root_path, "data/id_opioid_sensititvity_df.rds"))
+readmit_sensititvity_df <- readRDS(file=here(root_path, "data/id_readmit_sensititvity_df.rds"))
 
 ```
 
@@ -210,11 +210,11 @@ We now write the dataset, with the `anon_` prefix.
 
 ```{r write dataset}
 
-saveRDS(anon_df, file=paste0(root_path, "/data/anon_dataset.rds"))
+saveRDS(anon_df, file=here(root_path, "data/anon_dataset.rds"))
 
-saveRDS(opioid_sensititvity_df, file=paste0(root_path, "/data/anon_opioid_sensititvity_df.rds"))
+saveRDS(opioid_sensititvity_df, file=here(root_path, "data/anon_opioid_sensititvity_df.rds"))
 
-saveRDS(readmit_sensititvity_df, file=paste0(root_path, "/data/anon_readmit_sensititvity_df.rds"))
+saveRDS(readmit_sensititvity_df, file=here(root_path, "data/anon_readmit_sensititvity_df.rds"))
 
 ```
 
