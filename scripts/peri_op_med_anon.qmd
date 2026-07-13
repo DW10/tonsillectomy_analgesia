@@ -184,9 +184,7 @@ The high risk data items included are:
 
 We will leave this in as they core to the dataset. 
 
-> FOR REVIEW
-> 
-> Stef, do we need a specific justification to use the above (gender + opioids) or is it covered by the DAPR?
+Gender and Opiods seems reasonable (from Stef)
 
 ## Step 2F - Minimum group size supression
 
