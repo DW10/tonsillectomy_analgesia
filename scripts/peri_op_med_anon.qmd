@@ -92,6 +92,26 @@ anon_df <- anon_df %>%
   rename(patient_id = masked_id)
 
 
+# Repeat for providers
+
+mapping_table_provider <- data.frame(provider_id = unique(c(anon_df$FirstAnesthesiaProviderDurableKey, anon_df$ResponsibleAnesthesiologistDurableKey ))) %>%
+  slice(sample(1:n())) %>%
+  mutate(masked_id = row_number())
+
+anon_df <- anon_df %>%
+  mutate(FirstAnesthesiaProviderDurableKey = as.integer(as.character(FirstAnesthesiaProviderDurableKey))) %>%
+  left_join(mapping_table_provider, by = join_by(FirstAnesthesiaProviderDurableKey == provider_id)) %>%
+  select(-FirstAnesthesiaProviderDurableKey) %>%
+  rename(FirstAnesthesiaProviderDurableKey = masked_id) %>%
+  mutate(ResponsibleAnesthesiologistDurableKey = as.integer(as.character(ResponsibleAnesthesiologistDurableKey))) %>%
+  left_join(mapping_table_provider, by = join_by(ResponsibleAnesthesiologistDurableKey == provider_id)) %>%
+  select(-ResponsibleAnesthesiologistDurableKey) %>%
+  rename(ResponsibleAnesthesiologistDurableKey = masked_id)
+
+
+
+
+
 
 
 ```
