@@ -7,13 +7,13 @@ To allow research on an anonymised dataset we need to anonymise our data. We wil
 ```{r}
 library(dplyr)
 library(lubridate)
+library(here)
 
+source(here("scripts/settings.R"))
 
-source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
-
-df <- readRDS(file=paste0(root_path, "/data/id_dataset.rds"))
-opioid_sensititvity_df <- readRDS( file=paste0(root_path, "/data/id_opioid_sensititvity_df.rds"))
-readmit_sensititvity_df <- readRDS(file=paste0(root_path, "/data/id_readmit_sensititvity_df.rds"))
+df <- readRDS(file=here(root_path, "data/id_dataset.rds"))
+opioid_sensititvity_df <- readRDS( file=here(root_path, "data/id_opioid_sensititvity_df.rds"))
+readmit_sensititvity_df <- readRDS(file=here(root_path, "data/id_readmit_sensititvity_df.rds"))
 
 ```
 
@@ -92,6 +92,26 @@ anon_df <- anon_df %>%
   rename(patient_id = masked_id)
 
 
+# Repeat for providers
+
+mapping_table_provider <- data.frame(provider_id = unique(c(anon_df$FirstAnesthesiaProviderDurableKey, anon_df$ResponsibleAnesthesiologistDurableKey ))) %>%
+  slice(sample(1:n())) %>%
+  mutate(masked_id = row_number())
+
+anon_df <- anon_df %>%
+  mutate(FirstAnesthesiaProviderDurableKey = as.integer(as.character(FirstAnesthesiaProviderDurableKey))) %>%
+  left_join(mapping_table_provider, by = join_by(FirstAnesthesiaProviderDurableKey == provider_id)) %>%
+  select(-FirstAnesthesiaProviderDurableKey) %>%
+  rename(FirstAnesthesiaProviderDurableKey = masked_id) %>%
+  mutate(ResponsibleAnesthesiologistDurableKey = as.integer(as.character(ResponsibleAnesthesiologistDurableKey))) %>%
+  left_join(mapping_table_provider, by = join_by(ResponsibleAnesthesiologistDurableKey == provider_id)) %>%
+  select(-ResponsibleAnesthesiologistDurableKey) %>%
+  rename(ResponsibleAnesthesiologistDurableKey = masked_id)
+
+
+
+
+
 
 
 ```
@@ -164,9 +184,7 @@ The high risk data items included are:
 
 We will leave this in as they core to the dataset. 
 
-> FOR REVIEW
-> 
-> Stef, do we need a specific justification to use the above (gender + opioids) or is it covered by the DAPR?
+Gender and Opiods seems reasonable (from Stef)
 
 ## Step 2F - Minimum group size supression
 
@@ -210,11 +228,11 @@ We now write the dataset, with the `anon_` prefix.
 
 ```{r write dataset}
 
-saveRDS(anon_df, file=paste0(root_path, "/data/anon_dataset.rds"))
+saveRDS(anon_df, file=here(root_path, "data/anon_dataset.rds"))
 
-saveRDS(opioid_sensititvity_df, file=paste0(root_path, "/data/anon_opioid_sensititvity_df.rds"))
+saveRDS(opioid_sensititvity_df, file=here(root_path, "data/anon_opioid_sensititvity_df.rds"))
 
-saveRDS(readmit_sensititvity_df, file=paste0(root_path, "/data/anon_readmit_sensititvity_df.rds"))
+saveRDS(readmit_sensititvity_df, file=here(root_path, "data/anon_readmit_sensititvity_df.rds"))
 
 ```
 
