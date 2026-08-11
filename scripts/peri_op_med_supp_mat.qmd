@@ -31,8 +31,8 @@ source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
 sapply(functions_paths, source, verbose=FALSE)
 df <- readRDS(file=paste0(root_path, "/data/anon_dataset.rds"))
 
-opioid_sensititvity_df <-  readRDS(file=paste0(root_path, "/data/anon_opioid_sensititvity_df.rds"))
-readmit_sensititvity_df <-  readRDS(file=paste0(root_path, "/data/anon_readmit_sensititvity_df.rds"))
+opioid_sensititvity_df <-  readRDS(file=here(root_path, "data/anon_opioid_sensititvity_df.rds"))
+readmit_sensititvity_df <-  readRDS(file=here(root_path, "data/anon_readmit_sensititvity_df.rds"))
 
 
 ```

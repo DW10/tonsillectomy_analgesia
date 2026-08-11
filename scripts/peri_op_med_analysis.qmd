@@ -27,10 +27,14 @@ library(ggconsort)
 library(arrow)
 library(lme4)
 library(ggpubr)
+library(UpSetR)
+library(lmerTest)
+library(grid)
 
 source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
 sapply(functions_paths, source, verbose=FALSE)
-df <- readRDS(file=paste0(root_path, "/data/anon_dataset.rds"))
+
+df <- readRDS(file=here(root_path, "data/anon_dataset.rds"))
 
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(message = FALSE)
@@ -416,7 +420,7 @@ plot_data <- data_set %>%
 # Crucial: Include Clonidine/Ketamine etc. here so the plot separates them out!
 upset_sets <- unname(name_map)
 
-library(UpSetR)
+
 
 upset_plot <- upset(plot_data %>% as.data.frame(), 
       # Pass the dataframe directly, not fromList
@@ -1708,7 +1712,7 @@ model_2_gt <- model_2_fixed_eff %>%
 ```
 
 ```{r}
-library(lmerTest)
+
 
 model_3  <- lmer(
   recovery_time ~ treatment_arm +
