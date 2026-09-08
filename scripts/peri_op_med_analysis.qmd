@@ -4,6 +4,8 @@ execute:
   output: false
   echo: false
 format: 
+  html:
+    toc: true
   docx:
     number-sections: false
 crossref:
@@ -30,6 +32,7 @@ library(ggpubr)
 library(UpSetR)
 library(lmerTest)
 library(grid)
+library(here)
 
 source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
 sapply(functions_paths, source, verbose=FALSE)
@@ -909,7 +912,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 # Background
 
-## Table 1
+## @tbl-variables
 
 +---------------------------+--------------------------------+--------------------------+
 | Patient                   | Surgical                       | Anaesthetic              |
@@ -937,7 +940,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 |                           | -   Ressection of capsuel      |                          |
 +---------------------------+--------------------------------+--------------------------+
 
-*Variables contributing to postoperative pain following tonsillectomy*
+: Variables contributing to postoperative pain following tonsillectomy {#tbl-variables}
 
 # Methods
 
@@ -993,7 +996,52 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 ```
 
-![](../export/figure_1.png)
+```{mermaid}
+%%| label: fig-mermaid-groups
+%%| fig-cap: "Flowchart describing logic for eligibility for the treatment groups depending on the medications received."
+
+---
+
+config:
+
+theme: redux
+
+layout: dagre
+
+---
+
+flowchart LR
+
+A["Study population"] --> B{"Received Standard Simple Analgesia?<br>(paracetamol + NSAID + dexamethasone)"}
+
+B -- No --> C["EXCLUDED"]
+
+B -- Yes --> D{"Received Adjuncts?<br> (ketamine, magnesium or clonidine)"}
+
+D -- Yes --> C
+
+D -- No --> F{"Opioid Received?"}
+
+F -- No Opioids --> G["Treatment Group 1:<br>Simple Analgesia Only"]
+
+F -- morphine Only --> H["Treatment Group 2:<br>Simple Analgesia + morphine"]
+
+F -- fentanyl Only --> I["Treatment Group 3:<br>Simple Analgesia + fentanyl"]
+
+F -- morphine and fentanyl --> J["Treatment Group 4:<br>Simple Analgesia + morphine + fentanyl"]
+
+  
+
+style C fill:#ff6b6b
+
+style G fill:#4472ca
+
+style H fill:#f19a3e
+
+style I fill:#820b8a
+
+style J fill:#2a9d8f
+```
 
 *Flowchart describing logic for eligibility for the treatment groups depending on the medications received.*
 
