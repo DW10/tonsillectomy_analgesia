@@ -185,7 +185,7 @@ col_name_lookup<- c("Age (years)" = "age",
               )
 ```
 
-# Supplementary materials S1 – Data Specification
+# Supplementary materials S1 – Data Specification {#sec-sm-data-spec}
 
 ## S1.1 - Surgical Procedure Classification
 

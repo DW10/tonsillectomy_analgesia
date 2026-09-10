@@ -1,19 +1,5 @@
 ---
 title: "Figures and Tables"
-execute:
-  output: false
-  echo: false
-format: 
-  html:
-    toc: true
-  docx:
-    number-sections: false
-crossref:
-  tbl-prefix: ""
-  tbl-title: ""
-knitr:
-  opts_knit:
-    root.dir: "~/data/dwhitake/tonsillectomy_analgesia/scripts"
 ---
 
 ```{r set up}
@@ -912,6 +898,44 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 # Background
 
+```{r}
+#| label: tbl-variables
+
+library(dplyr)
+library(gt)
+
+tbl_data <- tibble(
+  Patient = c(
+    "Age<br> - Paediatric<br> - Adult",
+    "Pre-existing chronic pain",
+    "Pre-existing opioid use",
+    "Comorbidities"
+  ),
+  Surgical = c(
+    "Procedure indication:<br> - Sleep disordered breathing<br> -  Recurrent tonsillitis",
+    "Procedure length",
+    "Technique:<br> - Dissection<br> - Diathermy<br> - Coblation",
+    "Extent of resection:<br> - Intracapsular<br>-  Resection of capsule"
+  ),
+  Anaesthetic = c(
+    "Intraoperative analgesia",
+    "Postoperative analgesia",
+    "",
+    ""
+  )
+)
+
+tbl_variables <- tbl_data %>%
+  gt() %>%
+  tab_header(
+    title = "Variables contributing to postoperative pain following tonsillectomy"
+  ) %>%
+  fmt_markdown(columns = everything())
+
+tbl_variables
+
+```
+
 ## @tbl-variables
 
 +---------------------------+--------------------------------+--------------------------+
@@ -944,7 +968,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 # Methods
 
-## Figure 1 - Flow chart of treatment group criteria
+## @fig-mermaid-groups - Flow chart of treatment group criteria
 
 ```{r}
 
@@ -999,6 +1023,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 ```{mermaid}
 %%| label: fig-mermaid-groups
 %%| fig-cap: "Flowchart describing logic for eligibility for the treatment groups depending on the medications received."
+%%| title: Flow chart of treatment group criteria
 
 ---
 
@@ -1043,7 +1068,6 @@ style I fill:#820b8a
 style J fill:#2a9d8f
 ```
 
-*Flowchart describing logic for eligibility for the treatment groups depending on the medications received.*
 
 # Results
 
@@ -1113,19 +1137,21 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 ```
 
-## Table 2
+## @tbl-demo-all - Demographics - All patients
 
 ```{r }
 #| output: true
+#| title: "Demographics - All patients"
+#| label: tbl-demo-all
+#| fig-cap: "Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented."
 
 demo_all 
 #gtsave(demo_all, "publications/tonsillectomy/export/table.png")
 gtsave(demo_all, paste0(root_path,"/export/table_2.docx"))
 ```
 
-*Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented.*
 
-## Table 3
+## @tbl-demo-adult - Demographics - Adult patients
 
 ```{r Demographics adults}
 
@@ -1146,8 +1172,11 @@ demo_adults <- draw_table(  explanatory = demograpic_explanatory,
 #| df-print: kable
 #| tbl-colwidths: auto 
 #| output: true
-demo_adults
+#| title: "Demographics - Adult patients"
+#| label: tbl-demo-adult
+#| fig-cap: "Participant and surgical data for adult cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record)."
 
+demo_adults
 gtsave(demo_adults, paste0(root_path,"/export/table_3.docx"))
 
 ```
@@ -2011,3 +2040,11 @@ ggsave(plot=adult_forrest_composite, filename =paste0(root_path, "/export/figure
 ![](../export/figure_6.png)
 
 *Left to right: 1) unadjusted association between treatment group and rescue opioid administration (model 1), 2) adjusted association between treatment group and rescue opioid administration (model 2), 3) adjusted association between treatment group and time spent in recovery, 4) adjusted association between treatment group and same day discharge from hospital.*
+
+# Figures
+
+\listoffigures
+
+# Tables
+
+\listoftables

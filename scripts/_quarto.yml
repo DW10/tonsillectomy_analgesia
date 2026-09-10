@@ -1,0 +1,31 @@
+project:
+  type: default
+  output-dir: export_docx
+
+execute:
+  echo: false
+  output: true
+  warning: false
+  message: false
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+    embed-resources: true
+    lof: true
+    lot: true
+  docx:
+    number-sections: false
+    lof: true
+    lot: true
+crossref:
+  fig-prefix: "Figure"
+  tbl-prefix: "Table"
+  fig-title: "Figure"
+  tbl-title: "Table"
+
+knitr:
+  opts_knit:
+    root.dir: "~/data/dwhitake/tonsillectomy_analgesia"

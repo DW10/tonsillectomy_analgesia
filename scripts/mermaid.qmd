@@ -1,8 +1,7 @@
 ---
 format:
   html:
-    mermaid:
-      theme: neutral
+    mermaid-format: png
 ---
 
 ```{mermaid}

@@ -1,0 +1,69 @@
+```{r}
+#| eval: true
+#| echo: false
+#| message: false
+
+library(dplyr)
+library(ggplot2)
+# Read in plots and key values
+
+render_in_place <- TRUE
+knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+# Manuscript
+
+## Background
+
+Tonsillectomy and adenoidectomy are high-volume surgical procedures.  In the UK nearly 50,000 tonsillectomies are performed each year, typically for managing recurrent tonsillitis and/or sleep disordered breathing.1,2 Procedures may be undertaken in combination (adenotonsillectomy) or isolation, depending on the indication, and most are day case procedures.
+
+<Add rest>
+
+## Methods
+
+### Design, Setting and Population
+
+A single centre, retrospective electronic patient record (EPR) cohort study.  Patients who underwent elective tonsillectomy, adenoidectomy, or combined adenotonsillectomy were included.  Procedures were identified using relevant OPCS Classification of Interventions and Procedures codes (@sec-sm-data-spec).  
+
+
+## Treatment groups
+
+```{r}
+library(magick)
+fig_mermaid_flowchart <- png::readPNG("fig-mermaid-flowchart.png")
+fig_mermaid_flowchart <- image_read("fig-mermaid-flowchart.png") %>% 
+  image_ggplot(interpolate = TRUE)
+fig_mermaid_flowchart
+
+```
+
+## Results
+
+The results have shown one result @fig-example.
+
+```{r}
+#| eval: !expr render_in_place
+#| label: fig-example
+#| fig-scap: "Example plot"
+#| fig-cap: "The example plot that shows three dots"
+
+df <- tibble(x = 1:5, y = 6:10) %>%
+  filter(x > 2)
+
+ggplot(df, aes(x=x, y=y))+
+  geom_point()
+
+```
+
+```{r}
+
+print("Hello worlds")
+
+```
+
+
+## List os things
+
+\listoffigures
