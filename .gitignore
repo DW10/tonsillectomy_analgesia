@@ -19,3 +19,4 @@ functions/*
 
 /.quarto/
 **/*.quarto_ipynb
+core*

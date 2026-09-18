@@ -18,9 +18,9 @@ If you feel you require any parts of this data/code please contact [Dylan](https
 # How to use
 
 1) Complete the fields in `scripts/settings_EXAMPLE.R` and rename to `settings.R`
-2) Run `peri_op_med_dataset.qmd` to produce the study dataset (`df`) that is saved to `/data`
-3) Run `peri_op_med_anon.qmd` to anonmyise the study dataset. 
-3) Run `peri_op_med_analysis.qmd` and `peri_op_med_supp_matt.qmd` to generate the main tables/figures and supplementary materials respectively. 
+2) Run `scripts/peri_op_med_dataset.qmd` within a HOSPITAL TRE to produce the study dataset (`df`) that is saved to `/data`
+3) Run `scripts/peri_op_med_anon.qmd` to anonymise the study dataset (`anon_dataset.rda`) that is saved to `/data`. This file is then transferred to a RESEARCH TRE for analysis.
+3) Run `scripts/peri_op_med_analysis.qmd` and `scripts/peri_op_med_supp_matt.qmd` to generate the main tables/figures and supplementary materials respectively. 
 
 
 # Notes
@@ -28,7 +28,7 @@ If you feel you require any parts of this data/code please contact [Dylan](https
 ## Notes on figures and tables
 All of the tables and figures are generated dynamically by the code with a few notable exceptions:
 
-Table 1 - Hard coded in markdown in `peri_op_med_analysis.R`
+Table 1 - Hard coded in markdown in `scripts/peri_op_med_analysis.R`
 Figure 1 - A mermaid diagram that was exported from the mermaid website online tool. Mermaid code held in comments. 
 
 Various tables in supplementary materials are hard coded in markdown as they are mostly describing constants unchanged in the analysis. 
