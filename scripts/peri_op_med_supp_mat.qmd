@@ -187,7 +187,7 @@ col_name_lookup<- c("Age (years)" = "age",
 
 # Supplementary materials S1 – Data Specification {#sec-sm-data-spec}
 
-## S1.1 - Surgical Procedure Classification
+## S1.1 - Surgical Procedure Classification {#sec-sm-data-spec-procedures}
 
 Surgical technique was assessed using the procedure codes recorded for each case using the OPSC-4.9 version as described in **Table S4**
 For each case, the procedure was included into a group if one of the eligible OPSC codes was identified (Inclusive of all 3-digit codes within each 2-digit code) and then subsequently removed if an exclusion code was also present.
@@ -209,7 +209,7 @@ Only where a technique is explicitly coded is it auditable.
 For example, all ENT procedures are set up with electrocautery (diathermy) as standard, but only in cases where explicit mention is made in the surgical operation note are the coded then captures and auditable.
 Thus, surgical technical may be significantly underestimating the true prevalence.
 
-## S1.2 – Past Medical History
+## S1.2 – Past Medical History {#sec-sm-data-spec-pmh}
 
 For a patient to be considered as ‘positive’ for a previous medical condition their problem list was searched for eligible ICD-10-5th edition codes, where a 3-digit code was provided, this included all of the 4-digit codes inclusive, unless the 4-digit code was provided in the exclusion ICD codes. 
 
@@ -222,7 +222,7 @@ For a patient to be considered as ‘positive’ for a previous medical conditio
 | Chronic Tonsillitis | J35 | J35.8 |
 | Sleep apnoea | G47.3 | |
 
-## S1.3 – Intra-operative Medications
+## S1.3 – Intra-operative Medications {#sec-sm-data-spec-intra-op-meds}
 
 Broadly the majority of preparations provided on the intra-operative MAR were intravenous preparations but there are a few examples of oral medications being given.
 All medication doses in theatre were converted to mg and if given in discrete doses within a theatre episode where pooled to produce the total intra-operative dose.
@@ -252,7 +252,7 @@ Discharge medications were counted if there were prescribed on the discharge pap
 Specific formulations of discharge medications have not been provided as clinicians will prescribe a generic medication and dose regime and formulation details are not provided on the discharge paperwork.
 
 
-### Table S7 - Formulations for discharge medications
+### Table S7 - Formulations for discharge medications {#sec-sm-data-spec-discharge}
 
 | Medication group | Medications generic name |
 | :--- | :--- |
@@ -264,7 +264,7 @@ Specific formulations of discharge medications have not been provided as clinici
 
 \newpage
 
-# Supplementary materials S2 - Missing data
+# Supplementary materials S2 - Missing data {#sec-sm-missing-data}
 
 The level of missing data for each of the key variables were assessed as reported in **Table S8**. All other variables had no missing values. Extracted variables for past medical history and medications administered required a past medical history and medication administration record to be able to assess, there was no missing records so these fields have no missing variables. It is noted by the authors the limitations of accuracy of the medical record. Where missing data exists for computed variables there was a missing variable during the computation, hence the resulting value being `NA` (for example if a patient did not have any pain scores recorded within 3 hours post-op the median value is not computable and thus missing).
 
@@ -382,7 +382,7 @@ Distributions and mean dose sum of each opioid within each treatment group are d
 
 \newpage
 
-# Supplementary materials S3 - Analysis code
+# Supplementary materials S3 - Analysis code {#sec-sm-analysis-code}
 
 Data was extracted from the EPR and stored in a proprietary data model in the parquet format. Extraction code is not provided as it contains intellectual property of the EPR provider Epic, Wisconsin.
 
@@ -397,9 +397,9 @@ The code is held at the following github repository [https://github.com/DW10/ton
 
 \newpage
 
-# Supplementary materials S4 – Sensitivity analysis
+# Supplementary materials S4 – Sensitivity analysis {#sec-sm-sensitivity}
 
-## S4.1 – Rescue opioid administration
+## S4.1 – Rescue opioid administration {#sec-sm-sensitivity-opioid}
 
 
 ```{r}
@@ -584,7 +584,7 @@ sens_analysis_ed
 ![](../export/figure_S7.png)
 *Cumulative density plot of the of the time to presentation at the emergency department (ED) from the discharge date to the ED visit time. Gray filled area depicts the density distribution and dotted line denotes the time point of 7,14 and 30 days.*
 
-## S4.3 – Multi-level modelling group size threshold
+## S4.3 – Multi-level modelling group size threshold {#sec-sm-sensitivity-group-size}
 
 ```{r sensatitivty for anaesthis cases cut off}
 
@@ -753,9 +753,9 @@ sens_analysis_multi_level_theshold
 *Upper plot, line chart of odds ratio with 95% confidence interval bands for differing clinical group size threshold values.Lower plot, line chart of AIC over threshold values with number of clinicians included shower per point.*
 \newpage
 
-# Supplementary materials S5 – Modelling
+# Supplementary materials S5 – Modelling {#sec-sm-modelling}
 
-## Directed Acyclic Graph 
+## Directed Acyclic Graph {#sec-sm-modelling-dag}
 
 A direct acyclic graph was generated using expert domain konwledge to understand and specific the suitable co-variants for the associational model. 
 
@@ -854,7 +854,7 @@ flowchart LR
 
 ```
 
-## S5.1 – Models parameters
+## S5.1 – Models parameters {#sec-sm-model-parameters}
 
 ### Table S12
 
