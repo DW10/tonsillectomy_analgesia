@@ -1143,7 +1143,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 #| output: true
 #| title: "Demographics - All patients"
 #| label: tbl-demo-all
-#| fig-cap: "Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented."
+#| fig-cap: "Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented"
 
 demo_all 
 #gtsave(demo_all, "publications/tonsillectomy/export/table.png")
@@ -1187,6 +1187,7 @@ gtsave(demo_adults, paste0(root_path,"/export/table_3.docx"))
 
 ```{r demographics paeds }
 #| output: true
+#| label: tbl-demo-paed
 
 demo_paeds <- draw_table(explanatory = demograpic_explanatory,
            cohort = "paeds",
@@ -1210,6 +1211,9 @@ gtsave(demo_paeds, paste0(root_path,"/export/table_S1.docx"))
 
 ```{r analgesic exposure adults }
 #| output: true
+#| label: tbl-analgesic-adult
+
+
 analgesia_explanatory <-  c( "intra_op_and_pre_paracetamol_given",
                              "intra_op_diclofenac_given",
                              "intra_op_dexamethasone_given",
@@ -1253,6 +1257,7 @@ gtsave(anes_adult_all_meds,paste0(root_path,"/export/table_4.docx"))
 
 ```{r analgesia exposure paeds}
 #| output: true
+#| label: tbl-analgesic-paed
 
 analgesia_explanatory <-  c( "intra_op_and_pre_paracetamol_given",
                              "intra_op_diclofenac_given",
@@ -1297,6 +1302,7 @@ gtsave(anes_paeds_all_meds, paste0(root_path,"/export/table_S2.docx"))
 ## Figure 2 - Venn diagrams of adult intraoperative medications
 
 ```{r analgesic exposure venn adult}
+#| label: fig-venn-adult
 
 
 venn_A <- create_venn_data(df %>% filter(adult==1),
@@ -1330,6 +1336,7 @@ ggsave(plot=adult_venns, filename =paste0(root_path, "/export/figure_2.png"), he
 ## Figure S1 - Venn diagrams of paediatric intraoperative medications
 
 ```{r analgesic exposure venn paed}
+#| label: fig-venn-paed
 
 venn_A <- create_venn_data(df %>% filter(adult==0),
                  columns = c("simple_analgesia_given", "opioid_given"),
@@ -1386,6 +1393,8 @@ ggsave(plot=venns_supplament, filename =paste0(root_path, "/export/figure_S2.png
 ## Figure S3 – Venn diagram of analgesia adjuncts administration:
 
 ```{r analgesic exposure adjuncts}
+#| label: fig-venn-adjuncts
+
 venn_supp_a <- create_venn_data(df%>% filter(adult==1),
                  columns = c("intra_op_magnesium_given", "intra_op_ketamine_given", "intra_op_clonidine_given"),
                  col_names = c("Magnesium", "Ketamine", "Clonidine")) %>%
@@ -1409,6 +1418,8 @@ ggsave(plot=venns_supplament, filename =paste0(root_path, "/export/figure_S3.png
 ## Figure 3 – Distribution of adult intraoperative opioid dose
 
 ```{r ome histogram adult}
+#| label: fig-opioid-histogram-adult
+
 ome_histogram_adult <-  plot_treatment_group_ome_histogram(data_set = df %>% filter(adult == 1))
 
 #ome_histogram_adult
@@ -1439,6 +1450,7 @@ ggsave(plot = ome_histogram_paed,  filename = paste0(root_path,"/export/figure_S
 ## Figure 4 – UpSet graph of the combinations of adult intraoperative analgesia
 
 ```{r upset plots adult}
+#| label: fig-upset-adult
 
 upset_plot_adult <- plot_upset_graph(data_set = df %>% filter(adult==1))
 
@@ -1455,6 +1467,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "/export/figure_4.p
 ## Figure S5 – Combinations of paediatric intraoperative analgesia:
 
 ```{r upset plots paed}
+#| label: fig-upset-paed
 
 upset_plot_paed <- plot_upset_graph(data_set = df %>% filter(adult==0))
 
@@ -1470,6 +1483,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "/export/figure_S5.
 
 ```{r}
 #| output: true
+#| label: tbl-outcome-adult
 
 explanatory_outcomes <- c("opioid_given_post_op",
                           "opioid_given_post_op_morphine",
@@ -1511,6 +1525,7 @@ gtsave(outcome_adult, paste0(root_path,"/export/table_5.docx"))
 
 ```{r}
 #| output: true
+#| label: tbl-outcome-paed
 
 explanatory_outcomes <- c("opioid_given_post_op",
                           "opioid_given_post_op_morphine",
@@ -1629,6 +1644,7 @@ paed_data <- paed_data %>% mutate(treatment_arm = factor(treatment_arm, levels =
 ```
 
 ```{r plot consort diagram}
+#| label: fig-consort-modelling
 
 consort <- modelling_cohort %>%
   consort_box_add(
@@ -1726,6 +1742,7 @@ ggsave(plot = consort, paste0(root_path,"/export/figure_5.png"),bg = "white", he
 ```
 
 ## Figure 5 - Consort diagram demonstrating patient inclusion for modelling
+
 
 ![](../export/figure_5.png)
 
@@ -1905,6 +1922,7 @@ saveRDS(model_save, file=paste0(root_path, "/data/models.rds"))
 ## Figure 6 – Combined forrest plots of treatment group effect for outcome measures
 
 ```{r}
+#| label: fig-forrest-plot
 
 y_axis_order <- c(
   "Simple analgesia + morphine + fentanyl",
