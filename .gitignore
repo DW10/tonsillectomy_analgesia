@@ -9,14 +9,12 @@
 *.png
 *.html
 *.docx
-
 data/*
 !data/placeholder.md
-
 scripts/settings.R
 functions/*
 .positai
-
 /.quarto/
 **/*.quarto_ipynb
 core*
+.Rapp.history
