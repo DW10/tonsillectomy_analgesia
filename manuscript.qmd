@@ -49,48 +49,7 @@ For each medication, route of administration and dose were extracted across thre
 
 To explore the prevalence and effectiveness of different analgesic strategies and the perioperative use of opioids, four clinically relevant treatment groups were predefined (@fig-mermaid-groups).  Group 1 represents a simple analgesic strategy without opioids (in line with current PROSPECT guidance) and includes patients administered paracetamol during the pre or intraoperative phases), a NSAID and dexamethasone.  Group 2 and 3 include patients receiving simple analgesia plus an intraoperative opioid (morphine or fentanyl respectively).  Group 4 represents patients who received simple analgesia with both morphine and fentanyl intraoperatively.  Patients receiving non-opioid analgesics (clonidine, ketamine, magnesium) were analysed separately.  
 
-<!-- INSERT: fig-mermaid-groups -->
-
-```{mermaid}
-%%| label: fig-mermaid-groups
-%%| fig-cap: "**Flow chart of treatment group criteria.** Flowchart describing logic for eligibility for the treatment groups depending on the medications received."
-
----
-
-config:
-
-theme: redux
-
-layout: dagre
-
----
-
-flowchart LR
-
-A["Study population"] --> B{"Received Standard Simple Analgesia?<br>(paracetamol + NSAID + dexamethasone)"}
-
-B -- No --> C["EXCLUDED"]
-
-B -- Yes --> D{"Received Adjuncts?<br> (ketamine, magnesium or clonidine)"}
-
-D -- Yes --> C
-
-D -- No --> F{"Opioid Received?"}
-
-F -- No Opioids --> G["Treatment Group 1:<br>Simple Analgesia Only"]
-
-F -- morphine Only --> H["Treatment Group 2:<br>Simple Analgesia + morphine"]
-
-F -- fentanyl Only --> I["Treatment Group 3:<br>Simple Analgesia + fentanyl"]
-
-F -- morphine and fentanyl --> J["Treatment Group 4:<br>Simple Analgesia + morphine + fentanyl"]
-
-style C fill:#ff6b6b
-style G fill:#4472ca
-style H fill:#f19a3e
-style I fill:#820b8a
-style J fill:#2a9d8f
-```
+![**Flow chart of treatment group criteria.** Flowchart describing logic for eligibility for the treatment groups depending on the medications received.](figures/fig-mermaid-groups.png){#fig-mermaid-groups}
 
 ### Outcome Measures
 
