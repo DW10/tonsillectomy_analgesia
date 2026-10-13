@@ -49,9 +49,7 @@ For each medication, route of administration and dose were extracted across thre
 
 To explore the prevalence and effectiveness of different analgesic strategies and the perioperative use of opioids, four clinically relevant treatment groups were predefined (@fig-mermaid-groups).  Group 1 represents a simple analgesic strategy without opioids (in line with current PROSPECT guidance) and includes patients administered paracetamol during the pre or intraoperative phases), a NSAID and dexamethasone.  Group 2 and 3 include patients receiving simple analgesia plus an intraoperative opioid (morphine or fentanyl respectively).  Group 4 represents patients who received simple analgesia with both morphine and fentanyl intraoperatively.  Patients receiving non-opioid analgesics (clonidine, ketamine, magnesium) were analysed separately.  
 
-
 ![**Flow chart of treatment group criteria.** Flowchart describing logic for eligibility for the treatment groups depending on the medications received.](figures/fig-mermaid-groups.png){#fig-mermaid-groups}
-
 
 ### Outcome Measures
 
