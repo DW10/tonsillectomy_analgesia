@@ -68,6 +68,17 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
     gt::gtsave(x, file.path(tbl_dir, paste0(label, ".html")))
     # PNG needs the optional webshot2 package + Chrome; skipped silently if unavailable
     try(gt::gtsave(x, file.path(tbl_dir, paste0(label, ".png"))), silent = TRUE)
+
+    if (knitr::is_latex_output()) {
+      # gt writes its own \begin{table} float, which LaTeX rejects inside the float Quarto
+      # already wraps around tbl-/stbl- chunks ("Not in outer par mode"). Keep the tabular only.
+      tex <- as.character(gt::as_latex(x))
+      tex <- gsub("\\\\begin\\{table\\}(\\[[^]]*\\])?\\s*", "", tex)
+      tex <- gsub("\\\\end\\{table\\}", "", tex)
+      # \caption* is only valid inside a float: keep any gt title/subtitle as plain text
+      tex <- gsub("\\\\caption\\*(\\{(?:[^{}]++|(?1))*\\})(\\s*\\\\\\\\)?", "\\\\noindent\\1\\\\par\\\\smallskip", tex, perl = TRUE)
+      return(knitr::asis_output(tex))
+    }
     return(x)
   }
 
