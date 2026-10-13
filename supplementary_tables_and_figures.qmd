@@ -1,3 +1,6 @@
+
+# Tables and Figures {#sec-sm-tables-figures}
+
 ```{r}
 #| label: setup-supplementary
 #| include: false
@@ -9,10 +12,8 @@ source(here::here("scripts", "export_helpers.R"))
 supp <- load_objects("supp")
 ```
 
-# Supplementary tables and figures {#sec-sm-tables-figures}
 
-Supplementary figures and tables are numbered separately from the main manuscript (Figure S1, Table S1, ...). This chapter holds the additional descriptive tables and figures; methods, sensitivity analyses and models are in the supplementary materials.
-
+## Supplementary Tables
 
 ::: {#stbl-demo-paed}
 ```{r}
@@ -21,7 +22,7 @@ Supplementary figures and tables are numbered separately from the main manuscrip
 show_float(supp)
 ```
 
-**Demographics - Paediatric patients.** Participant and surgical data for paediatric cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record).
+**Demographics table - Paediatric patients.** Participant and surgical data for paediatric cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record).
 :::
 
 ::: {#stbl-analgesic-paed}
@@ -43,6 +44,8 @@ show_float(supp)
 
 **Paediatric outcomes.** Outcome data for paediatric patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec.
 :::
+
+## Supplementary Figures
 
 ::: {#sfig-venn-paed}
 ```{r}

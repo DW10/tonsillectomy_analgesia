@@ -1,3 +1,6 @@
+
+# Manuscript
+
 ```{r}
 #| label: setup-manuscript
 #| include: false
@@ -8,8 +11,6 @@
 source(here::here("scripts", "export_helpers.R"))
 main <- load_objects("main")
 ```
-
-# Manuscript
 
 ## Background
 
@@ -115,7 +116,7 @@ Multilevel modelling was used to investigate the association between analgesic s
 
 ```{r}
 #| label: tbl-demo-all
-#| tbl-cap: "**Demographics - All patients.** Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented"
+#| tbl-cap: "**Demographics table - All patients.** Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented"
 
 show_float(main)
 ```
@@ -126,7 +127,7 @@ Isolated tonsillectomy was the most common procedure in the adult cohort (n = 1,
 
 ```{r}
 #| label: tbl-demo-adult
-#| tbl-cap: "**Demographics - Adult patients.** Participant and surgical data for adult cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record)."
+#| tbl-cap: "**Demographics table - Adult patients.** Participant and surgical data for adult cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record)."
 
 show_float(main)
 ```

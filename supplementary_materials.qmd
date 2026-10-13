@@ -1,3 +1,6 @@
+
+# Supplementary materials {#sec-sm-materials}
+
 ```{r}
 #| label: setup-supplementary
 #| include: false
@@ -10,9 +13,6 @@ supp <- load_objects("supp")
 supp_stats <- load_stats()
 ```
 
-# Supplementary materials {#sec-sm-materials}
-
-Methods, sensitivity analyses and models. Figures and tables are numbered together with the supplementary tables and figures chapter (Figure S1, Table S1, ...).
 
 ## Data specification {#sec-sm-data-spec}
 
