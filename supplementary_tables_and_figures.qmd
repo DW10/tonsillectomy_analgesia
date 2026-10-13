@@ -1,0 +1,121 @@
+```{r}
+#| label: setup-supplementary
+#| include: false
+
+# Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd and
+# scripts/peri_op_med_supp_mat.qmd) and saved to data/*.rds. Each labelled chunk below prints
+# one of them with show_float(), which also saves a copy named after the label into export/.
+source(here::here("scripts", "export_helpers.R"))
+supp <- load_objects("supp")
+```
+
+# Supplementary tables and figures {#sec-sm-tables-figures}
+
+Supplementary figures and tables are numbered separately from the main manuscript (Figure S1, Table S1, ...). This chapter holds the additional descriptive tables and figures; methods, sensitivity analyses and models are in the supplementary materials.
+
+
+::: {#stbl-demo-paed}
+```{r}
+#| label: chunk-stbl-demo-paed
+
+show_float(supp)
+```
+
+**Demographics - Paediatric patients.** Participant and surgical data for paediatric cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record).
+:::
+
+::: {#stbl-analgesic-paed}
+```{r}
+#| label: chunk-stbl-analgesic-paed
+
+show_float(supp)
+```
+
+**Anaesthetic management - Paediatrics.** Intraoperative analgesia administration for paediatric patients stratified by surgical group. OME, Oral Morphine Equivalent. Weight based dosed calculated where patient weight available.
+:::
+
+::: {#stbl-outcome-paed}
+```{r}
+#| label: chunk-stbl-outcome-paed
+
+show_float(supp)
+```
+
+**Paediatric outcomes.** Outcome data for paediatric patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec.
+:::
+
+::: {#sfig-venn-paed}
+```{r}
+#| label: chunk-sfig-venn-paed
+#| fig-alt: "Venn diagrams of paediatric intraoperative medications"
+#| fig-width: 18
+#| fig-height: 12
+
+show_float(supp, width = 12, height = 8, scale = 1.5)
+```
+
+**Venn diagrams of paediatric intraoperative medications.** Distributions of complete intra-operative simple analgesia and intraoperative opioid administration in paediatrics (A). Venn diagram to show the breakdown of the simple analgesia (B) and opioids given (C)
+:::
+
+::: {#sfig-venn-paracetamol}
+```{r}
+#| label: chunk-sfig-venn-paracetamol
+#| fig-alt: "Venn diagram of paracetamol administration"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 6, height = 4, scale = 2)
+```
+
+**Venn diagram of paracetamol administration.** Venn diagram of distributions of paracetamol given intraoperatively as defined as being given on the intraoperative medication administration record compared to doses of paracetamol given in the 3 hours pre-operatively for the adult cohort (A) and paediatric cohorts (B) respectively.
+:::
+
+::: {#sfig-venn-adjuncts}
+```{r}
+#| label: chunk-sfig-venn-adjuncts
+#| fig-alt: "Venn diagram of analgesia adjuncts administration"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 6, height = 4, scale = 2)
+```
+
+**Venn diagram of analgesia adjuncts administration.** Distributions of magnesium, ketamine and clonidine given intraoperatively for the adult cohort (A) and paediatric cohorts (B) respectively.
+:::
+
+::: {#sfig-opioid-histogram-adult}
+```{r}
+#| label: chunk-sfig-opioid-histogram-adult
+#| fig-alt: "Distribution of adult intraoperative opioid dose"
+#| fig-width: 10
+#| fig-height: 5
+
+show_float(supp, width = 10, height = 5, scale = 1)
+```
+
+**Distribution of adult intraoperative opioid dose.** Histogram with marginal rug plot of individual doses of total intra-operative OME doses across adult patients in treatment groups 2,3 and 4.
+:::
+
+::: {#sfig-opioid-histogram-paed}
+```{r}
+#| label: chunk-sfig-opioid-histogram-paed
+#| fig-alt: "Distribution of paediatric intraoperative opioid dose"
+#| fig-width: 10
+#| fig-height: 5
+
+show_float(supp, width = 10, height = 5, scale = 1)
+```
+
+**Distribution of paediatric intraoperative opioid dose.** Histogram with marginal rug plot of individual doses of total intra-operative OME doses across paediatric patients in treatment groups 2,3 and 4.
+:::
+
+::: {#sfig-upset-paed}
+```{r}
+#| label: chunk-sfig-upset-paed
+#| fig-alt: "Combinations of paediatric intraoperative analgesia"
+
+show_float(supp)
+```
+
+**Combinations of paediatric intraoperative analgesia.** Distribution of different analgesic combinations for paediatric patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication.
+:::

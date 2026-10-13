@@ -1,7 +1,10 @@
-# Helpers used by manuscript.qmd and supplementary.qmd to print AND export floats.
+# Helpers used by manuscript.qmd and supplementary_*.qmd to print AND export floats.
 #
-# Every figure/table in the book is one chunk with a `label` (fig-*, tbl-*, sfig-*,
-# stbl-*) and a caption, whose body is just `show_float(<store>)`. show_float():
+# Every figure/table in the book is one chunk whose body is just `show_float(<store>)`.
+# Main floats (fig-*, tbl-*) are chunks with `label` + `fig-cap`/`tbl-cap`. Supplementary
+# floats (sfig-*, stbl-*) are custom cross-reference types, which Quarto only supports on
+# a Div: `::: {#sfig-x}` containing a chunk labelled `chunk-sfig-x`, then the caption as the
+# last paragraph. show_float():
 #   1. looks up the object in the store from the chunk label (`-` -> `_`),
 #   2. saves a copy named after the label into export/figures/ or export/tables/
 #      (this is the "image and table dump" for journal upload),
@@ -46,6 +49,9 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
   if (is.null(label) || grepl("^unnamed-chunk", label)) {
     stop("show_float() must be called from a chunk with a `label:` option.", call. = FALSE)
   }
+  # Supplementary floats use the documented Div form for custom cross-reference types:
+  # the Div carries the label (#sfig-x / #stbl-x) and the chunk inside is `chunk-<label>`.
+  label <- sub("^chunk-", "", label)
   key <- gsub("-", "_", label)
   x <- store[[key]]
   if (is.null(x)) {

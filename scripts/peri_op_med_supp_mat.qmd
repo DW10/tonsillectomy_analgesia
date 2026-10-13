@@ -11,7 +11,7 @@ peri_op_med_analysis.qmd, and saves them to:
   data/supp_objects_extra.rds   gt tables / ggplots, named by chunk label (`-` -> `_`)
   data/supp_stats.rds           pre-formatted numbers quoted in the supplementary text
 
-The narrative, hard-coded tables, captions and labels live in supplementary.qmd.
+The narrative, hard-coded tables, captions and labels live in supplementary_*.qmd.
 Do NOT write captions or call ggsave()/gtsave() here.
 -->
 
@@ -309,7 +309,7 @@ rescue_opioid_prop_table <- data.frame(
 )
 
 # (The old in-table gt title "Sensitivity analysis for Rescue opioid administration" was
-#  removed: the title now lives in the stbl-sens-rescue-opioid caption in supplementary.qmd)
+#  removed: the title now lives in the stbl-sens-rescue-opioid caption in supplementary_*.qmd)
 sens_analysis_rescue <- rescue_opioid_prop_table %>% gt() %>%
   cols_label(
     Hours = "Time (hours)",
@@ -612,7 +612,7 @@ supp_objects_extra$sfig_model_6_random <- plot_rand_effects(model_6, outcome_lab
 ```{r numbers quoted in the supplementary text}
 
 # Same expressions as the previous inline `r` calls; only moved here so
-# supplementary.qmd does not need the fitted models.
+# supplementary_*.qmd does not need the fitted models.
 supp_stats$model_1_variance <- data.frame(VarCorr(model_1)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)
 supp_stats$model_2_variance <- data.frame(VarCorr(model_2)) %>% pull(vcov) %>% scales::percent(accuracy = 0.1)
 supp_stats$model_3_sd_minutes <- data.frame(VarCorr(model_3))[1,] %>% pull(sdcor) %>% round(digits=2)

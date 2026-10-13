@@ -18,7 +18,8 @@ Code and manuscript source for a retrospective electronic patient record (EPR) c
 |------------------------------------|------------------------------------|
 | `index.qmd` | Abstract |
 | `manuscript.qmd` | Manuscript body. Main figures/tables print **in place** (see `<!-- INSERT: label -->` comments) |
-| `supplementary.qmd` | Supplementary methods, tables and figures (appendix part of the book) |
+| `supplementary_tables_and_figures.qmd` | Supplementary tables and figures (appendix part of the book) |
+| `supplementary_materials.qmd` | Supplementary methods, sensitivity analyses and models (appendix part of the book) |
 | `references.qmd` | Reference list |
 | `_quarto.yml` | Book settings, output formats, cross-reference numbering, authors |
 | `pre_render.R` | Runs before every render: clears `export/`, checks analysis outputs, optionally re-runs the analysis |
@@ -38,7 +39,7 @@ Code and manuscript source for a retrospective electronic patient record (EPR) c
 ```         
 dataset.qmd -> anon.qmd -> analysis.qmd -> supp_mat.qmd -> data/*.rds
                                                              |
-                  quarto render:  manuscript.qmd + supplementary.qmd read data/*.rds
+                  quarto render:  manuscript.qmd + supplementary_*.qmd read data/*.rds
                                   -> _book/ (html, docx, pdf)  +  export/ (one file per label)
 ```
 
@@ -46,7 +47,7 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
 
 ## How to edit
 
-- **Prose** lives in `index.qmd`, `manuscript.qmd` and `supplementary.qmd`. Numbers in the prose are typed by hand and must be checked manually after any change to the analysis.
+- **Prose** lives in `index.qmd`, `manuscript.qmd`, `supplementary_tables_and_figures.qmd` and `supplementary_materials.qmd`. Numbers in the prose are typed by hand and must be checked manually after any change to the analysis.
 
 - **Every figure/table is one labelled chunk with a caption**, for example:
 
@@ -63,9 +64,23 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
   | Prefix | Where | Caption option | Cite with | Renders as |
   |---------------|---------------|---------------|---------------|---------------|
   | `fig-` / `tbl-` | main manuscript | `fig-cap` / `tbl-cap` | `@fig-x` / `@tbl-x` | Figure 1 / Table 1 |
-  | `sfig-` / `stbl-` | supplementary | `sfig-cap` / `stbl-cap` | `@sfig-x` / `@stbl-x` | Figure S1 / Table S1 |
+  | `sfig-` / `stbl-` | supplementary (on a Div, see below) | caption = last paragraph of the Div | `@sfig-x` / `@stbl-x` | Figure S1 / Table S1 |
   | `sec-` | headings (`## Title {#sec-x}`) |  | `@sec-x` | Section number |
 
+- **Supplementary floats** are Quarto *custom cross-reference types*, which only work on a Div (not on chunk options). The Div carries the label, the chunk inside is named `chunk-<label>` (so `show_float()` can find the object), and the caption is the last paragraph:
+
+  ````
+  ::: {#sfig-venn-paed}
+  ```{r}
+  #| label: chunk-sfig-venn-paed
+  #| fig-width: 18
+  #| fig-height: 12
+  show_float(supp, width = 12, height = 8, scale = 1.5)
+  ```
+
+  **Short title.** Description, abbreviations.
+  :::
+  ````
 - **Add or move a figure/table:** (1) compute it in the relevant `scripts/` file and add it to the saved list under the label with `-` -\> `_`; (2) add a labelled chunk with a caption where it should appear. Order and numbering update automatically.
 
 - Captions use the form `**Short title.** Description.` and must exist for every float. Chunks whose caption still reads `TODO: caption to be supplied by the authors.` need one.

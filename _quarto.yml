@@ -13,7 +13,8 @@ book:
     - manuscript.qmd
     - references.qmd
   appendices:
-    - supplementary.qmd
+    - supplementary_tables_and_figures.qmd
+    - supplementary_materials.qmd
 
 # TODO: point at a local .bib file (e.g. a Better BibTeX auto-export in this folder).
 # Until then citations in manuscript.qmd will render as unresolved.

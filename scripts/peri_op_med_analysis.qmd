@@ -14,7 +14,7 @@ and saves them, ready to print, to:
   data/models.rds                fitted models (read by peri_op_med_supp_mat.qmd)
 
 Captions, labels, cross-references and the export/ dump are handled by the book:
-`manuscript.qmd` and `supplementary.qmd` read these objects and print one labelled
+`manuscript.qmd` and the supplementary_*.qmd chapters read these objects and print one labelled
 chunk per figure/table. Do NOT write captions or call ggsave()/gtsave() here.
 
 Run with `Rscript pre_render.R` (or RUN_ANALYSIS=true quarto render).
@@ -52,7 +52,7 @@ knitr::opts_chunk$set(warning = FALSE)
 ```{r draw_table() functions}
 
 # NOTE: captions are NOT set here. They live on the labelled chunk in the book
-# (manuscript.qmd / supplementary.qmd). The `caption` argument is only used by the
+# (manuscript.qmd / supplementary_*.qmd). The `caption` argument is only used by the
 # legacy tableHTML output.
 draw_table <- function(dependant = "cohort",
                        explanatory,
@@ -919,7 +919,7 @@ row_name_lookup <- c("Treatment group 2" = "treatment_arm2",
 
 # Variables table (NOT currently included in the book)
 
-<!-- Kept for later: no `tbl-variables` float is printed by manuscript.qmd or supplementary.qmd. -->
+<!-- Kept for later: no `tbl-variables` float is printed by manuscript.qmd or supplementary_*.qmd. -->
 
 ```{r}
 
@@ -1758,7 +1758,7 @@ adult_forrest_composite <- ggarrange(model_1_forrest, model_2_forrest, model_3_f
 # Save objects for the book
 
 Every object saved here is printed by exactly one labelled chunk in the book
-(`manuscript.qmd` -> `main`, `supplementary.qmd` -> `supp`). The list name is the
+(`manuscript.qmd` -> `main`, `supplementary_*.qmd` -> `supp`). The list name is the
 chunk label with `-` replaced by `_` (label `fig-venn-adult` -> `fig_venn_adult`), so
 `show_float()` can find the object from the label alone. Supplementary labels start
 `sfig-` / `stbl-`.
