@@ -1,3 +1,8 @@
+```{r}
+#| include: false
+source(here::here("scripts", "inline_helpers.R"))
+```
+
 # Abstract {.unnumbered} 
 
 ## Background
@@ -10,7 +15,7 @@ A retrospective cohort study was performed to identify all patients undergoing t
 
 ## Results
 
-3,656 patients were included, of which 2,259 (61.8%) were paediatric patients. 82.9% of adults received all three components of simple analgesia compared to 72.0% of paediatric patients. Fentanyl was the most common intraoperative opioid in the paediatric cohort (95.4% of cases ) but adults received a mix of strategies, with 49.0% receiving fentanyl only (n = 685), 22.8% morphine only (n = 318), 17.7% receiving both (n = 247), and 10.5% receiving neither (n = 147). There was no significant difference in the need for recovery opioids between treatment groups for adult patients, however simple analgesia with both morphine and fentanyl resulted in a reduced time in recovery (-42.1 minutes, 95% CI -66.7 to -17.5).
+`r comma(nrow(df))` patients were included, of which `r N(df$adult == 0)` (`r P(df$adult == 0)`) were paediatric patients. `r P(adults$simple_analgesia_given)` of adults received all three components of simple analgesia compared to `r P(paeds$simple_analgesia_given)` of paediatric patients. Fentanyl was the most common intraoperative opioid in the paediatric cohort (`r P(fent_only(paeds))` of cases) but adults received a mix of strategies, with `r P(fent_only(adults))` receiving fentanyl only (n = `r N(fent_only(adults))`), `r P(morph_only(adults))` morphine only (n = `r N(morph_only(adults))`), `r P(both_opioids(adults))` receiving both (n = `r N(both_opioids(adults))`), and `r P(no_opioids(adults))` receiving neither (n = `r N(no_opioids(adults))`). There was no significant difference in the need for recovery opioids between treatment groups for adult patients, however simple analgesia with both morphine and fentanyl resulted in a reduced time in recovery (`r beta(3, "treatment_arm4")` minutes, 95% CI `r beta(3, "treatment_arm4", "conf.low")` to `r beta(3, "treatment_arm4", "conf.high")`).
 
 ## Conclusions
 
