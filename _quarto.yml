@@ -1,26 +1,70 @@
 project:
   type: book
-#  pre-render: 
-#    - script/plume_authors.R   ### RUN TO UPDATE AUTHOR LIST
-#    - scripts/peri_op_med_dataset.qmd  ### RUN TO GENERATE DATASET FROM SOURCE DATA
-#    - scripts/per_up_med_anon.qmd  ### RUN TO ANAONYMISE DATASET
+  output-dir: _book
+  # Checks data/*.rds exist, clears the export/ dump, and re-runs the analysis scripts
+  # when RUN_ANALYSIS=true (see pre_render.R and README.md)
+  pre-render: pre_render.R
+
 book:
   title: 'Intraoperative Opioid Choice in Adult and Paediatric Tonsillectomy: A Retrospective
     Electronic Patient Record Cohort Study'
   chapters:
     - index.qmd
     - manuscript.qmd
-#  appendices: supplementary_materials.qmd
-#bibliography: references.bib
+    - references.qmd
+  appendices:
+    - supplementary.qmd
+
+# TODO: point at a local .bib file (e.g. a Better BibTeX auto-export in this folder).
+# Until then citations in manuscript.qmd will render as unresolved.
+# bibliography: references.bib
+
+# Supplementary chapter labels / headings
+language:
+  crossref-apx-prefix: 'Supplementary material'
+  section-title-appendices: 'Supplementary material'
+
+# Main figures/tables are numbered Figure 1, 2... / Table 1, 2... across the whole book
+# (labels fig-* and tbl-*). Supplementary figures/tables use their own counters
+# (labels sfig-* and stbl-*, cited with @sfig-x / @stbl-x) and render as "Figure S1" / "Table S1".
+# Custom cross-reference types need Quarto >= 1.4.
+crossref:
+  chapters: false
+  custom:
+    - kind: float
+      key: sfig
+      latex-env: sfig
+      reference-prefix: Figure S
+      caption-prefix: Figure S
+      space-before-numbering: false
+    - kind: float
+      key: stbl
+      latex-env: stbl
+      reference-prefix: Table S
+      caption-prefix: Table S
+      space-before-numbering: false
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
 format:
   html:
     theme: cosmo
+    toc: true
+    fig-align: center
+    fig-dpi: 150
   pdf:
     documentclass: scrreprt
+    toc: true
+    fig-align: center
+    fig-pos: H
+    fig-dpi: 300
   docx:
     toc: true
-    lof: true
-    lot: true
+    fig-align: center
+    fig-dpi: 300
 author:
   - id: aut1
     name:

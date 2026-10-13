@@ -1,0 +1,629 @@
+```{r}
+#| label: setup-supplementary
+#| include: false
+
+# Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd and
+# scripts/peri_op_med_supp_mat.qmd) and saved to data/*.rds. Each labelled chunk below prints
+# one of them with show_float(), which also saves a copy named after the label into export/.
+source(here::here("scripts", "export_helpers.R"))
+supp <- load_objects("supp")
+supp_stats <- load_stats()
+```
+
+# Supplementary methods and results {#sec-sm}
+
+Supplementary figures and tables are numbered separately from the main manuscript (Figure S1, Table S1, ...).
+
+## Additional descriptive results {#sec-sm-additional-results}
+
+
+```{r}
+#| label: stbl-demo-paed
+#| stbl-cap: "**Demographics - Paediatric patients.** Participant and surgical data for paediatric cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record)."
+
+show_float(supp)
+```
+
+```{r}
+#| label: stbl-analgesic-paed
+#| stbl-cap: "**Anaesthetic management - Paediatrics.** Intraoperative analgesia administration for paediatric patients stratified by surgical group. OME, Oral Morphine Equivalent. Weight based dosed calculated where patient weight available."
+
+show_float(supp)
+```
+
+```{r}
+#| label: stbl-outcome-paed
+#| stbl-cap: "**Paediatric outcomes.** Outcome data for paediatric patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec."
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-venn-paed
+#| sfig-cap: "**Venn diagrams of paediatric intraoperative medications.** Distributions of complete intra-operative simple analgesia and intraoperative opioid administration in paediatrics (A). Venn diagram to show the breakdown of the simple analgesia (B) and opioids given (C)"
+#| fig-alt: "Venn diagrams of paediatric intraoperative medications"
+#| fig-width: 18
+#| fig-height: 12
+
+show_float(supp, width = 12, height = 8, scale = 1.5)
+```
+
+```{r}
+#| label: sfig-venn-paracetamol
+#| sfig-cap: "**Venn diagram of paracetamol administration.** Venn diagram of distributions of paracetamol given intraoperatively as defined as being given on the intraoperative medication administration record compared to doses of paracetamol given in the 3 hours pre-operatively for the adult cohort (A) and paediatric cohorts (B) respectively."
+#| fig-alt: "Venn diagram of paracetamol administration"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 6, height = 4, scale = 2)
+```
+
+```{r}
+#| label: sfig-venn-adjuncts
+#| sfig-cap: "**Venn diagram of analgesia adjuncts administration.** Distributions of magnesium, ketamine and clonidine given intraoperatively for the adult cohort (A) and paediatric cohorts (B) respectively."
+#| fig-alt: "Venn diagram of analgesia adjuncts administration"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 6, height = 4, scale = 2)
+```
+
+```{r}
+#| label: sfig-opioid-histogram-adult
+#| sfig-cap: "**Distribution of adult intraoperative opioid dose.** Histogram with marginal rug plot of individual doses of total intra-operative OME doses across adult patients in treatment groups 2,3 and 4."
+#| fig-alt: "Distribution of adult intraoperative opioid dose"
+#| fig-width: 10
+#| fig-height: 5
+
+show_float(supp, width = 10, height = 5, scale = 1)
+```
+
+```{r}
+#| label: sfig-opioid-histogram-paed
+#| sfig-cap: "**Distribution of paediatric intraoperative opioid dose.** Histogram with marginal rug plot of individual doses of total intra-operative OME doses across paediatric patients in treatment groups 2,3 and 4."
+#| fig-alt: "Distribution of paediatric intraoperative opioid dose"
+#| fig-width: 10
+#| fig-height: 5
+
+show_float(supp, width = 10, height = 5, scale = 1)
+```
+
+```{r}
+#| label: sfig-upset-paed
+#| sfig-cap: "**Combinations of paediatric intraoperative analgesia.** Distribution of different analgesic combinations for paediatric patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication."
+#| fig-alt: "Combinations of paediatric intraoperative analgesia"
+
+show_float(supp)
+```
+
+
+## Data specification {#sec-sm-data-spec}
+
+### Surgical procedure classification {#sec-sm-data-spec-procedures}
+
+Surgical technique was assessed using the procedure codes recorded for each case using the OPSC-4.9 version as described in @stbl-surgical-criteria.
+For each case, the procedure was included into a group if one of the eligible OPSC codes was identified (Inclusive of all 3-digit codes within each 2-digit code) and then subsequently removed if an exclusion code was also present.
+To exclude concurrent procedures within the mouth where the tonsils may additionally be removed (such as a glossectomy or mandibular resection), the remainder of the F chapter was excluded across the simple procedure groups.
+The use of coblation and electrocautery were determined with the same method and then added as a feature to each procedure.
+The three surgical groups were checked to ensure mutual exclusivity.
+
+
+::: {#stbl-surgical-criteria}
+| Surgical Group | Eligible OPSC codes | Exclusion OPSC codes |
+| :--- | :--- | :--- |
+| Tonsillectomy | F34, F35 | E20, F0:F33, F36:F99 |
+| Adenoidectomy | E20 | F34, F35, F0:F33, F36:F99 |
+| Adenotonsillectomy | F34, F35, E20 | F0:F33, F36:F99, Patients already identified in tonsillectomy and adenoidectomy cohorts. |
+| Coblation | Y10.1, F34.7, F35.2 | |
+| Electrocautery | Y10.2, Y11.1 | Y10.1 |
+
+**Criteria for surgical cohort eligibility.**
+:::
+
+
+Only where a technique is explicitly coded is it auditable.
+For example, all ENT procedures are set up with electrocautery (diathermy) as standard, but only in cases where explicit mention is made in the surgical operation note are the coded then captures and auditable.
+Thus, surgical technical may be significantly underestimating the true prevalence.
+
+### Past medical history {#sec-sm-data-spec-pmh}
+
+For a patient to be considered as ‘positive’ for a previous medical condition their problem list was searched for eligible ICD-10-5th edition codes, where a 3-digit code was provided, this included all of the 4-digit codes inclusive, unless the 4-digit code was provided in the exclusion ICD codes. 
+
+
+::: {#stbl-pmh-criteria}
+| Past medical history item | Eligible ICD codes | Exclusion ICD codes |
+| :--- | :--- | :--- |
+| Chronic Pain | R52 | R52.0 |
+| Opioid Dependence | F11 | |
+| Chronic Tonsillitis | J35 | J35.8 |
+| Sleep apnoea | G47.3 | |
+
+**Eligibility for past medical history filtering on ICD10 codes.**
+:::
+
+
+### Intra-operative medications {#sec-sm-data-spec-intra-op-meds}
+
+Broadly the majority of preparations provided on the intra-operative MAR were intravenous preparations but there are a few examples of oral medications being given.
+All medication doses in theatre were converted to mg and if given in discrete doses within a theatre episode where pooled to produce the total intra-operative dose.
+
+
+::: {#stbl-intra-op-formulations}
+| Medication group (if applicable) | Medication | Medication preparation |
+| :--- | :--- | :--- |
+| | Paracetamol | paracetamol 1g/100ml solution for infusion, paracetamol 500mg/50ml solution for infusion vial, paracetamol 500mg tablets, paracetamol 500mg suppository, paracetamol 250mg/5ml suspension sugar-free, paracetamol 250mg/5ml oral suspension |
+| NSAIDs | Diclofenac* | diclofenac sodium 75mg/3ml injection, diclofenac sodium 100mg suppository, diclofenac sodium 50mg suppository |
+| | Dexamethasone | dexamethasone 6.6mg/2ml injection, dexamethasone 2mg tablet |
+| | Tramadol | tramadol 100mg/2ml injection |
+| | Clonidine | clonidine 150microgram/1ml injection, clonidine 25microgram tablets |
+| | Ketamine | ketamine 50mg/5ml injection preservative-free, ketamine 200mg/20ml injection, ketamine 100mg/2mL, ketamine 500mg/10ml injection |
+| | Magnesium | magnesium sulfate in 100 ml in normal saline, magnesium sulfate in 250 ml in normal saline |
+| Strong opioid | Morphine | morphine sulfate 10mg/1ml solution for injection ampoule, morphine sulfate 1mg/ml injection, morphine sulfate 10mg/5ml oral solution |
+| | Oxycodone | oxycodone hydrochloride 10mg/1ml injection, oxycodone hydrochloride 20mg/2ml injection, oxycodone hydrochloride 50mg/1ml injection, oxycodone 100mg/50ml pca solution for infusion, oxycodone hydrochloride 5mg/5ml oral solution sugar-free |
+| | Fentanyl | fentanyl 100microgram/2ml injection, fentanyl 2000mcg/100ml pca infusion |
+| | Diamorphine | diamorphine hydrochloride 5mg powder for solution for injection, diamorphine hydrochloride 10mg powder for solution for injection |
+
+**Formulations for intraoperative medications.**
+:::
+
+
+\* Note: Diclofenac is the only NSAID used within UCLH theatres.
+A review of Aspirin, Naproxen, Celecoxib and ibuprofen revealed no intra-operative administrations across the cohort.
+
+### Discharge medications {#sec-sm-data-spec-discharge}
+
+Discharge medications were counted if there were prescribed on the discharge paperwork, regardless if they were dispensed from hospital pharmacy, sent to the community pharmacy or patients were instructed to purchase over the counter.
+Specific formulations of discharge medications have not been provided as clinicians will prescribe a generic medication and dose regime and formulation details are not provided on the discharge paperwork.
+
+
+::: {#stbl-discharge-formulations}
+| Medication group | Medications generic name |
+| :--- | :--- |
+| Paracetamol | paracetamol |
+| NSAID’s* | Ibuprofen, Diclofenac sodium, Naproxen, Etoricoxib, Celecoxib |
+| Strong opioid | morphine sulfate, oxycodone hydrochloride, buprenorphine, fentanyl, diamorphine hydrochloride |
+| Weak opioid | codeine phosphate, dihydrocodeine, co-dydramol (dihydrocodeine and paracetamol), co-codamol (codeine and paracetamol), tramadol |
+
+**Formulations for discharge medications.**
+:::
+
+
+\* Aspirin was not included as the primary intention is usually not for post-operative analgesia
+
+## Missing data {#sec-sm-missing-data}
+
+The level of missing data for each of the key variables were assessed as reported in @stbl-missing-data. All other variables had no missing values. Extracted variables for past medical history and medications administered required a past medical history and medication administration record to be able to assess, there was no missing records so these fields have no missing variables. It is noted by the authors the limitations of accuracy of the medical record. Where missing data exists for computed variables there was a missing variable during the computation, hence the resulting value being `NA` (for example if a patient did not have any pain scores recorded within 3 hours post-op the median value is not computable and thus missing).
+
+
+```{r}
+#| label: stbl-missing-data
+#| stbl-cap: "TODO: caption to be supplied by the authors."
+
+# Old heading was just "Table S8" (no title or caption). Table: count and % missing per key variable, adults vs paediatrics.
+show_float(supp)
+```
+
+
+## Oral morphine equivalence {#sec-sm-ome}
+
+For each medication the routes were grouped and a conversion value attributed using the standard equivalence table provided by Neilsen et al.
+Oral morphine equivalence (OME) was then calculated as a weighted sum using the standard OME equation.
+$$
+\begin{aligned}
+&\text{for}\  i \in \{1,...,n\}\\
+\text{OME} &= d_{\text{ref}} + \sum_{i \in N} (c_i  d_i)\\
+\\
+&&d_{\text{ref}} = \text{dose of reference medication} \\
+&&d_{i} = \text{dose of medication} \\
+&&c_{i} = \text{conversion value of medication} \\
+&&{N} = \text{non-referance medications}
+\end{aligned}
+$$
+Distributions and mean dose sum of each opioid within each treatment group are described within the results.
+
+## Analysis code {#sec-sm-analysis-code}
+
+Data was extracted from the EPR and stored in a proprietary data model in the parquet format. Extraction code is not provided as it contains intellectual property of the EPR provider Epic, Wisconsin.
+
+The dataset was cleaned to remove known issues by the script `import_proccess.qmd`.
+
+The tonsillectomy dataset was produced by the script `peri_op_med_dataset.qmd`.
+
+The analysis was performed by the script `peri_op_med_analysis.qmd` and supplementary analysis and materials in `peri_op_med_supp_mat.qmd`. 
+
+The code is held at the following github repository [https://github.com/DW10/tonsillectomy_analgesia](https://github.com/DW10/tonsillectomy_analgesia)
+
+## Sensitivity analysis {#sec-sm-sensitivity}
+
+### Rescue opioid administration {#sec-sm-sensitivity-opioid}
+
+The time to first post-operative opioid was extracted for all patients, and a sensitivity analysis was performed to establish the best cut off time as show in the @stbl-sens-rescue-opioid and @sfig-sens-rescue-opioid.
+A threshold time of 3 hours was selected given the clinical rational of any inter-operative analgesia plan would include adequate analgesic for this period and any opioids administered within 3 hours would represent inadequate analgesic effect.
+
+
+```{r}
+#| label: stbl-sens-rescue-opioid
+#| stbl-cap: "TODO: caption to be supplied by the authors."
+
+# Old heading was just "Table S9"; the table previously had an in-table title "Sensitivity analysis for Rescue opioid administration".
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-sens-rescue-opioid
+#| sfig-cap: "**Cumulative density of opioid administration times in recovery.** Cumulative density plot of the administration times of opioid medications from the end of surgery to the first dose given for patient that received an opioid within 6 hours of surgery. Gray filled area depicts the density distribution and dotted line denotes the time cut off point of 3 hours."
+#| fig-alt: "Cumulative density of opioid administration times in recovery"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 12, height = 8, scale = 1)
+```
+
+
+### Presentation to the emergency department {#sec-sm-sensitivity-ed}
+
+All of the subsequent presentations to the UCLH emergency department within 35 days was extracted for the patients.
+Primary reason for attendance was not extracted and where patients attended more than once within the 40 day period the first presentation was used.
+A sensitivity analysis was performed to understand the distribution of the data against the clinically benchmarked timepoints of 7, 14 and 30 days.
+@stbl-sens-ed and @sfig-sens-ed depict the proportion of presentations across important timepoints.
+
+
+```{r}
+#| label: stbl-sens-ed
+#| stbl-cap: "TODO: caption to be supplied by the authors."
+
+# Old heading was just "Table S10" (no title or caption).
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-sens-ed
+#| sfig-cap: "**Cumulative density of time to presentation to the emergency department.** Cumulative density plot of the of the time to presentation at the emergency department (ED) from the discharge date to the ED visit time. Gray filled area depicts the density distribution and dotted line denotes the time point of 7,14 and 30 days."
+#| fig-alt: "Cumulative density of time to presentation to the emergency department"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 12, height = 8, scale = 1)
+```
+
+
+### Multi-level modelling group size threshold {#sec-sm-sensitivity-group-size}
+
+To account for inter-clinician difference in practices, multi-level modelling has been used.
+To balance the power of the model against the generalisability a threshold of case size has been used.
+
+Clinicians who have performed fewer than 5 cases for adult patients across the whole study period were deemed not experienced enough to impart personalised differences in practice to the care and thus were removed from the modelling.
+
+A threshold of 5 was chosen from the sensitivity @stbl-sens-group-size and @sfig-sens-group-size.
+
+The maximum threshold values test was 70 due to failure of model convergence beyond this value.
+
+
+```{r}
+#| label: stbl-sens-group-size
+#| stbl-cap: "Table of model performance of the unadjusted multilevel model of primary outcome (rescue opioids) with varying threshold levels"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-sens-group-size
+#| sfig-cap: "**Plot of sensitivity analysis of multi-level threshold.** Upper plot, line chart of odds ratio with 95% confidence interval bands for differing clinical group size threshold values.Lower plot, line chart of AIC over threshold values with number of clinicians included shower per point."
+#| fig-alt: "Plot of sensitivity analysis of multi-level threshold"
+#| fig-width: 14.4
+#| fig-height: 9.6
+
+show_float(supp, width = 12, height = 8, scale = 1.2)
+```
+
+
+## Modelling {#sec-sm-modelling}
+
+### Cohort for modelling
+
+@sfig-consort-modelling shows the eligibility of patient groups for modelling.
+
+
+```{r}
+#| label: sfig-consort-modelling
+#| sfig-cap: "**Consort diagram demonstrating patient inclusion for modelling.** Consort diagram demonstrating the eligibility of patient groups for modelling"
+#| fig-alt: "Consort diagram demonstrating patient inclusion for modelling"
+#| fig-width: 14.4
+#| fig-height: 9
+
+show_float(supp, width = 8, height = 5, scale = 1.8)
+```
+
+
+### Directed acyclic graph {#sec-sm-modelling-dag}
+
+A direct acyclic graph was generated using expert domain konwledge to understand and specific the suitable co-variants for the associational model. 
+
+```{mermaid}
+%%| label: sfig-dag
+%%| sfig-cap: "TODO: caption to be supplied by the authors. (Old placeholder caption was: 'A simple workflow diagram showing step A leading to step B.')"
+
+flowchart LR
+    classDef dashedNode stroke-dasharray: 5 5
+
+    AT>Anaesthetic Technique]
+    TIVA((TIVA))
+    MD((Morphine Dose))
+    FD((Fentanyl Dose))
+    WT((Weight))
+    HT((Height))
+   
+    OC((Previous Opioid use))
+    ETH(Ethnicity)
+    OAC((Opioid Concentration)):::dashedNode
+    SE((Surgeon Exp))
+    SS((Surgical Skill)):::dashedNode
+    SI((Surgical Site))
+    SHD((Surgical Harm Damage)):::dashedNode
+    COB((Coblation))
+    LOSurg((Length of Surgery))
+    SED((Sedation)):::dashedNode
+    NAU((Nausea)):::dashedNode
+    PAIN((Pain)):::dashedNode
+    TOD(Time of day)
+    ON[Overnight Stay]
+    LOS[LOS]
+    LIR[Length in Recovery]
+    RR[Rescue analgesia]
+    RD((Remifentanil Dose))
+    PD((Propofol dose))
+
+    subgraph PV[Patient Variables]
+        WT((Weight))
+        HT((Height))
+        ETH(Ethnicity)
+        OC
+    end
+
+
+    subgraph PV2[Anaesthesia Variables]
+    TIVA
+    MD
+    FD
+    RD
+    RD
+    end
+
+      subgraph PV3[Surgical Variables]
+    SS
+    SI
+    SE
+    SHD
+    COB
+    LOSurg
+    end
+
+    AT --> TIVA
+    AT --> MD
+    AT --> OAC
+
+    TIVA --> RD
+    RD --> OAC
+    TIVA --> PD
+    PD --> SED
+
+    MD --> OAC
+    FD --> OAC
+    WT --> OAC
+    HT --> OAC
+    OC --> OAC
+    ETH --> OAC
+    OAC --> SED
+    OAC --> NAU
+    OAC --> PAIN
+    SE --> SS
+    SS --> SHD
+    SI --> SHD
+    COB --> SHD
+    LOSurg --> SHD
+    SHD --> PAIN
+    PAIN --> RR
+    RR --> LIR
+    SED --> LOS
+    SED --> LIR
+    NAU --> LOS
+    NAU --> LIR
+    TOD ---> ON
+    LOS --> ON
+```
+
+### Models parameters {#sec-sm-model-parameters}
+
+
+::: {#stbl-model-parameters}
+| Model Number | Cohort | Outcome | Multi-level by primary anaesthetist | Co-variants | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 0 | Adult | Recovery opioids | No | Nil | |
+| 1 | Adults | Recovery opioids | Yes | Nil | |
+| 2 | Adults | Recovery opioids | Yes | age, sex, surgical cohort, ASA, history of chronic pain, procedure length and use of coblation | |
+| 3 | Adults | Time in recovery | Yes | | |
+| 4 | Adults | Same discharge | Yes | | |
+| 5 | Adults | Opioid on discharge | Yes | | Model fails to converge |
+| 6 | Adults | Return to ED at 7 days | Yes | | Model fails to converge |
+
+**TODO: caption to be supplied by the authors.**
+:::
+
+
+The following secondary outcomes were not modelled with the associated justification:
+
+ -  Length of admission (Days) – Same day discharge has been modelled as a logistic regression instead due to the multi-modal disruption of length of admission.
+ 
+-  Median pain score – Significant number of missing data as pain scores not being collected in recovery, only on the ward.
+
+-  Discharge medications – Medication prescriptions at the point of discharge likely represent the variation in discharging clinician rather than anaesthetic clinician
+
+-  Return to theatre– Lack of distribution of outcome
+
+-  Re-presentation – Lack of distribution of outcome
+
+- Deaths – Lack of distribution of outcome
+
+### Multilevel modelling
+
+An ANOVA was performed between model 0 (without multi-level modelling) and model 1 (with multi-level modelling) to establish the difference in model performance
+
+
+```{r}
+#| label: stbl-model-anova
+#| stbl-cap: "**ANOVA of Model 0 and Model 1.**"
+
+show_float(supp)
+```
+
+
+### Treatment group effects
+
+
+```{r}
+#| label: sfig-forrest-plot
+#| sfig-cap: "**Combined forest plots of treatment group effect for outcome measures.** Left to right: 1) unadjusted association between treatment group and rescue opioid administration (model 1), 2) adjusted association between treatment group and rescue opioid administration (model 2), 3) adjusted association between treatment group and time spent in recovery, 4) adjusted association between treatment group and same day discharge from hospital."
+#| fig-alt: "Combined forest plots of treatment group effect for outcome measures"
+#| fig-width: 12
+#| fig-height: 8
+
+show_float(supp, width = 12, height = 8, scale = 1)
+```
+
+
+### Results of Model 1 {#sec-sm-model-1}
+
+In Model 1 the variance explained by the anaesthetist ID was `r supp_stats$model_1_variance`
+
+
+```{r}
+#| label: stbl-model-1-fixed
+#| stbl-cap: "**Fixed effects of model 1.**"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-model-1-random
+#| sfig-cap: "**Random effects of model 1.**"
+#| fig-alt: "Random effects of model 1"
+#| fig-width: 6
+#| fig-height: 3
+
+show_float(supp, width = 6, height = 3, scale = 1)
+```
+
+
+### Results of Model 2 {#sec-sm-model-2}
+
+In Model 1 the variance explained by the anaesthetist ID was `r supp_stats$model_2_variance`
+
+
+```{r}
+#| label: stbl-model-2-fixed
+#| stbl-cap: "**Fixed effects of model 2.**"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-model-2-random
+#| sfig-cap: "**Random effects of model 2.**"
+#| fig-alt: "Random effects of model 2"
+#| fig-width: 6
+#| fig-height: 3
+
+show_float(supp, width = 6, height = 3, scale = 1)
+```
+
+
+### Results of Model 3 {#sec-sm-model-3}
+
+In Model 3 the standard deviation of the variance explained by the anaesthetist ID was `r supp_stats$model_3_sd_minutes` minutes.
+
+
+```{r}
+#| label: stbl-model-3-fixed
+#| stbl-cap: "**Fixed effects of model 3.**"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-model-3-random
+#| sfig-cap: "**Random effects of model 3.**"
+#| fig-alt: "Random effects of model 3"
+#| fig-width: 6
+#| fig-height: 3
+
+show_float(supp, width = 6, height = 3, scale = 1)
+```
+
+
+### Results of Model 4 {#sec-sm-model-4}
+
+In Model 4 the variance explained by the anaesthetist ID was `r supp_stats$model_4_variance`
+
+
+```{r}
+#| label: stbl-model-4-fixed
+#| stbl-cap: "**Fixed effects of model 4.**"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-model-4-random
+#| sfig-cap: "**Random effects of model 4.**"
+#| fig-alt: "Random effects of model 4"
+#| fig-width: 6
+#| fig-height: 3
+
+show_float(supp, width = 6, height = 3, scale = 1)
+```
+
+
+### Results of Model 5 {#sec-sm-model-5}
+
+In Model 5 the variance explained by the anaesthetist ID was `r supp_stats$model_5_variance`
+
+
+```{r}
+#| label: stbl-model-5-fixed
+#| stbl-cap: "**Fixed effects of model 5.**"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-model-5-random
+#| sfig-cap: "**Random effects of model 5.**"
+#| fig-alt: "Random effects of model 5"
+#| fig-width: 6
+#| fig-height: 3
+
+show_float(supp, width = 6, height = 3, scale = 1)
+```
+
+
+### Results of Model 6 {#sec-sm-model-6}
+
+In Model 6 the variance explained by the anaesthetist ID was `r supp_stats$model_6_variance`
+
+
+```{r}
+#| label: stbl-model-6-fixed
+#| stbl-cap: "**Fixed effects of model 6.**"
+
+show_float(supp)
+```
+
+```{r}
+#| label: sfig-model-6-random
+#| sfig-cap: "**Random effects of model 6.**"
+#| fig-alt: "Random effects of model 6"
+#| fig-width: 6
+#| fig-height: 3
+
+show_float(supp, width = 6, height = 3, scale = 1)
+```

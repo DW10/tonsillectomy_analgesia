@@ -1,16 +1,12 @@
 ```{r}
-#| eval: true
-#| echo: false
-#| message: false
+#| label: setup-manuscript
+#| include: false
 
-library(dplyr)
-library(ggplot2)
-# Read in plots and key values
-
-render_in_place <- TRUE
-knitr::opts_chunk$set(eval = FALSE)
-knitr::opts_chunk$set(echo = FALSE)
-
+# Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd)
+# and saved to data/main_objects.rds. Each labelled chunk below prints one of them with
+# show_float(), which also saves a copy named after the label into export/.
+source(here::here("scripts", "export_helpers.R"))
+main <- load_objects("main")
 ```
 
 # Manuscript
@@ -50,9 +46,54 @@ For each medication, route of administration and dose were extracted across thre
 
 To explore the prevalence and effectiveness of different analgesic strategies and the perioperative use of opioids, four clinically relevant treatment groups were predefined (@fig-mermaid-groups).  Group 1 represents a simple analgesic strategy without opioids (in line with current PROSPECT guidance) and includes patients administered paracetamol during the pre or intraoperative phases), a NSAID and dexamethasone.  Group 2 and 3 include patients receiving simple analgesia plus an intraoperative opioid (morphine or fentanyl respectively).  Group 4 represents patients who received simple analgesia with both morphine and fentanyl intraoperatively.  Patients receiving non-opioid analgesics (clonidine, ketamine, magnesium) were analysed separately.  
 
-<INSERT>
-@fig-mermaid-groups
-</INSERT>
+<!-- INSERT: fig-mermaid-groups -->
+
+```{mermaid}
+%%| label: fig-mermaid-groups
+%%| fig-cap: "**Flow chart of treatment group criteria.** Flowchart describing logic for eligibility for the treatment groups depending on the medications received."
+
+---
+
+config:
+
+theme: redux
+
+layout: dagre
+
+---
+
+flowchart LR
+
+A["Study population"] --> B{"Received Standard Simple Analgesia?<br>(paracetamol + NSAID + dexamethasone)"}
+
+B -- No --> C["EXCLUDED"]
+
+B -- Yes --> D{"Received Adjuncts?<br> (ketamine, magnesium or clonidine)"}
+
+D -- Yes --> C
+
+D -- No --> F{"Opioid Received?"}
+
+F -- No Opioids --> G["Treatment Group 1:<br>Simple Analgesia Only"]
+
+F -- morphine Only --> H["Treatment Group 2:<br>Simple Analgesia + morphine"]
+
+F -- fentanyl Only --> I["Treatment Group 3:<br>Simple Analgesia + fentanyl"]
+
+F -- morphine and fentanyl --> J["Treatment Group 4:<br>Simple Analgesia + morphine + fentanyl"]
+
+  
+
+style C fill:#ff6b6b
+
+style G fill:#4472ca
+
+style H fill:#f19a3e
+
+style I fill:#820b8a
+
+style J fill:#2a9d8f
+```
 
 ### Outcome Measures
 
@@ -70,65 +111,99 @@ Multilevel modelling was used to investigate the association between analgesic s
 
 3,656 patients had a surgical encounter matching the predefined OPCS codes during the study period.  @tbl-demo-all shows the demographics of both adult and paediatric cohorts.  
 
-<INSERT>
-@tbl-demo-all
-</INSERT>
+<!-- INSERT: tbl-demo-all -->
 
-Isolated tonsillectomy was the most common procedure in the adult cohort (n = 1,247, 89.3%; @tbl-demo-adult), whilst paediatric patients predominantly underwent adenotonsillectomy (n = 1,292, 57.2%; @tbl-demo-paed).  
+```{r}
+#| label: tbl-demo-all
+#| tbl-cap: "**Demographics - All patients.** Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented"
 
-<INSERT>
-@tbl-demo-adult
-</INSERT>
+show_float(main)
+```
+
+Isolated tonsillectomy was the most common procedure in the adult cohort (n = 1,247, 89.3%; @tbl-demo-adult), whilst paediatric patients predominantly underwent adenotonsillectomy (n = 1,292, 57.2%; @stbl-demo-paed).  
+
+<!-- INSERT: tbl-demo-adult -->
+
+```{r}
+#| label: tbl-demo-adult
+#| tbl-cap: "**Demographics - Adult patients.** Participant and surgical data for adult cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record)."
+
+show_float(main)
+```
 
 Across all surgical procedures, 1,038 (74.3%) adults and 2,026 (89.7%) children had an EPR diagnosis of chronic tonsillitis.  A diagnosis of OSA was recorded in 201 (14.4%) adults and 1,241 (54.9%) children.  
 There was less Coblation use recorded in adult patients compared with children (n = 43 (3.1%) and n = 1,344 (59.5%) respectively).
 
 ### Analgesic Exposure
 
-All intraoperative analgesic administration is shown in @tbl-analgesic-adult (adult) and @tbl-analgesic-paed (paediatric) for each surgical procedure group.
+All intraoperative analgesic administration is shown in @tbl-analgesic-adult (adult) and @stbl-analgesic-paed (paediatric) for each surgical procedure group.
 
-<INSERT>
-@tbl-analgesic-adult
-</INSERT>
+<!-- INSERT: tbl-analgesic-adult -->
+
+```{r}
+#| label: tbl-analgesic-adult
+#| tbl-cap: "**Anaesthetic management - Adults.** Intraoperative analgesia administration for adult patients stratified by surgical group. OME, Oral Morphine Equivalent."
+
+show_float(main)
+```
 
 #### Simple Analgesia – Paracetamol, NSAID, Dexamethasone
 
-Across the adult population, 82.9% (n = 1,158) of patients received a standard simple analgesia combination of paracetamol, diclofenac and dexamethasone (@fig-venn-adult A).  Of those that did not receive all three medications, the most common omission was diclofenac (@fig-venn-adult B).  In the paediatric cohort 72.0% (n = 1,627) of patients received complete simple analgesia (@fig-venn-paed A).  
-Paracetamol was given in 98.8% (n = 2,223) of paediatric cases, of which 20.4% (n = 456) was received as an oral dose prior to theatre (@fig-venn-paed B).  Oral pre-dosing was not common in the adult cohort (4.6%, n = 64), but overall perioperative use was similarly high (96.4%, n = 1,347).  There was no use of selective COX-2 inhibitor drugs during the study period.
+Across the adult population, 82.9% (n = 1,158) of patients received a standard simple analgesia combination of paracetamol, diclofenac and dexamethasone (@fig-venn-adult A).  Of those that did not receive all three medications, the most common omission was diclofenac (@fig-venn-adult B).  In the paediatric cohort 72.0% (n = 1,627) of patients received complete simple analgesia (@sfig-venn-paed A).  
+Paracetamol was given in 98.8% (n = 2,223) of paediatric cases, of which 20.4% (n = 456) was received as an oral dose prior to theatre (@sfig-venn-paed B).  Oral pre-dosing was not common in the adult cohort (4.6%, n = 64), but overall perioperative use was similarly high (96.4%, n = 1,347).  There was no use of selective COX-2 inhibitor drugs during the study period.
 
-<INSERT>
-@fig-venn-adult
-</INSERT>
+<!-- INSERT: fig-venn-adult -->
+
+```{r}
+#| label: fig-venn-adult
+#| fig-cap: "**Venn diagrams of adult intraoperative medications.** Distributions of complete intra-operative simple analgesia and intraoperative opioid administration in adults (A). Venn diagram to show the breakdown of the simple analgesia (B) and opioids given (C)"
+#| fig-alt: "Venn diagrams of adult intraoperative medications"
+#| fig-width: 18
+#| fig-height: 12
+
+show_float(main, width = 12, height = 8, scale = 1.5)
+```
 
 #### Opioid Analgesia
 
-89.5% (n = 1,250) of adult patients and 98.3% (n = 2,221) of paediatric patients received a strong opioid medication intraoperatively (@sec-sm-data-spec-intra-op-meds). @tbl-analgesic-adult  (adult) and @tbl-analgesic-paed (paediatric) show the breakdown of opioid medication use across each surgical procedure group.  
-Across all procedures, a single opioid strategy with fentanyl was most common in children, accounting for 95.4% of cases (n = 2,156; @fig-venn-paed C).  Adults received a mix of strategies, with 49.0% receiving fentanyl only (n = 685), 22.8% morphine only (n = 318), 17.7% receiving both (n = 247) and 10.5% receiving neither (n = 147), illustrated in @fig-venn-adult C).  The median intraoperative opioid dose administered to adults was 30mg (OME, IQR = 20-40mg). Patients receiving a regimen of simple analgesia plus morphine only received a median 20mg OME (IQR 20-30mg), contrasting with 30mg OME (IQR 15-30mg) in fentanyl only group, and 50mg (IQR 41-50mg) in the combined opioid group (@fig-opioid-histogram-adult).
+89.5% (n = 1,250) of adult patients and 98.3% (n = 2,221) of paediatric patients received a strong opioid medication intraoperatively (@sec-sm-data-spec-intra-op-meds). @tbl-analgesic-adult  (adult) and @stbl-analgesic-paed (paediatric) show the breakdown of opioid medication use across each surgical procedure group.  
+Across all procedures, a single opioid strategy with fentanyl was most common in children, accounting for 95.4% of cases (n = 2,156; @sfig-venn-paed C).  Adults received a mix of strategies, with 49.0% receiving fentanyl only (n = 685), 22.8% morphine only (n = 318), 17.7% receiving both (n = 247) and 10.5% receiving neither (n = 147), illustrated in @fig-venn-adult C).  The median intraoperative opioid dose administered to adults was 30mg (OME, IQR = 20-40mg). Patients receiving a regimen of simple analgesia plus morphine only received a median 20mg OME (IQR 20-30mg), contrasting with 30mg OME (IQR 15-30mg) in fentanyl only group, and 50mg (IQR 41-50mg) in the combined opioid group (@sfig-opioid-histogram-adult).
 Paediatric patients received a median fentanyl dose of 1.14 mcg.kg-1 (IQR = 0.99 – 1.85 mcg.kg-1) and a median morphine dose of 0.10 mg.kg-1 (IQR = 0.06 – 0.10 mg.kg-1).
 
 No patients received oxycodone, diamorphine or tramadol intraoperatively.
 
 #### Non-Opioid Analgesics – Clonidine, Ketamine, Magnesium
 
-The use of non-opioid analgesics was generally low across both adult and paediatric cohorts (@fig-venn-adjuncts).  4.3% (n =157) of patients received either clonidine, ketamine and or magnesium. Clonidine was used in 2.9% (n = 41) of adult cases and 0.1% (n = 3) of paediatric cases, whilst ketamine was used in 2.5% (n = 35) of adult cases and only one paediatric case. Magnesium was used in 6.9% (n = 96) adult cases and 0.2% (n = 4) paediatric cases. 
+The use of non-opioid analgesics was generally low across both adult and paediatric cohorts (@sfig-venn-adjuncts).  4.3% (n =157) of patients received either clonidine, ketamine and or magnesium. Clonidine was used in 2.9% (n = 41) of adult cases and 0.1% (n = 3) of paediatric cases, whilst ketamine was used in 2.5% (n = 35) of adult cases and only one paediatric case. Magnesium was used in 6.9% (n = 96) adult cases and 0.2% (n = 4) paediatric cases. 
 
 #### Combined Analgesic Strategies
 
 Across the adult cohort, the most common analgesic combination seen was Group 3 (n = 516, 36.9% of all adult patients), followed by Group 2 (n = 241, 17.2%) and Group 4 (n = 184, 13.1%)(@tbl-analgesic-adult). @fig-upset-adult shows the relative distribution of the different possible combinations of intraoperative analgesic agents.
 
-<INSERT>
-@fig-upset-adult
-</INSERT>
+<!-- INSERT: fig-upset-adult -->
 
-Across the paediatric cohort less heterogeneity in the analgesic combinations was observed (@fig-upset-paed).  The commonest strategy was Group 3 (n = 1,538, 68.0%), followed by Group 4 (n = 52, 2.3%).  28.0% (n = 632) of the paediatric cohort did not receive a complete combination of simple analgesia (paracetamol, NSAID and dexamethasone).
+```{r}
+#| label: fig-upset-adult
+#| fig-cap: "**UpSet graph of the combinations of adult intraoperative analgesia.** Distribution of the different analgesic combinations for adults patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication."
+#| fig-alt: "UpSet graph of the combinations of adult intraoperative analgesia"
+
+show_float(main)
+```
+
+Across the paediatric cohort less heterogeneity in the analgesic combinations was observed (@sfig-upset-paed).  The commonest strategy was Group 3 (n = 1,538, 68.0%), followed by Group 4 (n = 52, 2.3%).  28.0% (n = 632) of the paediatric cohort did not receive a complete combination of simple analgesia (paracetamol, NSAID and dexamethasone).
 
 ### Outcomes
 
-Across all surgical procedure groups, 55.7% (n = 778) of adult patients required rescue opioid administration in the first three postoperative hours, compared to 4.0% (n = 90) of children. In adults, the median dose of rescue opioid administered was 20mg (OME, IQR = 12.0-20mg), of which 98% was administered as fentanyl (n = 762).  The breakdown of administration across each surgical procedure group and secondary outcome measures are shown in @tbl-outcome-adult (adult) and @tbl-outcome-paed (paediatric).
+Across all surgical procedure groups, 55.7% (n = 778) of adult patients required rescue opioid administration in the first three postoperative hours, compared to 4.0% (n = 90) of children. In adults, the median dose of rescue opioid administered was 20mg (OME, IQR = 12.0-20mg), of which 98% was administered as fentanyl (n = 762).  The breakdown of administration across each surgical procedure group and secondary outcome measures are shown in @tbl-outcome-adult (adult) and @stbl-outcome-paed (paediatric).
 
-<INSERT>
-@tbl-outcome-adult
-</INSERT>
+<!-- INSERT: tbl-outcome-adult -->
+
+```{r}
+#| label: tbl-outcome-adult
+#| tbl-cap: "**Adult outcomes.** Outcome data for adult patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec."
+
+show_float(main)
+```
 
 
 Adults spent a median 70.8 minutes (IQR = 46.1 – 101.4 minutes) in first stage recovery, with 76.7% (n = 1072) going to be discharged home the same day.  The median length of stay from admission to hospital discharge was 0.43 days (IQR = 0.38-0.55).  Most adults (80.5%, n = 1,124) received a weak opioid prescription on discharge.  19 (1.4%) adult patients received a strong opioid prescription on discharge, all of which were continuations of an existing preoperative opioid prescription.  There were no newly initiated strong opioid prescriptions.
@@ -138,7 +213,7 @@ Across the whole study sample, the representation rate to the study centre’s e
 
 ### Association of Analgesic Strategy with Outcomes
 
-For the primary outcome measure, unadjusted (rescue analgesia and analgesic group) and adjusted models (incorporating clinically relevant covariates as fixed effects) are presented.  @fig-consort-modelling shows the composition of adult and paediatric cohorts used for model construction and the distribution of the associated treatment groups.  Given the lack of observed variation in the analgesic and opioid practices for the paediatric cohort, this analysis was confined to the adult cohort. 
+For the primary outcome measure, unadjusted (rescue analgesia and analgesic group) and adjusted models (incorporating clinically relevant covariates as fixed effects) are presented.  @sfig-consort-modelling shows the composition of adult and paediatric cohorts used for model construction and the distribution of the associated treatment groups.  Given the lack of observed variation in the analgesic and opioid practices for the paediatric cohort, this analysis was confined to the adult cohort. 
 
 #### Adults
 
@@ -146,7 +221,7 @@ After applying exclusion criteria, 975 patients were included in the analysis.  
 An unadjusted generalised linear mixed effects model (model 1) examining the association of rescue opioid administration with analgesic group (using group 1 as a reference) and nested by anaesthetic consultant identity demonstrated a 54.6% chance of receiving rescue opioids in recovery for patients who did not receive any intraoperative opioid (group 1).  Group 4 (simple analgesia plus morphine and fentanyl) demonstrated a significant negative association (OR 0.28, 95% CI 0.16-0.49).  Anaesthetist identity accounted for 5.0% (SD 23%) of the observed variation in the unadjusted model.  
 After adjusting for age, sex, surgical procedure type, ASA, chronic pain history, procedure length, use of a Coblation technique and intraoperative opioid dose (model 2), the association observed for Group 4 was no longer significant (OR 0.41, 95% CI 0.16-1.09).  Variation associated with the individual anaesthetist was 4.1% (SD 18%).
 
-The same model parameters were used to evaluate the secondary outcomes (@fig-forrest-plot). Treatment group 4 showed a reduced time in recovery (-42.1 minutes, 95% CI -66.7 to -17.5) and an increased, but not significant, odds ratio of 3.17 of same day discharge (95% CI 0.96 to 10.4).  Modelling of pain scores was not possible due to the lack of distribution in data and the model of presentations to the emergency department was non-significant with low confidence (@sec-sm-modelling). 
+The same model parameters were used to evaluate the secondary outcomes (@sfig-forrest-plot). Treatment group 4 showed a reduced time in recovery (-42.1 minutes, 95% CI -66.7 to -17.5) and an increased, but not significant, odds ratio of 3.17 of same day discharge (95% CI 0.96 to 10.4).  Modelling of pain scores was not possible due to the lack of distribution in data and the model of presentations to the emergency department was non-significant with low confidence (@sec-sm-modelling). 
 
 ## Discussion
 

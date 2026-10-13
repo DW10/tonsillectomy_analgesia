@@ -18,3 +18,8 @@ functions/*
 **/*.quarto_ipynb
 core*
 .Rapp.history
+_book/
+*_files/
+export/**/*.pdf
+export/**/*.html
+!export/**/.gitkeep

@@ -11,7 +11,7 @@ library(cli)
 library(stringr)
 library(gt)
 
-source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
+source(here::here("scripts", "settings.R"))
 sapply(functions_paths, source, verbose=FALSE)
 
 data_set_details <- load_dataset(data_set = data_set,
