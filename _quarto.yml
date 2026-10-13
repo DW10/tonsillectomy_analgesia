@@ -16,19 +16,14 @@ book:
     - supplementary_tables_and_figures.qmd
     - supplementary_materials.qmd
 
-# TODO: point at a local .bib file (e.g. a Better BibTeX auto-export in this folder).
-# Until then citations in manuscript.qmd will render as unresolved.
-# bibliography: references.bib
+
+bibliography: references.bib
 
 # Supplementary chapter labels / headings
 language:
   crossref-apx-prefix: 'Supplementary material'
   section-title-appendices: 'Supplementary material'
 
-# Main figures/tables are numbered Figure 1, 2... / Table 1, 2... across the whole book
-# (labels fig-* and tbl-*). Supplementary figures/tables use their own counters
-# (labels sfig-* and stbl-*, cited with @sfig-x / @stbl-x) and render as "Figure S1" / "Table S1".
-# Custom cross-reference types need Quarto >= 1.4.
 crossref:
   chapters: false
   custom:
