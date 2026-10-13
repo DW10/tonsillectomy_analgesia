@@ -10,6 +10,8 @@
 # show_float(), which also saves a copy named after the label into export/.
 source(here::here("scripts", "export_helpers.R"))
 main <- load_objects("main")
+
+df <- readRDS(file=here("data/anon_dataset.rds"))
 ```
 
 ## Background
@@ -29,19 +31,18 @@ Despite the large volume of these procedures undertaken, there remains little da
 
 A single centre, retrospective electronic patient record (EPR) cohort study.  Patients who underwent elective tonsillectomy, adenoidectomy, or combined adenotonsillectomy were included.  Procedures were identified using relevant OPCS Classification of Interventions and Procedures codes (@sec-sm-data-spec-procedures).  
 
-Data from the Epic (Epic Systems, Wisconsin) EPR for University College London Hospitals NHS Foundation Trust (UCLH), including The Royal National Throat, Nose and Ear Hospital were evaluated.  All patients who underwent surgery between 1st April, 2019 and 22nd June, 2026 were included.  Data analysis was undertaken using Python (v3.11.13) and `r version$version.string` (@sec-sm-analysis-code).  
+Data from the Epic (Epic Systems, Wisconsin) EPR for University College London Hospitals NHS Foundation Trust (UCLH), including The Royal National Throat, Nose and Ear Hospital were evaluated.  All patients who admitted for surgery between `r paste0(ordinal(day(min(df$Date))), " ", month(min(df$Date), label = TRUE, abbr = FALSE), ", ", year(min(df$Date)))` and `r paste0(ordinal(day(max(df$Date))), " ", month(max(df$Date), label = TRUE, abbr = FALSE), ", ", year(max(df$Date)))` were included.  Data analysis was undertaken using Python (v3.11.13) and `r version$version.string` (@sec-sm-analysis-code).  
   
 ### Data Specification
 
 #### Patient and Surgical Factors
 
-Using International Classification of Diseases (10) codes, indicators of relevant medical conditions were extracted from the patient’s active medical problem list at the time of the surgical encounter.  These included indicators of chronic pain states, preoperative opioid dependence, history of recurrent tonsillitis, sleep disordered breathing or obstructive sleep apnoea (@sec-sm-data-spec-pmh).  
-Patients were grouped into adult (≥ 18 years) and paediatric (< 18 years) cohorts based on age on admission to hospital.  
+Using International Classification of Diseases (10) codes, indicators of relevant medical conditions were extracted from the patient’s active medical problem list at the time of the surgical encounter.  These included indicators of chronic pain states, preoperative opioid dependence, history of recurrent tonsillitis, sleep disordered breathing or obstructive sleep apnoea (@sec-sm-data-spec-pmh). Patients were grouped into adult (≥ 18 years) and paediatric (< 18 years) cohorts based on age on admission to hospital.  
 
 #### Perioperative Analgesic Exposure
 
 Analgesic medication administration was identified from EPR timestamps within both preoperative medication and intraoperative anaesthetic records.  Simple analgesics were defined as paracetamol, any selective or non-selective COX inhibitors and dexamethasone. Opioid medications included morphine, fentanyl, oxycodone, diamorphine or tramadol.  Intraoperative use of remifentanil infusions were excluded due to their limited role in postoperative analgesia.  Non-opioid analgesics examined included clonidine, ketamine and magnesium.  Dexmedetomidine is not routinely used at UCLH perioperatively. 
-For each medication, route of administration and dose were extracted across three phases of care: 1) Preoperatively – four hours before procedure start, 2) Intraoperatively – start of anaesthesia to end of procedure, and 3) Postoperatively – from entry into recovery area to time of hospital discharge.  Combined opioid dosing was calculated using oral morphine equivalents (OME, milligrams) using standard methods (@sec-sm-analysis-code).  For paediatric patients, doses were adjusted for weight and presented as milligrams per kilogram (mg kg-1).
+For each medication, route of administration and dose were extracted across three phases of care: 1) Preoperatively – four hours before procedure start, 2) Intraoperatively – start of anaesthesia to end of procedure, and 3) Postoperatively – from entry into recovery area to time of hospital discharge. Combined opioid dosing was calculated using oral morphine equivalents (OME, milligrams) using standard methods (@sec-sm-analysis-code).  For paediatric patients, doses were adjusted for weight and presented as milligrams per kilogram (mg kg-1).
 
 #### Intraoperative Analgesic Strategy
 
@@ -83,16 +84,10 @@ F -- fentanyl Only --> I["Treatment Group 3:<br>Simple Analgesia + fentanyl"]
 
 F -- morphine and fentanyl --> J["Treatment Group 4:<br>Simple Analgesia + morphine + fentanyl"]
 
-  
-
 style C fill:#ff6b6b
-
 style G fill:#4472ca
-
 style H fill:#f19a3e
-
 style I fill:#820b8a
-
 style J fill:#2a9d8f
 ```
 
@@ -110,7 +105,7 @@ Multilevel modelling was used to investigate the association between analgesic s
 
 ### Study Population
 
-3,656 patients had a surgical encounter matching the predefined OPCS codes during the study period.  @tbl-demo-all shows the demographics of both adult and paediatric cohorts.  
+`r comma(nrow(df))` patients had a surgical encounter matching the predefined OPCS codes during the study period.  @tbl-demo-all shows the demographics of both adult and paediatric cohorts.  
 
 <!-- INSERT: tbl-demo-all -->
 
@@ -121,7 +116,7 @@ Multilevel modelling was used to investigate the association between analgesic s
 show_float(main)
 ```
 
-Isolated tonsillectomy was the most common procedure in the adult cohort (n = 1,247, 89.3%; @tbl-demo-adult), whilst paediatric patients predominantly underwent adenotonsillectomy (n = 1,292, 57.2%; @stbl-demo-paed).  
+Isolated tonsillectomy was the most common procedure in the adult cohort (n = `r comma(sum(df$adult==1))`, `r percent(sum(df$adult==1)/nrow(df), 0.1)`; @tbl-demo-adult), whilst paediatric patients predominantly underwent adenotonsillectomy (n = `r comma(sum(df$adult==0))`, `r percent(sum(df$adult==0)/nrow(df), 0.1)`; @stbl-demo-paed).  
 
 <!-- INSERT: tbl-demo-adult -->
 
@@ -132,8 +127,8 @@ Isolated tonsillectomy was the most common procedure in the adult cohort (n = 1,
 show_float(main)
 ```
 
-Across all surgical procedures, 1,038 (74.3%) adults and 2,026 (89.7%) children had an EPR diagnosis of chronic tonsillitis.  A diagnosis of OSA was recorded in 201 (14.4%) adults and 1,241 (54.9%) children.  
-There was less Coblation use recorded in adult patients compared with children (n = 43 (3.1%) and n = 1,344 (59.5%) respectively).
+Across all surgical procedures, `r comma(df %>%filter(adult == 1) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 1) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==1)), 0.1)`) adults and `r comma(df %>%filter(adult == 0) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 0) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==0)), 0.1)`) children had an EPR diagnosis of chronic tonsillitis.  A diagnosis of OSA was recorded in `r comma(df %>%filter(adult == 1) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 1) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==1)), 0.1)`) adults and `r comma(df %>%filter(adult == 0) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 0) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==0)), 0.1)`) children.  
+There was less Coblation use recorded in adult patients compared with children (n = `r comma(df %>%filter(adult == 1) %>% with(sum(coblation == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 1) %>% with(sum(coblation == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==1)), 0.1)`) and n = `r comma(df %>%filter(adult == 0) %>% with(sum(coblation == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 0) %>% with(sum(coblation == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==0)), 0.1)`) respectively).
 
 ### Analgesic Exposure
 
