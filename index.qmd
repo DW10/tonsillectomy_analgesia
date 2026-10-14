@@ -1,26 +1,30 @@
-```{r}
-#| include: false
-source(here::here("scripts", "inline_helpers.R"))
-```
 
-# Abstract {.unnumbered} 
+# Cover letter {.unnumbered}
 
-## Background
+::: {.callout-important title="Reviwer Notes"}
+This version is the final draft of the manuscript formatted for the BJA Open. 
+Access the online version here: [https://projects.dylanwhitaker.co.uk](https://projects.dylanwhitaker.co.uk).
+On the online version you can highlight and comment directly on the website. You can also download copies of the PDF or word doc here: 
 
-Severe pain following tonsillectomy is common and an important cause of delays to discharge and secondary postoperative complications. Clinical guidelines offer a range of perioperative analgesia recommendations but the optimal intraoperative opioid strategy remains unknown. This study aimed to evaluate existing variation in perioperative analgesic management and its impact on postoperative outcomes at a high-volume surgical centre. 
+To edit your author information please update your row in [this spreadsheet](https://docs.google.com/spreadsheets/d/123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY/edit?usp=sharing)
+:::
 
-## Methods
+::: {.flushright custom-style="Address" data-latex=""}
+Dr. Susan Goobie, MD, FRCPC,\
+Harvard Medical School,\
+Boston,\
+MA,\
+USA\
+:::
 
-A retrospective cohort study was performed to identify all patients undergoing tonsillectomy, adenoidectomy or combined adenotonsillectomy over a 7-year period using routinely collected data from the electronic patient record. Medication exposure and outcomes were extracted, and patients grouped on analgesic exposure to simple analgesia (paracetamol, dexamethasone and diclofenac), plus or minus additional morphine, fentanyl or both. Descriptive analysis of the analgesic exposure, treatment groups and multilevel modelling was performed. 
+Dear Dr Goobie,
+We thank you for the consideration of our **Clinical investigation** manuscript titled *“Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study”* to the BJA Open. 
 
-## Results
+Our study is a large scale, high fidelity single centre review of analgesic practice in patients undergoing tonsillectomy and adenoidectomy procedures. We believe <INSERT JUSTIFICATION>
 
-`r comma(nrow(df))` patients were included, of which `r N(df$adult == 0)` (`r P(df$adult == 0)`) were paediatric patients. `r P(adults$simple_analgesia_given)` of adults received all three components of simple analgesia compared to `r P(paeds$simple_analgesia_given)` of paediatric patients. Fentanyl was the most common intraoperative opioid in the paediatric cohort (`r P(fent_only(paeds))` of cases) but adults received a mix of strategies, with `r P(fent_only(adults))` receiving fentanyl only (n = `r N(fent_only(adults))`), `r P(morph_only(adults))` morphine only (n = `r N(morph_only(adults))`), `r P(both_opioids(adults))` receiving both (n = `r N(both_opioids(adults))`), and `r P(no_opioids(adults))` receiving neither (n = `r N(no_opioids(adults))`). There was no significant difference in the need for recovery opioids between treatment groups for adult patients, however simple analgesia with both morphine and fentanyl resulted in a reduced time in recovery (`r beta(3, "treatment_arm4")` minutes, 95% CI `r beta(3, "treatment_arm4", "conf.low")` to `r beta(3, "treatment_arm4", "conf.high")`).
+We hope <INSERT HOPES>
 
-## Conclusions
+Preliminary results were presented as an abstract at the World Airway Management Meeting, Florence, Italy on 5-8th November 2025. We can confirm that none of this work is under consideration at any other journal and is not posted as a preprint.
 
-Intraoperative opioid strategies varied for adults undergoing tonsillectomy procedures, but were more homogeneous in paediatric patients. When accounting for patient, surgical and anaesthetic factors, a combined opioid regime of fentanyl and morphine with complete simple analgesia was associated with better odds of same day discharge and shorter time in hospital. This treatment plan was not associated with an increased odds of opioid prescriptions on discharge nor representations to the emergency department. Further work to address the limitations of data quality and possible causality is needed to build evidence for intra-operative opioids in tonsillectomy. 
-
-## Keywords:
-
-Tonsillectomy, Analgesia, Pain, Opioids, Retrospective, Multi-level modelling
+Many thanks,
+The authors

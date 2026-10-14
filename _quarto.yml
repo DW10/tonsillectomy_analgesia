@@ -6,8 +6,7 @@ project:
   pre-render: pre_render.R
 
 book:
-  title: 'Intraoperative Opioid Choice in Adult and Paediatric Tonsillectomy: A Retrospective
-    Electronic Patient Record Cohort Study'
+  title: 'Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
   chapters:
     - index.qmd
     - manuscript.qmd
