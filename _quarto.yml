@@ -9,7 +9,9 @@ book:
   title: 'Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
   chapters:
     - index.qmd
+    - abstract.qmd
     - manuscript.qmd
+    - author_contributions.qmd
     - references.qmd
   appendices:
     - supplementary_tables_and_figures.qmd
