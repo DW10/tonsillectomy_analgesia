@@ -300,9 +300,6 @@ rescue_opioid_prop_table <- data.frame(
   N_Patients = sapply(cutoffs, function(t) {
     length(unique(opioid_sensititvity_df$EncounterKey[opioid_sensititvity_df$med_time <= t*60]))
   }),
-   Proportion_of_reciving = sapply(cutoffs, function(t) {
-    round((length(unique(opioid_sensititvity_df$EncounterKey[opioid_sensititvity_df$med_time <= t*60])) / length(unique(opioid_sensititvity_df$EncounterKey[!is.na(opioid_sensititvity_df$med_time)])))*100, 2)
-  }),
     Proportion = sapply(cutoffs, function(t) {
     round((length(unique(opioid_sensititvity_df$EncounterKey[opioid_sensititvity_df$med_time <= t*60])) / n_total_patients)*100, 2)
   })
@@ -314,7 +311,6 @@ sens_analysis_rescue <- rescue_opioid_prop_table %>% gt() %>%
   cols_label(
     Hours = "Time (hours)",
     N_Patients = "Patients receiving 1 or more doses (N)",
-    Proportion_of_reciving = "Proportion of patients who received an opioid (%)",
     Proportion = "Proportion of all patients (%)"
   )
 
@@ -359,18 +355,23 @@ supp_objects_extra$sfig_sens_rescue_opioid <- sens_analysis_rescue_plot
 cutoffs <- c(1,2,3,4,5,6,7,14,30, 35)
 n_total_patients <- length(unique(df$EncounterKey))
 
+# readmit_sensititvity_df has one row per patient: the dataset script ends with
+# select(readmit_time) after group_by(PatientDurableKey), so the only columns kept are
+# PatientDurableKey (the grouping variable, masked by the anonymisation script) and
+# readmit_time. It has no index_encounter_key column, so count patients by PatientDurableKey.
+stopifnot(all(c("PatientDurableKey", "readmit_time") %in% names(readmit_sensititvity_df)))
+
+patients_within <- function(t) {
+  length(unique(readmit_sensititvity_df$PatientDurableKey[which(readmit_sensititvity_df$readmit_time <= t)]))
+}
+n_ever_readmitted <- length(unique(readmit_sensititvity_df$PatientDurableKey[which(!is.na(readmit_sensititvity_df$readmit_time))]))
+
 # Calculate proportion for each time point
 prop_table <- data.frame(
   Days = cutoffs,
-  N_Patients = sapply(cutoffs, function(t) {
-    length(unique(readmit_sensititvity_df$index_encounter_key[readmit_sensititvity_df$readmit_time <= t]))
-  }),
-   Proportion_of_readmitted = sapply(cutoffs, function(t) {
-    round((length(unique(readmit_sensititvity_df$index_encounter_key[readmit_sensititvity_df$readmit_time <= t])) / length(unique(readmit_sensititvity_df$index_encounter_key[!is.na(readmit_sensititvity_df$readmit_time)])))*100, 2)
-  }),
-    Proportion_of_all = sapply(cutoffs, function(t) {
-    round((length(unique(readmit_sensititvity_df$index_encounter_key[readmit_sensititvity_df$readmit_time <= t])) / n_total_patients)*100, 2)
-  })
+  N_Patients = sapply(cutoffs, patients_within),
+  Proportion_of_readmitted = sapply(cutoffs, function(t) round(patients_within(t) / n_ever_readmitted * 100, 2)),
+  Proportion_of_all = sapply(cutoffs, function(t) round(patients_within(t) / n_total_patients * 100, 2))
 )
 
 sens_analysis_ed <- prop_table %>% gt() %>%
