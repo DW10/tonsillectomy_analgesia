@@ -1,5 +1,7 @@
 
+::: {.content-visible when-profile="website"}
 # Manuscript
+:::
 
 ```{r}
 #| label: setup-manuscript

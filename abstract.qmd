@@ -21,6 +21,8 @@ A retrospective cohort study was performed to identify all patients undergoing t
 
 Intraoperative opioid strategies varied for adults undergoing tonsillectomy procedures, but were more homogeneous in paediatric patients. When accounting for patient, surgical and anaesthetic factors, a combined opioid regime of fentanyl and morphine with complete simple analgesia was associated with better odds of same day discharge and shorter time in hospital. This treatment plan was not associated with an increased odds of opioid prescriptions on discharge nor representations to the emergency department. Further work to address the limitations of data quality and possible causality is needed to build evidence for intra-operative opioids in tonsillectomy. 
 
+::: {.content-visible when-profile="website"}
 ## Keywords:
 
 Tonsillectomy, Analgesia, Pain, Opioids, Retrospective, Multi-level modelling
+:::

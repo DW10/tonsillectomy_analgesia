@@ -1,0 +1,19 @@
+---
+title: 'Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
+title-page: true
+keywords:
+  - Tonsillectomy
+  - Analgesia
+  - Pain
+  - Opioids
+  - Retrospective
+  - Multi-level modelling
+---
+
+{{< include ../abstract.qmd >}}
+
+{{< include ../manuscript.qmd >}}
+
+{{< include ../author_contributions.qmd >}}
+
+{{< include ../references.qmd >}}

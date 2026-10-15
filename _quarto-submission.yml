@@ -2,7 +2,12 @@ project:
   type: default
   output-dir: _submission
   execute-dir: project
-  render: []
+  render:
+    - submission/manuscript.qmd
+
+filters:
+  - at: pre-ast
+    path: title-page.lua
 
 format:
   docx:
