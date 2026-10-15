@@ -2,6 +2,7 @@ project:
   type: default
   output-dir: _submission
   execute-dir: project
+  post-render: submission/post-render.R
   render:
     - submission/cover-letter.qmd
     - submission/manuscript.qmd
