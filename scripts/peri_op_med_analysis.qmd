@@ -1215,9 +1215,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "/data/upset_adult.
 
 upset_plot_paed <- plot_upset_graph(data_set = df %>% filter(adult==0))
 
-# FIXME (flagged, not changed): this saves `upset_plot_adult`, not `upset_plot_paed`,
-# so the paediatric UpSet figure currently shows the ADULT data. Left as-is pending author review.
-label_save_upset(upset_plot_adult, subtitle = "", filepath = "/data/upset_paed.png")
+label_save_upset(upset_plot_paed, subtitle = "", filepath = "/data/upset_paed.png")
 
 ```
 

@@ -44,7 +44,7 @@ show_float(supp)
 show_float(supp)
 ```
 
-**Anaesthetic management - Paediatrics.** Intraoperative analgesia administration for paediatric patients stratified by surgical group. OME, Oral Morphine Equivalent. Weight based dosed calculated where patient weight available.
+**Anaesthetic management - Paediatrics.** Intraoperative analgesia administration for paediatric patients stratified by surgical group. OME, Oral Morphine Equivalent. Weight based dosed calculated where patient weight available. Treatment group shown as percentage of all patients who received complete simple analgesia.
 :::
 
 ::: {#stbl-outcome-adult}
@@ -55,7 +55,7 @@ show_float(supp)
 show_float(main, key = "tbl_outcome_adult")
 ```
 
-**Adult outcomes.** Outcome data for adult patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec.
+**Adult outcomes.** Outcome data for adult patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-missing-data.
 :::
 
 ::: {#stbl-outcome-paed}
@@ -65,7 +65,7 @@ show_float(main, key = "tbl_outcome_adult")
 show_float(supp)
 ```
 
-**Paediatric outcomes.** Outcome data for paediatric patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec.
+**Paediatric outcomes.** Outcome data for paediatric patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-missing-data.
 :::
 
 ## Supplementary Figures
@@ -143,5 +143,5 @@ show_float(supp, width = 10, height = 5, scale = 1)
 show_float(supp)
 ```
 
-**Combinations of paediatric intraoperative analgesia.** Distribution of different analgesic combinations for paediatric patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication.
+**Combinations of paediatric intraoperative analgesia.** Distribution of different analgesic combinations for paediatric patients. Upper vertical bar graph showing the total count of each combination of analgesia with treatment groups coloured. Lower left horizontal bar graph showing the total count of patients receiving each specific medication. Bars coloured with according to the treatment group: Group 1 - Blue, Group 2 - Yellow, Group 3 - Purple, Group 4 - Green.
 :::

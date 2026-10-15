@@ -21,11 +21,6 @@ supp_stats <- load_stats()
 ### Surgical procedure classification {#sec-sm-data-spec-procedures}
 
 Surgical technique was assessed using the procedure codes recorded for each case using the OPSC-4.9 version as described in @stbl-surgical-criteria.
-For each case, the procedure was included into a group if one of the eligible OPSC codes was identified (Inclusive of all 3-digit codes within each 2-digit code) and then subsequently removed if an exclusion code was also present.
-To exclude concurrent procedures within the mouth where the tonsils may additionally be removed (such as a glossectomy or mandibular resection), the remainder of the F chapter was excluded across the simple procedure groups.
-The use of coblation and electrocautery were determined with the same method and then added as a feature to each procedure.
-The three surgical groups were checked to ensure mutual exclusivity.
-
 
 ::: {#stbl-surgical-criteria}
 | Surgical Group | Eligible OPSC codes | Exclusion OPSC codes |
@@ -39,14 +34,18 @@ The three surgical groups were checked to ensure mutual exclusivity.
 **Criteria for surgical cohort eligibility.**
 :::
 
+For each case, the procedure was included into a group if one of the eligible OPSC codes was identified (Inclusive of all 3-digit codes within each 2-digit code) and then subsequently removed if an exclusion code was also present.
+To exclude concurrent procedures within the mouth where the tonsils may additionally be removed (such as a glossectomy or mandibular resection), the remainder of the F chapter was excluded across the simple procedure groups.
+The use of coblation and electrocautery were determined with the same method and then added as a feature to each procedure.
+The three surgical groups were checked to ensure mutual exclusivity.
 
-Only where a technique is explicitly coded is it auditable.
+Only where a technique is explicitly coded by the codeing department review of operation notes, is it auditable.
 For example, all ENT procedures are set up with electrocautery (diathermy) as standard, but only in cases where explicit mention is made in the surgical operation note are the coded then captures and auditable.
 Thus, surgical technical may be significantly underestimating the true prevalence.
 
 ### Past medical history {#sec-sm-data-spec-pmh}
 
-For a patient to be considered as ‘positive’ for a previous medical condition their problem list was searched for eligible ICD-10-5th edition codes, where a 3-digit code was provided, this included all of the 4-digit codes inclusive, unless the 4-digit code was provided in the exclusion ICD codes. 
+For a patient to be considered as ‘positive’ for a previous medical condition their problem list was searched for eligible ICD-10-5th edition codes, where a 3-digit code was provided, this included all of the 4-digit codes inclusive, unless the 4-digit code was provided in the exclusion ICD codes. The codes used are described in @stbl-pmh-criteria.
 
 
 ::: {#stbl-pmh-criteria}
@@ -63,6 +62,7 @@ For a patient to be considered as ‘positive’ for a previous medical conditio
 
 ### Intra-operative medications {#sec-sm-data-spec-intra-op-meds}
 
+Intraoperative medication were grouped as per @stbl-intra-op-formulations.
 Broadly the majority of preparations provided on the intra-operative MAR were intravenous preparations but there are a few examples of oral medications being given.
 All medication doses in theatre were converted to mg and if given in discrete doses within a theatre episode where pooled to produce the total intra-operative dose.
 
@@ -92,7 +92,7 @@ A review of Aspirin, Naproxen, Celecoxib and ibuprofen revealed no intra-operati
 ### Discharge medications {#sec-sm-data-spec-discharge}
 
 Discharge medications were counted if there were prescribed on the discharge paperwork, regardless if they were dispensed from hospital pharmacy, sent to the community pharmacy or patients were instructed to purchase over the counter.
-Specific formulations of discharge medications have not been provided as clinicians will prescribe a generic medication and dose regime and formulation details are not provided on the discharge paperwork.
+Specific formulations of discharge medications have not been provided as clinicians will prescribe a generic medication and dose regime and, the formulation details are not provided on the discharge paperwork.
 
 
 ::: {#stbl-discharge-formulations}
@@ -122,13 +122,13 @@ The level of missing data for each of the key variables were assessed as reporte
 show_float(supp)
 ```
 
-TODO: caption to be supplied by the authors.
+**Table of missing data.** Table of missing data broken down by age group. Columns not shown were complete. 
 :::
 
 
 ## Oral morphine equivalence {#sec-sm-ome}
 
-For each medication the routes were grouped and a conversion value attributed using the standard equivalence table provided by Neilsen et al.
+For each medication the routes were grouped and a conversion value attributed using the standard equivalence table provided by Neilsen et al. @nielsenSynthesisOralMorphine2016
 Oral morphine equivalence (OME) was then calculated as a weighted sum using the standard OME equation.
 $$
 \begin{aligned}
@@ -147,15 +147,9 @@ Distributions and mean dose sum of each opioid within each treatment group are d
 
 Data was extracted from the EPR and stored in a proprietary data model in the parquet format. Extraction code is not provided as it contains intellectual property of the EPR provider Epic, Wisconsin.
 
-The dataset was cleaned to remove known issues by the script `import_proccess.qmd`.
+The code is held at the following github repository with directions to generate and analyse the dataset: [https://github.com/DW10/tonsillectomy_analgesia](https://github.com/DW10/tonsillectomy_analgesia)
 
-The tonsillectomy dataset was produced by the script `peri_op_med_dataset.qmd`.
-
-The analysis was performed by the script `peri_op_med_analysis.qmd` and supplementary analysis and materials in `peri_op_med_supp_mat.qmd`. 
-
-The code is held at the following github repository [https://github.com/DW10/tonsillectomy_analgesia](https://github.com/DW10/tonsillectomy_analgesia)
-
-The R packages used, with the versions installed when the analysis was run, are listed in @stbl-r-packages.
+The R packages used, with the versions installed at the time of analysis, are listed in @stbl-r-packages.
 
 ::: {#stbl-r-packages}
 ```{r}
@@ -185,7 +179,7 @@ A threshold time of 3 hours was selected given the clinical rational of any inte
 show_float(supp)
 ```
 
-TODO: caption to be supplied by the authors.
+**Sensitivity analysis of rescue opioid.** Table of rescue opioid dose timings. For patients given more than one dose only the first dose was taken.
 :::
 
 ::: {#sfig-sens-rescue-opioid}
@@ -218,7 +212,7 @@ A sensitivity analysis was performed to understand the distribution of the data 
 show_float(supp)
 ```
 
-TODO: caption to be supplied by the authors.
+**Sensitivity analysis of representation.** Table of time to presentation to the UCLH emergency department only.
 :::
 
 ::: {#sfig-sens-ed}
@@ -296,7 +290,7 @@ show_float(supp, width = 8, height = 5, scale = 1.8)
 
 A direct acyclic graph was generated using expert domain konwledge to understand and specific the suitable co-variants for the associational model. 
 
-![TODO: caption to be supplied by the authors. (Old placeholder caption was: 'A simple workflow diagram showing step A leading to step B.')](figures/sfig-dag.png){#sfig-dag}
+![**Directed Acyclic Graph of variables.** A Directed Acyclic Graph of causal relationships between variables extracted in the study. Non-observable variables shown with dotted edges. Coloured boxed show the three overall areas of co-variants (surgical, anaesthetic and patient).](figures/sfig-dag.png){#sfig-dag}
 
 ### Models parameters {#sec-sm-model-parameters}
 
@@ -312,7 +306,7 @@ A direct acyclic graph was generated using expert domain konwledge to understand
 | 5 | Adults | Opioid on discharge | Yes | | Model fails to converge |
 | 6 | Adults | Return to ED at 7 days | Yes | | Model fails to converge |
 
-**TODO: caption to be supplied by the authors.**
+**Table of multi-level modelling parameters for each model.**
 :::
 
 
