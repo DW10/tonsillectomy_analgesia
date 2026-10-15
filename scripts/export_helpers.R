@@ -41,6 +41,13 @@ load_stats <- function() {
   readRDS(path)
 }
 
+# Drop gt's cell-level styling (fills such as \cellcolor, bold/italic text styles) so Word and
+# PDF tables use the native table defaults. Structure (headers, spanners, footnotes) is kept.
+plain_gt <- function(x) {
+  x[["_styles"]] <- x[["_styles"]][0, ]
+  x
+}
+
 # Save + return a labelled float.
 #   store   list from load_objects(); the object is `store[[gsub("-", "_", label)]]`
 #   width, height, scale, dpi  export size in inches for ggplots (as the old ggsave() calls)
@@ -64,6 +71,8 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
   dir.create(tbl_dir, recursive = TRUE, showWarnings = FALSE)
 
   if (inherits(x, "gt_tbl")) {
+    # HTML keeps the styled table; PDF and Word (and the exported copies) use native defaults
+    if (!knitr::is_html_output()) x <- plain_gt(x)
     gt::gtsave(x, file.path(tbl_dir, paste0(label, ".docx")))
     gt::gtsave(x, file.path(tbl_dir, paste0(label, ".html")))
     # PNG needs the optional webshot2 package + Chrome; skipped silently if unavailable
@@ -72,12 +81,16 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
     if (knitr::is_latex_output()) {
       # gt writes its own \begin{table} float, which LaTeX rejects inside the float Quarto
       # already wraps around tbl-/stbl- chunks ("Not in outer par mode"). Keep the tabular only.
-      tex <- as.character(gt::as_latex(x))
+      lx <- gt::as_latex(x)
+      # as_latex() attaches the LaTeX packages the table needs (colortbl for \cellcolor,
+      # booktabs, multirow, ...). They must be passed on or the preamble lacks them.
+      latex_deps <- attr(lx, "knit_meta")
+      tex <- as.character(lx)
       tex <- gsub("\\\\begin\\{table\\}(\\[[^]]*\\])?\\s*", "", tex)
       tex <- gsub("\\\\end\\{table\\}", "", tex)
       # \caption* is only valid inside a float: keep any gt title/subtitle as plain text
       tex <- gsub("\\\\caption\\*(\\{(?:[^{}]++|(?1))*\\})(\\s*\\\\\\\\)?", "\\\\noindent\\1\\\\par\\\\smallskip", tex, perl = TRUE)
-      return(knitr::asis_output(tex))
+      return(knitr::asis_output(tex, meta = latex_deps))
     }
     return(x)
   }
