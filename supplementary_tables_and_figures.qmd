@@ -2,7 +2,7 @@
 # Tables and Figures {#sec-sm-tables-figures}
 
 ```{r}
-#| label: setup-supplementary
+#| label: setup-supp-tables-figures
 #| include: false
 
 # Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd and

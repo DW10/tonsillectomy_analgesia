@@ -8,6 +8,10 @@ project:
 filters:
   - at: pre-ast
     path: title-page.lua
+  - at: pre-quarto
+    path: xref-hardcode.lua
+  - at: post-quarto
+    path: submission-split.lua
 
 format:
   docx:

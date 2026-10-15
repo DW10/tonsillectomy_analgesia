@@ -2,7 +2,7 @@
 # Supplementary materials {#sec-sm-materials}
 
 ```{r}
-#| label: setup-supplementary
+#| label: setup-supp-materials
 #| include: false
 
 # Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd and

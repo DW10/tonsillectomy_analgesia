@@ -1,6 +1,9 @@
 ---
 title: 'Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
+metadata-files:
+  - xref-map.yml
 title-page: true
+submission-keep: prose
 keywords:
   - Tonsillectomy
   - Analgesia
@@ -17,3 +20,12 @@ keywords:
 {{< include ../author_contributions.qmd >}}
 
 {{< include ../references.qmd >}}
+
+<!-- Included only so Quarto numbers every Figure S / Table S reference exactly as in the
+     book. submission-split.lua removes this block (and every float) after cross-references
+     are resolved. -->
+::: {.supp-only}
+{{< include ../supplementary_tables_and_figures.qmd >}}
+
+{{< include ../supplementary_materials.qmd >}}
+:::
