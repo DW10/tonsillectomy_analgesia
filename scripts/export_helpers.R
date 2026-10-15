@@ -92,6 +92,13 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
       tex <- gsub("\\\\caption\\*(\\{(?:[^{}]++|(?1))*\\})(\\s*\\\\\\\\)?", "\\\\noindent\\1\\\\par\\\\smallskip", tex, perl = TRUE)
       return(knitr::asis_output(tex, meta = latex_deps))
     }
+    if (isTRUE(knitr::pandoc_to("docx"))) {
+      # gt's Word output sets the table width to "auto", so Word shrinks the table to its
+      # content. Make it 100% of the page (text) width instead; Word autofits the columns.
+      xml <- gt::as_word(x)
+      xml <- sub('<w:tblW w:type="auto" w:w="0">', '<w:tblW w:type="pct" w:w="5000">', xml, fixed = TRUE)
+      return(knitr::asis_output(paste("```{=openxml}", xml, "```\n\n", sep = "\n")))
+    }
     return(x)
   }
 
