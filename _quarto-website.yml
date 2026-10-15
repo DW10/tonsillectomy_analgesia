@@ -26,9 +26,11 @@ format:
     fig-align: center
     fig-pos: H
     fig-dpi: 300
+    include-in-header: submission/pdf-page-numbers.tex
     output-file: tonsillectomy_manuscript.pdf
   docx:
     toc: true
+    reference-doc: submission/reference.docx
     fig-align: center
     fig-dpi: 300
     output-file: tonsillectomy_manuscript

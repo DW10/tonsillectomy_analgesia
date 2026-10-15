@@ -3,3 +3,10 @@ project:
   output-dir: _submission
   execute-dir: project
   render: []
+
+format:
+  docx:
+    toc: false
+    reference-doc: submission/reference.docx
+    fig-align: center
+    fig-dpi: 300

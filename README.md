@@ -120,6 +120,7 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
 - `_quarto.yml` holds shared settings (bibliography, cross-reference types, execute options) **and the author/affiliation block, the single source of truth** for all profiles. Do not add lists (`chapters`, `render`, `filters`) here: profile lists are appended, not replaced.
 - `_quarto-website.yml` holds the book configuration and output formats.
 - `_quarto-submission.yml` holds the submission configuration.
+- **Page numbers**: Word outputs use `submission/reference.docx` (centred PAGE-field footer); the PDF uses `submission/pdf-page-numbers.tex`.
 - **Authors** come from the shared plume Google sheet. `pre_render.R` runs `scripts/plume_authors.R` before every render, which rewrites only the `author:` / `affiliations:` keys of `_quarto.yml`. Edit authors in the sheet, not in the YAML. If Google sign-in or the network is unavailable it warns and keeps the existing YAML; set `SKIP_AUTHOR_REFRESH=true` to skip it.
 
 Render artefacts (`*_cache/`, `index.tex/.typ/.aux/.log/.toc`, `_book/`, `_submission/`) are git-ignored. If a render misbehaves, delete the caches or run `quarto render --cache-refresh`.
