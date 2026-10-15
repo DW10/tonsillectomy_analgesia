@@ -73,7 +73,7 @@ Multilevel modelling was used to investigate the association between analgesic s
 
 ```{r}
 #| label: tbl-demo-all
-#| tbl-cap: "**Demographics table - All patients.** Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record). Missing data count and proportion of total cohort presented"
+#| tbl-cap: "**Demographics table - All patients.** Participant baseline demographics and clinical history stratified by adult and paediatric cohorts. Categorical data as number (%). IQR (Interquartile Range)"
 
 show_float(main)
 ```

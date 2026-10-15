@@ -5,7 +5,7 @@ config:
 ---
 flowchart LR
 
-A["Study population"] --> B{"Received Standard Simple Analgesia?<br>(paracetamol + NSAID + dexamethasone)"}
+A["Study population"] --> B{"Received Standard Simple analgesia?<br>(paracetamol + NSAID + dexamethasone)"}
 
 B -- No --> C["EXCLUDED"]
 
@@ -15,16 +15,16 @@ D -- Yes --> C
 
 D -- No --> F{"Opioid Received?"}
 
-F -- No Opioids --> G["Treatment Group 1:<br>Simple Analgesia Only"]
+F -- no opioids --> G["Treatment Group 1:<br>Simple analgesia only"]
 
-F -- morphine Only --> H["Treatment Group 2:<br>Simple Analgesia + morphine"]
+F -- morphine only --> H["Treatment Group 2:<br>Simple analgesia + morphine"]
 
-F -- fentanyl Only --> I["Treatment Group 3:<br>Simple Analgesia + fentanyl"]
+F -- fentanyl only --> I["Treatment Group 3:<br>Simple analgesia + fentanyl"]
 
-F -- morphine and fentanyl --> J["Treatment Group 4:<br>Simple Analgesia + morphine + fentanyl"]
+F -- morphine and fentanyl --> J["Treatment Group 4:<br>Simple analgesia + morphine + fentanyl"]
 
-style C fill:#ff6b6b
-style G fill:#4472ca
-style H fill:#f19a3e
-style I fill:#820b8a
-style J fill:#2a9d8f
+style C fill:#ffbcbc
+style G fill:#abc0e7
+style H fill:#f9d2a8
+style I fill:#c791ca
+style J fill:#9fd3cd
