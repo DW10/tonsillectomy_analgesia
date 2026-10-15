@@ -6,14 +6,10 @@ profile:
       - submission
 bibliography: references.bib
 csl: bja.csl
-
-# Supplementary chapter labels / headings
 language:
   crossref-sec-prefix: Supplementary materials
   crossref-apx-prefix: Supplementary materials
   section-title-appendices: Supplementary material
-
-# Every caption goes below its figure / table, in all formats
 fig-cap-location: bottom
 tbl-cap-location: bottom
 crossref:
