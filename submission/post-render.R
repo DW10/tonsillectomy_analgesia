@@ -2,7 +2,7 @@
 #
 # 1. Moves the Word files up out of _submission/submission/ so _submission/ holds
 #    cover-letter.docx, manuscript.docx, figures-tables.docx and supplement.docx.
-# 2. Builds _submission/figures/: every figure at journal quality (300 dpi PNG and vector PDF
+# 2. Builds _submission/figures/: every figure at journal quality (300 dpi PNG
 #    written by show_float() into export/figures/, plus the hand-made PNGs in figures/),
 #    named Figure_1, Figure_S1, ... in the order the figures appear in the documents.
 
@@ -37,7 +37,7 @@ dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 
 copy_figure <- function(label, name) {
   copied <- character(0)
-  for (ext in c("png", "pdf")) {
+  for (ext in "png") {
     for (dir in c("export/figures", "figures")) {
       src <- file.path(dir, paste0(label, ".", ext))
       if (file.exists(src)) {
@@ -60,6 +60,6 @@ for (i in seq_along(supp_labels)) {
   copy_figure(supp_labels[i], paste0("Figure_S", i))
   index <- c(index, sprintf("Figure_S%d = %s", i, supp_labels[i]))
 }
-writeLines(c("# Journal figure name = source label (export/figures/<label>.png|pdf)", index),
+writeLines(c("# Journal figure name = source label (export/figures/<label>.png)", index),
            file.path(fig_dir, "figure_index.txt"))
 message("Submission figures written to ", fig_dir, " (", length(index), " figures)")

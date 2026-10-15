@@ -96,7 +96,7 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
   }
 
   if (inherits(x, "ggplot") || inherits(x, "patchwork") || inherits(x, "ggarrange")) {
-    for (ext in c("png", "pdf")) {
+    for (ext in "png") {
       ggplot2::ggsave(
         filename = file.path(fig_dir, paste0(label, ".", ext)),
         plot = x, width = width, height = height, scale = scale, dpi = dpi, bg = "white"

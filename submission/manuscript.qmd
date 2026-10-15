@@ -13,8 +13,6 @@ keywords:
   - Multi-level modelling
 ---
 
-{{< include ../abstract.qmd >}}
-
 {{< include ../manuscript.qmd >}}
 
 {{< include ../author_contributions.qmd >}}

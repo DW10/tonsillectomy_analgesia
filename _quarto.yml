@@ -11,6 +11,7 @@ profile:
     - [website, submission]
 
 bibliography: references.bib
+csl: bja.csl
 
 # Supplementary chapter labels / headings
 language:

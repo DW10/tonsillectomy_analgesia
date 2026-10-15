@@ -1,7 +1,6 @@
 -- Builds a separate title page (BJA house style) from the title, author,
 -- affiliations and keywords metadata, followed by a page break. The corresponding
--- author line gives the name, postal address (their affiliations from the plume sheet,
--- or an `address` field if one is set) and e-mail. No phone number is printed.
+-- author line gives only the e-mail address.
 -- Runs only when the document sets `title-page: true`. Quarto copies the
 -- full author records to `authors` and reduces `author` to names.
 
@@ -88,21 +87,10 @@ local function build(meta)
     blocks:insert(pandoc.Para({ pandoc.Superscript(tostring(n)), pandoc.Space(), pandoc.Str(text) }))
   end
   for _, a in ipairs(corresponding) do
-    local parts = { author_name(a) }
-    if a.address then
-      table.insert(parts, str(a.address))
-    else
-      for _, ref in ipairs(as_list(a.affiliations)) do
-        local key = type(ref) == "table" and ref.ref and str(ref.ref) or str(ref)
-        table.insert(parts, by_id[key] or key)
-      end
-    end
-    local line = pandoc.Inlines({ pandoc.Str("*Corresponding author: " .. table.concat(parts, ", ")) })
     if a.email then
-      line:extend({ pandoc.Str("."), pandoc.Space(), pandoc.Str("E-mail:"), pandoc.Space(),
-        pandoc.Link(str(a.email), "mailto:" .. str(a.email)) })
+      blocks:insert(pandoc.Para({ pandoc.Str("*Corresponding author email:"), pandoc.Space(),
+        pandoc.Link(str(a.email), "mailto:" .. str(a.email)) }))
     end
-    blocks:insert(pandoc.Para(line))
   end
 
   local kw = {}
