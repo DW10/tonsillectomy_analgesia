@@ -24,11 +24,13 @@ USA\
 Dear Dr Goobie,
 We thank you for the consideration of our **Clinical investigation** manuscript titled *“Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study”* to the BJA Open. 
 
-Our study is a large scale, high fidelity single centre review of analgesic practice in patients undergoing tonsillectomy and adenoidectomy procedures. We believe <INSERT JUSTIFICATION>
+Tonsillectomy is one of the most common surgical procedures in the UK, severe postoperative pain remains an important cause of delayed discharge, representation to the emergency department and secondary bleeding. Current PROSPECT guidance recommends paracetamol, an NSAID and dexamethasone, but it gives no recommendation on intraoperative opioids and notes the lack of evidence.
 
-We hope <INSERT HOPES>
+Our study is a large, single-centre review of routinely collected electronic patient record data for over 3,000 adult and paediatric patients. We believe our detailed descriptive analysis of real world practice allows us to capture and understand the nature and degree of variation across a wide range of co-variants. Associational modeling under covered an interesting hypothesis of utilising multiple opioids to provide effective analgesia and ensure patient recovery and discharge flow. 
+
+We hope the work will demonstrate the utility of perioperative data pipelines and help define the question for a future randomised trial of intraoperative opioid strategy in tonsillectomy.
 
 Preliminary results were presented as an abstract at the World Airway Management Meeting, Florence, Italy on 5-8th November 2025. We can confirm that none of this work is under consideration at any other journal and is not posted as a preprint.
 
-Many thanks,
+Many thanks,\
 The authors
