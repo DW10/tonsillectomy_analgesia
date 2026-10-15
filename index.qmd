@@ -1,12 +1,16 @@
 
+::: {.content-visible when-profile="website"}
 # Cover letter {.unnumbered}
+:::
 
+::: {.content-visible when-profile="website"}
 ::: {.callout-important title="Reviwer Notes"}
 This version is the final draft of the manuscript formatted for the BJA Open. 
 Access the online version here: [https://projects.dylanwhitaker.co.uk](https://projects.dylanwhitaker.co.uk).
 On the online version you can highlight and comment directly on the website. You can also download copies of the PDF or word doc here: 
 
 To edit your author information please update your row in [this spreadsheet](https://docs.google.com/spreadsheets/d/123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY/edit?usp=sharing)
+:::
 :::
 
 ::: {.flushright custom-style="Address" data-latex=""}

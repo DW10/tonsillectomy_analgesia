@@ -3,7 +3,9 @@ project:
   output-dir: _submission
   execute-dir: project
   render:
+    - submission/cover-letter.qmd
     - submission/manuscript.qmd
+    - submission/supplement.qmd
 
 filters:
   - at: pre-ast

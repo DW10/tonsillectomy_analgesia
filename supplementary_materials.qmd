@@ -1,5 +1,7 @@
 
+::: {.content-visible when-profile="website"}
 # Supplementary materials {#sec-sm-materials}
+:::
 
 ```{r}
 #| label: setup-supp-materials
