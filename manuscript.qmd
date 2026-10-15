@@ -12,6 +12,7 @@
 # show_float(), which also saves a copy named after the label into export/.
 source(here::here("scripts", "export_helpers.R"))
 main <- load_objects("main")
+supp <- load_objects("supp")   # fig-forrest-plot is saved in the supplementary store
 
 # Dataset (df, adults, paeds), fitted models and formatters for inline results
 source(here::here("scripts", "inline_helpers.R"))
@@ -78,16 +79,7 @@ Multilevel modelling was used to investigate the association between analgesic s
 show_float(main)
 ```
 
-Isolated tonsillectomy was the most common procedure in the adult cohort (n = `r N(adults$cohort == "Tonsillectomy")`, `r P(adults$cohort == "Tonsillectomy")`; @tbl-demo-adult), whilst paediatric patients predominantly underwent adenotonsillectomy (n = `r N(paeds$cohort == "Adenotonsillectomy")`, `r P(paeds$cohort == "Adenotonsillectomy")`; @stbl-demo-paed).  
-
-<!-- INSERT: tbl-demo-adult -->
-
-```{r}
-#| label: tbl-demo-adult
-#| tbl-cap: "**Demographics table - Adult patients.** Participant and surgical data for adult cohort stratified by surgical procedure group. Categorical data as number (%). IQR (Interquartile Range), EPR (Electronic Patient Record)."
-
-show_float(main)
-```
+Isolated tonsillectomy was the most common procedure in the adult cohort (n = `r N(adults$cohort == "Tonsillectomy")`, `r P(adults$cohort == "Tonsillectomy")`; @stbl-demo-adult), whilst paediatric patients predominantly underwent adenotonsillectomy (n = `r N(paeds$cohort == "Adenotonsillectomy")`, `r P(paeds$cohort == "Adenotonsillectomy")`; @stbl-demo-paed).  
 
 Across all surgical procedures, `r comma(df %>%filter(adult == 1) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 1) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==1)), 0.1)`) adults and `r comma(df %>%filter(adult == 0) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 0) %>% with(sum(hx_chronic_tonsillitis == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==0)), 0.1)`) children had an EPR diagnosis of chronic tonsillitis.  A diagnosis of OSA was recorded in `r comma(df %>%filter(adult == 1) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 1) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==1)), 0.1)`) adults and `r comma(df %>%filter(adult == 0) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 0) %>% with(sum(hx_sleep_apnoea == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==0)), 0.1)`) children.  
 There was less Coblation use recorded in adult patients compared with children (n = `r comma(df %>%filter(adult == 1) %>% with(sum(coblation == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 1) %>% with(sum(coblation == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==1)), 0.1)`) and n = `r comma(df %>%filter(adult == 0) %>% with(sum(coblation == TRUE, na.rm = TRUE)))` (`r percent(df %>%filter(adult == 0) %>% with(sum(coblation == TRUE, na.rm = TRUE))/nrow(df%>%filter(adult==0)), 0.1)`) respectively).
@@ -152,16 +144,7 @@ Across the paediatric cohort less heterogeneity in the analgesic combinations wa
 
 ### Outcomes
 
-Across all surgical procedure groups, `r P(adults$opioid_given_post_op)` (n = `r N(adults$opioid_given_post_op)`) of adult patients required rescue opioid administration in the first three postoperative hours, compared to `r P(paeds$opioid_given_post_op)` (n = `r N(paeds$opioid_given_post_op)`) of children. In adults, the median dose of rescue opioid administered was `r med(adults$ome_post_op, 0)`mg (OME, IQR = `r q1(adults$ome_post_op, 1)`-`r q3(adults$ome_post_op, 0)`mg), of which `r P(adults$opioid_given_post_op_fentanyl, n_true(adults$opioid_given_post_op), 1)` was administered as fentanyl (n = `r N(adults$opioid_given_post_op_fentanyl)`).  The breakdown of administration across each surgical procedure group and secondary outcome measures are shown in @tbl-outcome-adult (adult) and @stbl-outcome-paed (paediatric).
-
-<!-- INSERT: tbl-outcome-adult -->
-
-```{r}
-#| label: tbl-outcome-adult
-#| tbl-cap: "**Adult outcomes.** Outcome data for adult patients stratified by surgical group. Return to theatre at UCLH and representation to UCLH emergency department only, cumulative measures at each time point. Eligible medications for discharge measured as classified in @sec-sm-data-spec."
-
-show_float(main)
-```
+Across all surgical procedure groups, `r P(adults$opioid_given_post_op)` (n = `r N(adults$opioid_given_post_op)`) of adult patients required rescue opioid administration in the first three postoperative hours, compared to `r P(paeds$opioid_given_post_op)` (n = `r N(paeds$opioid_given_post_op)`) of children. In adults, the median dose of rescue opioid administered was `r med(adults$ome_post_op, 0)`mg (OME, IQR = `r q1(adults$ome_post_op, 1)`-`r q3(adults$ome_post_op, 0)`mg), of which `r P(adults$opioid_given_post_op_fentanyl, n_true(adults$opioid_given_post_op), 1)` was administered as fentanyl (n = `r N(adults$opioid_given_post_op_fentanyl)`).  The breakdown of administration across each surgical procedure group and secondary outcome measures are shown in @stbl-outcome-adult (adult) and @stbl-outcome-paed (paediatric).
 
 
 Adults spent a median `r med(adults$recovery_time)` minutes (IQR = `r q1(adults$recovery_time)` – `r q3(adults$recovery_time)` minutes) in first stage recovery, with `r P(adults$same_day_discharge)` (n = `r N(adults$same_day_discharge)`) going to be discharged home the same day.  The median length of stay from admission to hospital discharge was `r med(adults$length_of_admission, 2)` days (IQR = `r q1(adults$length_of_admission, 2)`-`r q3(adults$length_of_admission, 2)`).  Most adults (`r P(adults$weak_opioid_on_discharge)`, n = `r N(adults$weak_opioid_on_discharge)`) received a weak opioid prescription on discharge.  `r N(adults$opioid_on_discharge)` (`r P(adults$opioid_on_discharge)`) adult patients received a strong opioid prescription on discharge, all of which were continuations of an existing preoperative opioid prescription.  There were no newly initiated strong opioid prescriptions.
@@ -179,7 +162,20 @@ After applying exclusion criteria, `r comma(nobs(mod(1)))` patients were include
 An unadjusted generalised linear mixed effects model (model 1) examining the association of rescue opioid administration with analgesic group (using group 1 as a reference) and nested by anaesthetic consultant identity demonstrated a `r ref_prob(1)` chance of receiving rescue opioids in recovery for patients who did not receive any intraoperative opioid (group 1).  Group 4 (simple analgesia plus morphine and fentanyl) demonstrated a significant negative association (OR `r or_est(1, "treatment_arm4")`, 95% CI `r or_lo(1, "treatment_arm4")`-`r or_hi(1, "treatment_arm4")`).  Anaesthetist identity accounted for `r re_var(1)` (SD `r re_sd(1)`) of the observed variation in the unadjusted model.  
 After adjusting for age, sex, surgical procedure type, ASA, chronic pain history, procedure length, use of a Coblation technique and intraoperative opioid dose (model 2), the association observed for Group 4 was no longer significant (OR `r or_est(2, "treatment_arm4")`, 95% CI `r or_lo(2, "treatment_arm4")`-`r or_hi(2, "treatment_arm4")`).  Variation associated with the individual anaesthetist was `r re_var(2)` (SD `r re_sd(2)`).
 
-The same model parameters were used to evaluate the secondary outcomes (@sfig-forrest-plot). Treatment group 4 showed a reduced time in recovery (`r beta(3, "treatment_arm4")` minutes, 95% CI `r beta(3, "treatment_arm4", "conf.low")` to `r beta(3, "treatment_arm4", "conf.high")`) and an increased, but not significant, odds ratio of `r or_est(4, "treatment_arm4")` of same day discharge (95% CI `r or_lo(4, "treatment_arm4")` to `r or_hi(4, "treatment_arm4")`).  Modelling of pain scores was not possible due to the lack of distribution in data and the model of presentations to the emergency department was non-significant with low confidence (@sec-sm-modelling). 
+The same model parameters were used to evaluate the secondary outcomes (@fig-forrest-plot). Treatment group 4 showed a reduced time in recovery (`r beta(3, "treatment_arm4")` minutes, 95% CI `r beta(3, "treatment_arm4", "conf.low")` to `r beta(3, "treatment_arm4", "conf.high")`) and an increased, but not significant, odds ratio of `r or_est(4, "treatment_arm4")` of same day discharge (95% CI `r or_lo(4, "treatment_arm4")` to `r or_hi(4, "treatment_arm4")`).  Modelling of pain scores was not possible due to the lack of distribution in data and the model of presentations to the emergency department was non-significant with low confidence (@sec-sm-modelling). 
+
+<!-- INSERT: fig-forrest-plot -->
+
+```{r}
+#| label: fig-forrest-plot
+#| fig-cap: "**Combined forest plots of treatment group effect for outcome measures.** Left to right: 1) unadjusted association between treatment group and rescue opioid administration (model 1), 2) adjusted association between treatment group and rescue opioid administration (model 2), 3) adjusted association between treatment group and time spent in recovery, 4) adjusted association between treatment group and same day discharge from hospital."
+#| fig-alt: "Combined forest plots of treatment group effect for outcome measures"
+#| fig-width: 12
+#| fig-height: 8
+
+# The saved object is still named sfig_forrest_plot (in the supplementary store)
+show_float(supp, key = "sfig_forrest_plot", width = 12, height = 8, scale = 1)
+```
 
 ## Discussion
 

@@ -50,16 +50,19 @@ plain_gt <- function(x) {
 
 # Save + return a labelled float.
 #   store   list from load_objects(); the object is `store[[gsub("-", "_", label)]]`
+#   key     optional object name in `store`, when it differs from the label
 #   width, height, scale, dpi  export size in inches for ggplots (as the old ggsave() calls)
 show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
-                       label = knitr::opts_current$get("label")) {
+                       label = knitr::opts_current$get("label"), key = NULL) {
   if (is.null(label) || grepl("^unnamed-chunk", label)) {
     stop("show_float() must be called from a chunk with a `label:` option.", call. = FALSE)
   }
   # Supplementary floats use the documented Div form for custom cross-reference types:
   # the Div carries the label (#sfig-x / #stbl-x) and the chunk inside is `chunk-<label>`.
   label <- sub("^chunk-", "", label)
-  key <- gsub("-", "_", label)
+  # `key` overrides the lookup name when a float has moved between the main text and the
+  # supplement but the saved object keeps its old name (e.g. label stbl-demo-adult, object tbl_demo_adult)
+  if (is.null(key)) key <- gsub("-", "_", label)
   x <- store[[key]]
   if (is.null(x)) {
     stop("No object named `", key, "` in the store for label `", label, "`.", call. = FALSE)

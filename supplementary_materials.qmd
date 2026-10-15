@@ -346,23 +346,6 @@ show_float(supp)
 :::
 
 
-### Treatment group effects
-
-
-::: {#sfig-forrest-plot}
-```{r}
-#| label: chunk-sfig-forrest-plot
-#| fig-alt: "Combined forest plots of treatment group effect for outcome measures"
-#| fig-width: 12
-#| fig-height: 8
-
-show_float(supp, width = 12, height = 8, scale = 1)
-```
-
-**Combined forest plots of treatment group effect for outcome measures.** Left to right: 1) unadjusted association between treatment group and rescue opioid administration (model 1), 2) adjusted association between treatment group and rescue opioid administration (model 2), 3) adjusted association between treatment group and time spent in recovery, 4) adjusted association between treatment group and same day discharge from hospital.
-:::
-
-
 ### Results of Model 1 {#sec-sm-model-1}
 
 In Model 1 the variance explained by the anaesthetist ID was `r supp_stats$model_1_variance`
