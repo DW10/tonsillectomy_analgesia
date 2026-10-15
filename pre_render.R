@@ -1,6 +1,8 @@
 # Runs automatically before every full `quarto render` (see `project: pre-render` in
 # _quarto.yml), or by hand with `Rscript pre_render.R`.
 #
+# 0. Refreshes the author/affiliation YAML from the plume Google sheet (non-fatal; see
+#    scripts/plume_authors.R).
 # 1. Clears the generated figure/table dump in export/ so it matches this render.
 # 2. Checks the analysis outputs exist (data/*.rds). If RUN_ANALYSIS=true it first
 #    re-runs the analysis scripts - this needs the anonymised dataset, so do it inside
@@ -8,6 +10,9 @@
 #
 #    RUN_ANALYSIS=true quarto render      # recompute everything, then render the book
 #    quarto render                        # reuse the saved data/*.rds, just render
+
+source("scripts/plume_authors.R")
+refresh_authors()
 
 run_analysis <- identical(tolower(Sys.getenv("RUN_ANALYSIS")), "true")
 

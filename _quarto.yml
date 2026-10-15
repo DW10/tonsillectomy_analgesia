@@ -1,22 +1,14 @@
 project:
-  type: book
-  output-dir: _book
-  # Checks data/*.rds exist, clears the export/ dump, and re-runs the analysis scripts
-  # when RUN_ANALYSIS=true (see pre_render.R and README.md)
+  # Runs before every render: refreshes authors from plume, clears export/, checks
+  # data/*.rds exist and optionally re-runs the analysis (see pre_render.R and README.md)
   pre-render: pre_render.R
 
-book:
-  title: 'Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
-  chapters:
-    - index.qmd
-    - abstract.qmd
-    - manuscript.qmd
-    - author_contributions.qmd
-    - references.qmd
-  appendices:
-    - supplementary_tables_and_figures.qmd
-    - supplementary_materials.qmd
-
+# Default profile is `website` (the all-in-one book). Use `--profile submission` for the
+# journal submission files. Do not add lists (chapters, render, filters) here: list
+# values in profiles are appended, not replaced.
+profile:
+  group:
+    - [website, submission]
 
 bibliography: references.bib
 
@@ -45,156 +37,3 @@ execute:
   echo: false
   warning: false
   message: false
-
-format:
-  html:
-    theme: cosmo
-    toc: true
-    fig-align: center
-    fig-dpi: 150
-  pdf:
-    documentclass: scrreprt
-    toc: true
-    fig-align: center
-    fig-pos: H
-    fig-dpi: 300
-  docx:
-    toc: true
-    fig-align: center
-    fig-dpi: 300
-author:
-  - id: aut1
-    name:
-      given: Dylan
-      family: Whitaker
-    email: dylan.whitaker.25@ucl.ac.uk
-    orcid: 0000-0002-6619-5846
-    attributes:
-      corresponding: true
-    roles:
-      - Conceptualization
-      - Data curation
-      - Formal analysis
-      - Visualization
-      - Writing - original draft
-      - Writing - review & editing
-    affiliations:
-      - ref: aff1
-      - ref: aff2
-  - id: aut2
-    name:
-      given: Yogini
-      family: H Jani
-    orcid: 0000-0001-5927-5429
-    attributes:
-      corresponding: false
-    roles:
-      - Funding acquisition
-      - Writing - review & editing
-    affiliations:
-      - ref: aff3
-      - ref: aff4
-  - id: aut3
-    name:
-      given: Steve
-      family: Harris
-    orcid: 0000-0002-5001-0253
-    attributes:
-      corresponding: false
-    roles:
-      - Funding acquisition
-      - Supervision
-      - Writing - review & editing
-    affiliations:
-      - ref: aff2
-      - ref: aff5
-  - id: aut4
-    name:
-      given: Peter
-      family: Thomas
-    attributes:
-      corresponding: false
-    roles:
-      - Writing - review & editing
-    affiliations:
-      - ref: aff6
-  - id: aut5
-    name:
-      given: Alison
-      family: Carter
-    attributes:
-      corresponding: false
-    roles:
-      - Data curation
-      - Validation
-      - Writing - review & editing
-    affiliations:
-      - ref: aff7
-  - id: aut6
-    name:
-      given: James
-      family: Bedford
-    orcid: 0000-0002-6045-3226
-    attributes:
-      corresponding: false
-    roles:
-      - Data curation
-      - Validation
-      - Writing - review & editing
-    affiliations:
-      - ref: aff8
-  - id: aut7
-    name:
-      given: Ramani
-      family: Moonesinghe
-    orcid: 0000-0002-6730-5824
-    attributes:
-      corresponding: false
-    roles:
-      - Writing - review & editing
-    affiliations:
-      - ref: aff8
-      - ref: aff9
-  - id: aut8
-    name:
-      given: Matthew
-      family: Wilson
-    orcid: 0000-0002-5001-0253
-    attributes:
-      corresponding: false
-    roles:
-      - Conceptualization
-      - Data curation
-      - Funding acquisition
-      - Supervision
-      - Writing - original draft
-      - Writing - review & editing
-    affiliations:
-      - ref: aff8
-      - ref: aff9
-affiliations:
-  - id: aff1
-    name: NIHR University College London Hospitals Biomedical Research Centre
-  - id: aff2
-    name: Department of Critical Care, University College London Hospitals NHS Foundation
-      Trust, London, United Kingdom
-  - id: aff3
-    name: Centre for Medicines Optimisation and Research, University College London
-      Hospitals NHS Foundation Trust
-  - id: aff4
-    name: School of Pharmacy, University College London
-  - id: aff5
-    name: Institute of Health Informatics, University College London, London, United
-      Kingdom
-  - id: aff6
-    name: Department of Anaesthesia, Royal National Throat, Nose and Ear Hospital,
-      University College London Hospitals NHS Foundation Trust
-  - id: aff7
-    name: Department of Surgery, Royal National Throat, Nose and Ear Hospital, University
-      College London Hospitals NHS Foundation Trust
-  - id: aff8
-    name: Department of Anaesthesia and Perioperative Medicine, University College
-      London Hospitals NHS Foundation Trust
-  - id: aff9
-    name: Division of Surgery and Interventional Science, University College London,
-      London, United Kingdom
