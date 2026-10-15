@@ -108,7 +108,13 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
   if (is.character(x) && length(x) == 1 && file.exists(here(x))) {
     # An image already on disk (e.g. UpSet PNG): copy it and include it
     file.copy(here(x), file.path(fig_dir, paste0(label, ".", tools::file_ext(x))), overwrite = TRUE)
-    return(knitr::include_graphics(here(x)))
+    # include_graphics() writes the path relative to the document (../data/x.png for the
+    # wrappers in submission/, which pandoc resolves correctly) but then checks that relative
+    # path from the working directory, which fails there. Skip that check for sub-folder
+    # documents; an absolute path is not an option because Quarto mangles it.
+    doc_dir <- tryCatch(normalizePath(dirname(knitr::current_input(dir = TRUE))), error = function(e) here())
+    in_root <- identical(doc_dir, normalizePath(here()))
+    return(knitr::include_graphics(here(x), error = in_root))
   }
 
   warning("show_float(): don't know how to export an object of class ",
