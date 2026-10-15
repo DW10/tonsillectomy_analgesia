@@ -1,22 +1,13 @@
 project:
-  # Runs before every render: refreshes authors from plume, clears export/, checks
-  # data/*.rds exist and optionally re-runs the analysis (see pre_render.R and README.md)
   pre-render: pre_render.R
-
-# Default profile is `website` (the all-in-one book). Use `--profile submission` for the
-# journal submission files. Do not add lists (chapters, render, filters) here: list
-# values in profiles are appended, not replaced.
 profile:
   group:
-    - [website, submission]
-
+    - - website
+      - submission
 bibliography: references.bib
-
-# Supplementary chapter labels / headings
 language:
-  crossref-apx-prefix: 'Supplementary material'
-  section-title-appendices: 'Supplementary material'
-
+  crossref-apx-prefix: Supplementary material
+  section-title-appendices: Supplementary material
 crossref:
   chapters: false
   custom:
@@ -32,14 +23,10 @@ crossref:
       reference-prefix: Table S
       caption-prefix: Table S
       space-before-numbering: false
-
 execute:
   echo: false
   warning: false
   message: false
-
-# Authors and affiliations: the single source of truth for every profile and document.
-# Rewritten by pre_render.R from the plume Google sheet - edit the sheet, not this block.
 author:
   - id: aut1
     name:
