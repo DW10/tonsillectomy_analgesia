@@ -34,7 +34,7 @@ Despite the large volume of these procedures undertaken, there remains little da
 
 A single centre, retrospective electronic patient record (EPR) cohort study.  Patients who underwent elective tonsillectomy, adenoidectomy, or combined adenotonsillectomy were included.  Procedures were identified using relevant OPCS Classification of Interventions and Procedures codes (@sec-sm-data-spec-procedures).  
 
-Data from the Epic (Epic Systems, Wisconsin) EPR for University College London Hospitals NHS Foundation Trust (UCLH), including The Royal National Throat, Nose and Ear Hospital were evaluated.  All patients who admitted for surgery between `r paste0(ordinal(day(min(df$Date))), " ", month(min(df$Date), label = TRUE, abbr = FALSE), ", ", year(min(df$Date)))` and `r paste0(ordinal(day(max(df$Date))), " ", month(max(df$Date), label = TRUE, abbr = FALSE), ", ", year(max(df$Date)))` were included.  Data analysis was undertaken using Python (v3.11.13) and `r version$version.string` (@sec-sm-analysis-code).  
+Data from the Epic (Epic Systems, Wisconsin) EPR for University College London Hospitals NHS Foundation Trust (UCLH), including The Royal National Throat, Nose and Ear Hospital were evaluated.  All patients who admitted for surgery between `r paste0(ordinal(day(min(df$Date))), " ", month(min(df$Date), label = TRUE, abbr = FALSE), ", ", year(min(df$Date)))` and `r paste0(ordinal(day(max(df$Date))), " ", month(max(df$Date), label = TRUE, abbr = FALSE), ", ", year(max(df$Date)))` were included.  Data analysis was undertaken using Python (v3.11.13) and `r version$version.string` @RProgram with scripts and packages provided in @sec-sm-analysis-code.  
   
 ### Data Specification
 
