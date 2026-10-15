@@ -9,7 +9,7 @@
 
 write_xref_map <- function(src = "supplementary_materials.qmd",
                            out = "submission/xref-map.yml",
-                           prefix = "Supplementary Material") {
+                           prefix = "Supplementary materials") {
   lines <- readLines(src, warn = FALSE)
   in_code <- FALSE
   counters <- integer(0)
@@ -32,7 +32,7 @@ write_xref_map <- function(src = "supplementary_materials.qmd",
     counters <- c(counters, integer(max(0, depth - length(counters))))[seq_len(max(depth, length(counters)))]
     counters[depth] <- counters[depth] + 1L
     counters <- counters[seq_len(depth)]
-    if (has_id) map[id] <- paste(prefix, "Section", paste(counters, collapse = "."))
+    if (has_id) map[id] <- paste(prefix, paste(counters, collapse = "."))
   }
   # The separate supplementary tables and figures chapter has no numbered sections
   map["sec-sm-tables-figures"] <- "Supplementary Tables and Figures"

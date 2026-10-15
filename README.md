@@ -65,7 +65,7 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
   |---------------|---------------|---------------|---------------|---------------|
   | `fig-` / `tbl-` | main manuscript | `fig-cap` / `tbl-cap` | `@fig-x` / `@tbl-x` | Figure 1 / Table 1 |
   | `sfig-` / `stbl-` | supplementary (on a Div, see below) | caption = last paragraph of the Div | `@sfig-x` / `@stbl-x` | Figure S1 / Table S1 |
-  | `sec-` | headings (`## Title {#sec-x}`) |  | `@sec-x` | Section number |
+  | `sec-` | headings (`## Title {#sec-x}`) |  | `@sec-x` | "Supplementary materials 1.1" (prefix set by `crossref-sec-prefix` in `_quarto.yml`; fixed text in the manuscript via `submission/xref-map.yml`) |
 
 - **Supplementary floats** are Quarto *custom cross-reference types*, which only work on a Div (not on chunk options). The Div carries the label, the chunk inside is named `chunk-<label>` (so `show_float()` can find the object), and the caption is the last paragraph:
 

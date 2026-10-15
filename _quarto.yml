@@ -9,8 +9,13 @@ csl: bja.csl
 
 # Supplementary chapter labels / headings
 language:
-  crossref-apx-prefix: Supplementary material
+  crossref-sec-prefix: Supplementary materials
+  crossref-apx-prefix: Supplementary materials
   section-title-appendices: Supplementary material
+
+# Every caption goes below its figure / table, in all formats
+fig-cap-location: bottom
+tbl-cap-location: bottom
 crossref:
   chapters: false
   custom:
@@ -20,12 +25,14 @@ crossref:
       reference-prefix: Figure S
       caption-prefix: Figure S
       space-before-numbering: false
+      caption-location: bottom
     - kind: float
       key: stbl
       latex-env: stbl
       reference-prefix: Table S
       caption-prefix: Table S
       space-before-numbering: false
+      caption-location: bottom
 execute:
   echo: false
   warning: false
