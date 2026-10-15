@@ -4,6 +4,7 @@
 # 0. Refreshes the author/affiliation YAML from the plume Google sheet (non-fatal; see
 #    scripts/plume_authors.R).
 # 0b. Regenerates submission/xref-map.yml from the supplementary headings.
+# 0c. Refreshes packages/grateful-refs.bib and packages/packages.csv (grateful package).
 # 1. Clears the generated figure/table dump in export/ so it matches this render.
 # 2. Checks the analysis outputs exist (data/*.rds). If RUN_ANALYSIS=true it first
 #    re-runs the analysis scripts - this needs the anonymised dataset, so do it inside
@@ -18,6 +19,10 @@ refresh_authors()
 # Section numbers used by the submission documents for @sec-sm-* references
 source("scripts/xref_map.R")
 write_xref_map()
+
+# R package table + citations for the supplementary materials (grateful); non-fatal if missing
+source("scripts/package_citations.R")
+write_package_citations()
 
 run_analysis <- identical(tolower(Sys.getenv("RUN_ANALYSIS")), "true")
 
