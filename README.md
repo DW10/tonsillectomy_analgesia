@@ -117,10 +117,10 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
 | `quarto render` | General render (`website` profile, the default): the all-in-one book as HTML, `tonsillectomy_manuscript.pdf` and `tonsillectomy_manuscript.docx` in `_book/` |
 | `quarto render --profile submission` | Journal submission files in `_submission/` (being added in stages; nothing is produced yet) |
 
-- `_quarto.yml` holds shared settings only (bibliography, cross-reference types, execute options). Do not add lists (`chapters`, `render`, `filters`) here: profile lists are appended, not replaced.
-- `_quarto-website.yml` holds the book configuration, output formats and a copy of the author block.
+- `_quarto.yml` holds shared settings (bibliography, cross-reference types, execute options) **and the author/affiliation block, the single source of truth** for all profiles. Do not add lists (`chapters`, `render`, `filters`) here: profile lists are appended, not replaced.
+- `_quarto-website.yml` holds the book configuration and output formats.
 - `_quarto-submission.yml` holds the submission configuration.
-- **Authors** come from the shared plume Google sheet. `pre_render.R` runs `scripts/plume_authors.R` before every render, which rewrites the `author:` / `affiliations:` keys of `_authors.yml` and `_quarto-website.yml`. If Google sign-in or the network is unavailable it warns and keeps the existing YAML; set `SKIP_AUTHOR_REFRESH=true` to skip it.
+- **Authors** come from the shared plume Google sheet. `pre_render.R` runs `scripts/plume_authors.R` before every render, which rewrites only the `author:` / `affiliations:` keys of `_quarto.yml`. Edit authors in the sheet, not in the YAML. If Google sign-in or the network is unavailable it warns and keeps the existing YAML; set `SKIP_AUTHOR_REFRESH=true` to skip it.
 
 Render artefacts (`*_cache/`, `index.tex/.typ/.aux/.log/.toc`, `_book/`, `_submission/`) are git-ignored. If a render misbehaves, delete the caches or run `quarto render --cache-refresh`.
 
