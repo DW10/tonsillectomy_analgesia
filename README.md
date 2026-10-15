@@ -110,6 +110,8 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
     quarto render --to docx        # one format
     ```
 
+Render artefacts (`*_cache/`, `index.tex/.typ/.aux/.log/.toc`, `_book/`, `_submission/`) are git-ignored. If a render misbehaves, delete the caches or run `quarto render --cache-refresh`.
+
 Requires Quarto \>= 1.4 (custom "Figure S"/"Table S" cross-reference types), R, and the packages listed in the `Dockerfile`. Add a `bibliography:` (see `_quarto.yml`) before the first render with citations.
 
 ## Docker and working in a TRE
