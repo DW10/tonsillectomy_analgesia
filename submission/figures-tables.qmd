@@ -1,0 +1,16 @@
+---
+title: 'Figures and tables: Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
+metadata-files:
+  - xref-map.yml
+submission-keep: floats
+---
+
+<!-- All main and supplementary figures and tables, with captions. Everything else included
+     here only provides the floats; submission-split.lua keeps just the floats and adds the
+     lists of figures and tables. -->
+
+{{< include ../manuscript.qmd >}}
+
+{{< include ../supplementary_tables_and_figures.qmd >}}
+
+{{< include ../supplementary_materials.qmd >}}

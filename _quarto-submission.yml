@@ -5,6 +5,7 @@ project:
   render:
     - submission/cover-letter.qmd
     - submission/manuscript.qmd
+    - submission/figures-tables.qmd
     - submission/supplement.qmd
 
 filters:
@@ -12,6 +13,8 @@ filters:
     path: title-page.lua
   - at: pre-quarto
     path: xref-hardcode.lua
+  - at: pre-quarto
+    path: float-order.lua
   - at: post-quarto
     path: submission-split.lua
 
