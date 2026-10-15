@@ -1,34 +1,34 @@
 flowchart LR
     classDef dashedNode stroke-dasharray: 5 5
 
-    AT>Anaesthetic Technique]
+    AT>Anaesthetic technique]
     TIVA((TIVA))
-    MD((Morphine Dose))
-    FD((Fentanyl Dose))
+    MD((Morphine dose))
+    FD((Fentanyl dose))
     WT((Weight))
     HT((Height))
    
-    OC((Previous Opioid use))
+    OC((Previous opioid use))
     ETH(Ethnicity)
-    OAC((Opioid Concentration)):::dashedNode
+    OAC((Opioid concentration)):::dashedNode
     SE((Surgeon Exp))
-    SS((Surgical Skill)):::dashedNode
-    SI((Surgical Site))
-    SHD((Surgical Harm Damage)):::dashedNode
+    SS((Surgical skill)):::dashedNode
+    SI((Surgical site))
+    SHD((Surgical harm damage)):::dashedNode
     COB((Coblation))
-    LOSurg((Length of Surgery))
+    LOSurg((Length of surgery))
     SED((Sedation)):::dashedNode
     NAU((Nausea)):::dashedNode
     PAIN((Pain)):::dashedNode
     TOD(Time of day)
-    ON[Overnight Stay]
+    ON[Overnight stay]
     LOS[LOS]
-    LIR[Length in Recovery]
+    LIR[Length in recovery]
     RR[Rescue analgesia]
     RD((Remifentanil Dose))
     PD((Propofol dose))
 
-    subgraph PV[Patient Variables]
+    subgraph PV[Patient variables]
         WT((Weight))
         HT((Height))
         ETH(Ethnicity)
@@ -36,7 +36,7 @@ flowchart LR
     end
 
 
-    subgraph PV2[Anaesthesia Variables]
+    subgraph PV2[Anaesthesia variables]
     TIVA
     MD
     FD
@@ -44,7 +44,7 @@ flowchart LR
     RD
     end
 
-      subgraph PV3[Surgical Variables]
+      subgraph PV3[Surgical variables]
     SS
     SI
     SE
