@@ -85,7 +85,7 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
 
 - Captions use the form `**Short title.** Description.` and must exist for every float. Chunks whose caption still reads `TODO: caption to be supplied by the authors.` need one.
 
-- Mermaid diagrams (`fig-mermaid-groups`, `sfig-dag`) are written in the chapter itself. They are *not* written to `export/` automatically.
+- Mermaid diagrams (`fig-mermaid-groups`, `sfig-dag`) live in `diagrams/*.mmd` and are pre-rendered to `figures/*.png`; re-render with `REFRESH_DIAGRAMS=true quarto render` (runs `scripts/render_diagrams.sh`, needs node/npx) and commit `figures/`. They are *not* written to `export/` automatically.
 
 ## How to run the whole analysis
 
@@ -127,7 +127,7 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
 - **Figures and tables file**: `submission/figures-tables.qmd` includes the manuscript and both supplementary chapters; `submission-split.lua` (`submission-keep: floats`) keeps only the floats and adds a List of figures and a List of tables, then Main figures, Main tables, Supplementary figures and Supplementary tables, one float per page. `float-order.lua` records each float's label in document order so the filter can number and title them. The lists have no page numbers.
 - **Figures folder**: `submission/post-render.R` runs after the submission render. It moves the Word files up into `_submission/` and builds `_submission/figures/` from `export/figures/` (PNGs written by `show_float()`) and the hand-made `figures/*.png` (mermaid / DAG), numbered in document order. It warns if a figure has no saved image.
 - **R package table and citations**: `scripts/package_citations.R` (run by `pre_render.R`) finds the packages used by the analysis scripts and chapters with `renv::dependencies()` and cites them with the [grateful](https://pakillo.github.io/grateful/) package. It writes `packages/grateful-refs.bib` and `packages/packages.csv`; `supplementary_materials.qmd` (section "Analysis code") prints the table (Table S, `stbl-r-packages`). Only installed packages are listed, so refresh these files where the analysis runs (TRE / Docker image) and commit them; if grateful is missing the committed copies are used. In the website profile the package references join the single book reference list. In the submission profile only `supplement.docx` loads `packages/grateful-refs.bib`, so the package references appear in its "Supplementary references" and never in the manuscript's reference list.
-- **Authors** come from the shared plume Google sheet. `pre_render.R` runs `scripts/plume_authors.R` before every render, which rewrites only the `author:` / `affiliations:` keys of `_quarto.yml`. Edit authors in the sheet, not in the YAML. If Google sign-in or the network is unavailable it warns and keeps the existing YAML; set `SKIP_AUTHOR_REFRESH=true` to skip it.
+- **Authors** come from the shared plume Google sheet. `pre_render.R` runs `scripts/plume_authors.R` before every render, but by default it leaves the author YAML untouched. Set `REFRESH_AUTHORS=true` (e.g. `REFRESH_AUTHORS=true quarto render`) to rewrite the `author:` / `affiliations:` keys of `_quarto.yml` from the sheet. Edit authors in the sheet, not in the YAML. If Google sign-in or the network is unavailable it warns and keeps the existing YAML.
 
 Render artefacts (`*_cache/`, `index.tex/.typ/.aux/.log/.toc`, `_book/`, `_submission/`) are git-ignored. If a render misbehaves, delete the caches or run `quarto render --cache-refresh`.
 

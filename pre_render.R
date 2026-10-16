@@ -1,8 +1,10 @@
 # Runs automatically before every full `quarto render` (see `project: pre-render` in
 # _quarto.yml), or by hand with `Rscript pre_render.R`.
 #
-# 0. Refreshes the author/affiliation YAML from the plume Google sheet (non-fatal; see
-#    scripts/plume_authors.R).
+# 0. Only if REFRESH_AUTHORS=true: refreshes the author/affiliation YAML from the plume Google
+#    sheet (non-fatal; see scripts/plume_authors.R). Off by default.
+# 0a. Only if REFRESH_DIAGRAMS=true: re-renders the Mermaid diagrams (diagrams/*.mmd -> figures/*.png)
+#    with scripts/render_diagrams.sh (needs node/npx; non-fatal). Off by default.
 # 0b. Regenerates submission/xref-map.yml from the supplementary headings.
 # 0c. Refreshes packages/grateful-refs.bib and packages/packages.csv (grateful package).
 # 1. Clears the generated figure/table dump in export/ so it matches this render.
@@ -15,6 +17,13 @@
 
 source("scripts/plume_authors.R")
 refresh_authors()
+
+# Mermaid diagrams (diagrams/*.mmd -> figures/*.png); opt-in, needs node/npx and headless Chrome
+if (identical(tolower(Sys.getenv("REFRESH_DIAGRAMS")), "true")) {
+  message("Re-rendering Mermaid diagrams")
+  status <- tryCatch(system2("bash", "scripts/render_diagrams.sh"), error = function(e) 1L)
+  if (!identical(status, 0L)) warning("Diagram refresh failed, keeping existing figures/*.png", call. = FALSE)
+}
 
 # Section numbers used by the submission documents for @sec-sm-* references
 source("scripts/xref_map.R")
