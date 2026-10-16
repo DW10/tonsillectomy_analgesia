@@ -20,9 +20,10 @@ core*
 .Rapp.history
 _book/
 *_files/
-export/**/*.pdf
-export/**/*.html
-!export/**/.gitkeep
+
+# export/ holds the analysis products (stage 2) and the render dump: never commit it.
+export/*
+!export/.gitkeep
 
 # Render artefacts (caches, intermediate LaTeX/Typst, submission output)
 *_cache/

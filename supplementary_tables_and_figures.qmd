@@ -6,7 +6,7 @@
 #| include: false
 
 # Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd and
-# scripts/peri_op_med_supp_mat.qmd) and saved to data/*.rds. Each labelled chunk below prints
+# scripts/peri_op_med_supp_mat.qmd) and saved to export/*.rds. Each labelled chunk below prints
 # one of them with show_float(), which also saves a copy named after the label into export/.
 source(here::here("scripts", "export_helpers.R"))
 main <- load_objects("main")   # stbl-demo-adult and stbl-outcome-adult come from the main store

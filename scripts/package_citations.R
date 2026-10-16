@@ -1,19 +1,19 @@
 # Writes the R package citations for the supplementary materials (section "Analysis code"):
 #
-#   packages/grateful-refs.bib   BibTeX for R and every package the project's code uses
-#   packages/packages.csv        Package, Version and citation key, read by supplementary_materials.qmd
+#   export/packages/grateful-refs.bib   BibTeX for R and every package the project's code uses
+#   export/packages/packages.csv        Package, Version and citation key, read by supplementary_materials.qmd
 #
 # The packages are found with renv::dependencies() over the analysis scripts and the book
 # chapters, then cited with the grateful package (https://pakillo.github.io/grateful/), which
-# reads the installed versions and citation() data. Run by pre_render.R before every render.
+# reads the installed versions and citation() data. Run by run_analysis.R (stage 2).
 # Only packages that are installed are listed, so run this where the analysis runs (the TRE or
-# Docker image) and commit the two files. If grateful or renv is missing it warns and leaves
+# Docker image) and copy export/ to the render machine. If grateful or renv is missing it warns and leaves
 # the committed files alone, so the book still renders.
 #
 # Citations stay out of the main reference list in the submission profile: only the
-# supplement document lists packages/grateful-refs.bib as a bibliography.
+# supplement document lists export/packages/grateful-refs.bib as a bibliography.
 
-write_package_citations <- function(out_dir = "packages") {
+write_package_citations <- function(out_dir = file.path("export", "packages")) {
   if (!requireNamespace("grateful", quietly = TRUE) || !requireNamespace("renv", quietly = TRUE)) {
     warning("Package citations not refreshed: install the grateful package (and renv).", call. = FALSE)
     return(invisible(FALSE))

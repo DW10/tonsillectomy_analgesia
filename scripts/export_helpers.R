@@ -23,12 +23,12 @@ load_objects <- function(name) {
     supp = c("supp_objects_analysis.rds", "supp_objects_extra.rds"),
     stop("Unknown object store: ", name)
   )
-  paths <- here("data", files)
+  paths <- here("export", files)
   missing <- paths[!file.exists(paths)]
   if (length(missing) > 0) {
     stop(
       "Missing analysis output: ", paste(basename(missing), collapse = ", "),
-      "\nRun the analysis stage first (Rscript pre_render.R, or RUN_ANALYSIS=true quarto render).",
+      "\nRun the analysis stage first (Rscript run_analysis.R in the research TRE) and copy export/ here.",
       call. = FALSE
     )
   }
@@ -36,8 +36,8 @@ load_objects <- function(name) {
 }
 
 load_stats <- function() {
-  path <- here("data", "supp_stats.rds")
-  if (!file.exists(path)) stop("Missing data/supp_stats.rds - run the analysis stage first.", call. = FALSE)
+  path <- here("export", "supp_stats.rds")
+  if (!file.exists(path)) stop("Missing export/supp_stats.rds - run run_analysis.R first.", call. = FALSE)
   readRDS(path)
 }
 
@@ -118,7 +118,7 @@ show_float <- function(store, width = 8, height = 5, scale = 1, dpi = 300,
   if (is.character(x) && length(x) == 1 && file.exists(here(x))) {
     # An image already on disk (e.g. UpSet PNG): copy it and include it
     file.copy(here(x), file.path(fig_dir, paste0(label, ".", tools::file_ext(x))), overwrite = TRUE)
-    # include_graphics() writes the path relative to the document (../data/x.png for the
+    # include_graphics() writes the path relative to the document (../export/x.png for the
     # wrappers in submission/, which pandoc resolves correctly) but then checks that relative
     # path from the working directory, which fails there. Skip that check for sub-folder
     # documents; an absolute path is not an option because Quarto mangles it.

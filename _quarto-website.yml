@@ -17,7 +17,7 @@ book:
 # The book has one reference list: main references plus the R package citations
 bibliography:
   - references.bib
-  - packages/grateful-refs.bib
+  - export/packages/grateful-refs.bib
 
 format:
   html:

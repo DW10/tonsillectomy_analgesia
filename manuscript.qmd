@@ -7,14 +7,14 @@
 #| label: setup-manuscript
 #| include: false
 
-# Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd)
-# and saved to data/main_objects.rds. Each labelled chunk below prints one of them with
+# Figures/tables are computed by the analysis stage (run_analysis.R) and saved to
+# export/main_objects.rds. Each labelled chunk below prints one of them with
 # show_float(), which also saves a copy named after the label into export/.
 source(here::here("scripts", "export_helpers.R"))
 main <- load_objects("main")
 supp <- load_objects("supp")   # fig-forrest-plot is saved in the supplementary store
 
-# Dataset (df, adults, paeds), fitted models and formatters for inline results
+# Formatters for inline results; the values come from export/inline_values.rds (no patient-level data)
 source(here::here("scripts", "inline_helpers.R"))
 ```
 
@@ -35,7 +35,7 @@ Despite the large volume of these procedures undertaken, there remains little da
 
 A single centre, retrospective electronic patient record (EPR) cohort study.  Patients who underwent elective tonsillectomy, adenoidectomy, or combined adenotonsillectomy were included.  Procedures were identified using relevant OPCS Classification of Interventions and Procedures codes (@sec-sm-data-spec-procedures).  
 
-Data from the Epic (Epic Systems, Wisconsin) EPR for University College London Hospitals NHS Foundation Trust (UCLH), including The Royal National Throat, Nose and Ear Hospital were evaluated.  All patients who admitted for surgery between `r paste0(ordinal(day(min(df$Date))), " ", month(min(df$Date), label = TRUE, abbr = FALSE), ", ", year(min(df$Date)))` and `r paste0(ordinal(day(max(df$Date))), " ", month(max(df$Date), label = TRUE, abbr = FALSE), ", ", year(max(df$Date)))` were included.  Data analysis was undertaken using Python (v3.11.13) and `r version$version.string` @RProgram with scripts and packages provided in @sec-sm-analysis-code.  
+Data from the Epic (Epic Systems, Wisconsin) EPR for University College London Hospitals NHS Foundation Trust (UCLH), including The Royal National Throat, Nose and Ear Hospital were evaluated.  All patients who admitted for surgery between `r study_start()` and `r study_end()` were included.  Data analysis was undertaken using Python (v3.11.13) and `r version$version.string` @RProgram with scripts and packages provided in @sec-sm-analysis-code.  
   
 ### Data Specification
 

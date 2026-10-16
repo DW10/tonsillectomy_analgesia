@@ -8,7 +8,7 @@
 #| include: false
 
 # Figures/tables are computed by the analysis stage (scripts/peri_op_med_analysis.qmd and
-# scripts/peri_op_med_supp_mat.qmd) and saved to data/*.rds. Each labelled chunk below prints
+# scripts/peri_op_med_supp_mat.qmd) and saved to export/*.rds. Each labelled chunk below prints
 # one of them with show_float(), which also saves a copy named after the label into export/.
 source(here::here("scripts", "export_helpers.R"))
 supp <- load_objects("supp")
@@ -154,9 +154,9 @@ The R packages used, with the versions installed at the time of analysis, are li
 ::: {#stbl-r-packages}
 ```{r}
 #| label: chunk-stbl-r-packages
-# packages/packages.csv and packages/grateful-refs.bib are written by scripts/package_citations.R
+# export/packages/packages.csv and export/packages/grateful-refs.bib are written by scripts/package_citations.R
 # (grateful package) from pre_render.R
-pkgs <- read.csv(here::here("packages", "packages.csv"))
+pkgs <- read.csv(here::here("export", "packages", "packages.csv"))
 knitr::kable(pkgs, format = "pipe", row.names = FALSE)
 ```
 

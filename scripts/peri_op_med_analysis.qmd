@@ -3,21 +3,21 @@ title: "Analysis: figures, tables and models (computation only)"
 ---
 
 <!--
-STAGE 3 of the pipeline (see README.md).
+STAGE 2 of the pipeline (research TRE) (see README.md).
 
 This script ONLY computes. It builds every figure/table and model for the manuscript
 and saves them, ready to print, to:
 
-  data/main_objects.rds          figures/tables printed in the main manuscript
-  data/supp_objects_analysis.rds figures/tables printed in the supplementary material
-  data/upset_*.png               UpSet plots (base graphics cannot be stored in an .rds)
-  data/models.rds                fitted models (read by peri_op_med_supp_mat.qmd)
+  export/main_objects.rds          figures/tables printed in the main manuscript
+  export/supp_objects_analysis.rds figures/tables printed in the supplementary material
+  export/upset_*.png             UpSet plots (base graphics cannot be stored in an .rds)
+  data/models.rds                fitted models, patient-level rows: stay in data/ (read by peri_op_med_supp_mat.qmd)
 
 Captions, labels, cross-references and the export/ dump are handled by the book:
 `manuscript.qmd` and the supplementary_*.qmd chapters read these objects and print one labelled
 chunk per figure/table. Do NOT write captions or call ggsave()/gtsave() here.
 
-Run with `Rscript pre_render.R` (or RUN_ANALYSIS=true quarto render).
+Run with `Rscript run_analysis.R`.
 -->
 
 ```{r set up}
@@ -1207,7 +1207,7 @@ ome_histogram_paed <-  plot_treatment_group_ome_histogram(data_set = df %>% filt
 upset_plot_adult <- plot_upset_graph(data_set = df %>% filter(adult==1))
 
 # UpSet plots are base graphics, so are saved as PNG and included by the book
-label_save_upset(upset_plot_adult, subtitle = "", filepath = "data/upset_adult.png")
+label_save_upset(upset_plot_adult, subtitle = "", filepath = "export/upset_adult.png")
 
 ```
 
@@ -1215,7 +1215,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "data/upset_adult.p
 
 upset_plot_paed <- plot_upset_graph(data_set = df %>% filter(adult==0))
 
-label_save_upset(upset_plot_paed, subtitle = "", filepath = "data/upset_paed.png")
+label_save_upset(upset_plot_paed, subtitle = "", filepath = "export/upset_paed.png")
 
 ```
 
@@ -1769,7 +1769,7 @@ main_objects <- list(
   tbl_analgesic_adult = anes_adult_all_meds,
   tbl_outcome_adult   = outcome_adult,
   fig_venn_adult      = adult_venns,
-  fig_upset_adult     = "data/upset_adult.png"   # path relative to the project root
+  fig_upset_adult     = "export/upset_adult.png"   # path relative to the project root
 )
 
 supp_objects_analysis <- list(
@@ -1781,12 +1781,12 @@ supp_objects_analysis <- list(
   sfig_venn_adjuncts         = venns_adjuncts,
   sfig_opioid_histogram_adult = ome_histogram_adult,
   sfig_opioid_histogram_paed  = ome_histogram_paed,
-  sfig_upset_paed            = "data/upset_paed.png",
+  sfig_upset_paed            = "export/upset_paed.png",
   sfig_consort_modelling     = consort,
   sfig_forrest_plot          = adult_forrest_composite
 )
 
-saveRDS(main_objects, here("data/main_objects.rds"))
-saveRDS(supp_objects_analysis, here("data/supp_objects_analysis.rds"))
+saveRDS(main_objects, here("export/main_objects.rds"))
+saveRDS(supp_objects_analysis, here("export/supp_objects_analysis.rds"))
 
 ```

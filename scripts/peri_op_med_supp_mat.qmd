@@ -3,13 +3,13 @@ title: "Supplementary analysis: tables, figures and models (computation only)"
 ---
 
 <!--
-STAGE 4 of the pipeline (see README.md). Run AFTER peri_op_med_analysis.qmd.
+STAGE 2 of the pipeline (research TRE). Run by run_analysis.R AFTER peri_op_med_analysis.qmd.
 
 This script ONLY computes the supplementary tables/figures that are not produced by
 peri_op_med_analysis.qmd, and saves them to:
 
-  data/supp_objects_extra.rds   gt tables / ggplots, named by chunk label (`-` -> `_`)
-  data/supp_stats.rds           pre-formatted numbers quoted in the supplementary text
+  export/supp_objects_extra.rds   gt tables / ggplots, named by chunk label (`-` -> `_`)
+  export/supp_stats.rds           pre-formatted numbers quoted in the supplementary text
 
 The narrative, hard-coded tables, captions and labels live in supplementary_*.qmd.
 Do NOT write captions or call ggsave()/gtsave() here.
@@ -629,7 +629,7 @@ The list name is the chunk label with `-` replaced by `_` (see peri_op_med_analy
 
 ```{r save objects for the book}
 
-saveRDS(supp_objects_extra, here("data/supp_objects_extra.rds"))
-saveRDS(supp_stats, here("data/supp_stats.rds"))
+saveRDS(supp_objects_extra, here("export/supp_objects_extra.rds"))
+saveRDS(supp_stats, here("export/supp_stats.rds"))
 
 ```
