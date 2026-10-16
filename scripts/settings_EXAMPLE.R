@@ -1,4 +1,3 @@
-root_path <- ".../tonsillectomy_analgesia"
 functions_paths <- list.files("..../functions", full.names = TRUE) # To be replaced with library(IMPACTfunctions) when package published
 dataset_path <- ".../data/tonsillectomy_analgesia"
 data_set <- "all_years"

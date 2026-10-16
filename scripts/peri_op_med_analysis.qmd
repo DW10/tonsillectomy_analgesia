@@ -41,7 +41,7 @@ library(here)
 source(here("scripts", "settings.R"))
 sapply(functions_paths, source, verbose=FALSE)
 
-df <- readRDS(file=here(root_path, "data/anon_dataset.rds"))
+df <- readRDS(file=here("data/anon_dataset.rds"))
 
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(message = FALSE)
@@ -472,7 +472,7 @@ label_save_upset <- function(upset_plot, subtitle, filepath){
   #subtitle = "Adult patients"
   #filepath = "//Upset Plot(1)- Adults.png"
   
-png(paste0(root_path, filepath),   
+png(here(filepath),   
 width = 10*300,        # 10 x 300 pixels
 height = 6*300,
 res = 300,) 
@@ -1207,7 +1207,7 @@ ome_histogram_paed <-  plot_treatment_group_ome_histogram(data_set = df %>% filt
 upset_plot_adult <- plot_upset_graph(data_set = df %>% filter(adult==1))
 
 # UpSet plots are base graphics, so are saved as PNG and included by the book
-label_save_upset(upset_plot_adult, subtitle = "", filepath = "/data/upset_adult.png")
+label_save_upset(upset_plot_adult, subtitle = "", filepath = "data/upset_adult.png")
 
 ```
 
@@ -1215,7 +1215,7 @@ label_save_upset(upset_plot_adult, subtitle = "", filepath = "/data/upset_adult.
 
 upset_plot_paed <- plot_upset_graph(data_set = df %>% filter(adult==0))
 
-label_save_upset(upset_plot_paed, subtitle = "", filepath = "/data/upset_paed.png")
+label_save_upset(upset_plot_paed, subtitle = "", filepath = "data/upset_paed.png")
 
 ```
 
@@ -1621,7 +1621,7 @@ model_gt <- list(model_1_gt,
 
 model_save <- list(models, fixed_effects, model_gt)
 
-saveRDS(model_save, file=paste0(root_path, "/data/models.rds"))
+saveRDS(model_save, file=here("data/models.rds"))
 
 ```
 
@@ -1786,7 +1786,7 @@ supp_objects_analysis <- list(
   sfig_forrest_plot          = adult_forrest_composite
 )
 
-saveRDS(main_objects, paste0(root_path, "/data/main_objects.rds"))
-saveRDS(supp_objects_analysis, paste0(root_path, "/data/supp_objects_analysis.rds"))
+saveRDS(main_objects, here("data/main_objects.rds"))
+saveRDS(supp_objects_analysis, here("data/supp_objects_analysis.rds"))
 
 ```

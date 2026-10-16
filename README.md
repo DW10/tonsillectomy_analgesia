@@ -89,7 +89,7 @@ The `scripts/` analysis files only **compute**. They save finished `gt` tables a
 
 ## How to run the whole analysis
 
-1.  Copy `scripts/settings_EXAMPLE.R` to `scripts/settings.R` and fill in the paths.
+1.  Copy `scripts/settings_EXAMPLE.R` to `scripts/settings.R` and fill in the external paths (`functions_paths`, `dataset_path`); project paths use `here::here()`.
 
 2.  Run `scripts/peri_op_med_dataset.qmd` **inside the hospital TRE** to produce the study dataset in `data/`.
 
