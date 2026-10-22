@@ -39,6 +39,7 @@ library(grid)
 library(here)
 
 source(here("scripts", "settings.R"))
+source(here("scripts", "slim_export.R"))
 sapply(functions_paths, source, verbose=FALSE)
 
 df <- readRDS(file=here("data/anon_dataset.rds"))
@@ -473,9 +474,9 @@ label_save_upset <- function(upset_plot, subtitle, filepath){
   #filepath = "//Upset Plot(1)- Adults.png"
   
 png(here(filepath),   
-width = 10*300,        # 10 x 300 pixels
-height = 6*300,
-res = 300,) 
+width = 10*getOption("upset_dpi", 200),   # 10 x 6 inches
+height = 6*getOption("upset_dpi", 200),
+res = getOption("upset_dpi", 200),)
 
 print(upset_plot)
 grid::grid.text(label="Distribution of analgesia combinations", x = 0.4, y = 0.95,just = "left",
@@ -1786,7 +1787,8 @@ supp_objects_analysis <- list(
   sfig_forrest_plot          = adult_forrest_composite
 )
 
-saveRDS(main_objects, here("export/main_objects.rds"))
-saveRDS(supp_objects_analysis, here("export/supp_objects_analysis.rds"))
+# save_slim_rds() resets plot environments and compresses with xz (see scripts/slim_export.R)
+save_slim_rds(main_objects, here("export/main_objects.rds"), session = environment())
+save_slim_rds(supp_objects_analysis, here("export/supp_objects_analysis.rds"), session = environment())
 
 ```

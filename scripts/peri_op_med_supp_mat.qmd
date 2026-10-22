@@ -33,6 +33,7 @@ library(here)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 source(here("scripts", "settings.R"))
+source(here("scripts", "slim_export.R"))
 sapply(functions_paths, source, verbose=FALSE)
 df <- readRDS(file=here("data/anon_dataset.rds"))
 
@@ -629,7 +630,7 @@ The list name is the chunk label with `-` replaced by `_` (see peri_op_med_analy
 
 ```{r save objects for the book}
 
-saveRDS(supp_objects_extra, here("export/supp_objects_extra.rds"))
+save_slim_rds(supp_objects_extra, here("export/supp_objects_extra.rds"), session = environment())
 saveRDS(supp_stats, here("export/supp_stats.rds"))
 
 ```

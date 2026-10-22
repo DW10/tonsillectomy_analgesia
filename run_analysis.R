@@ -11,6 +11,7 @@
 
 library(here)
 setwd(here())
+source("scripts/slim_export.R")
 
 anon_files <- file.path("data", c("anon_dataset.rds", "anon_opioid_sensititvity_df.rds", "anon_readmit_sensititvity_df.rds"))
 missing <- anon_files[!file.exists(anon_files)]
@@ -69,5 +70,12 @@ audit_export <- function(threshold = 100L) {
   }
 }
 audit_export()
+
+# The .rds files must fit the 10 MB airlock limit: list their sizes, and warn about any single
+# object that still carries more than the plot itself (e.g. the analysis session)
+rds_files <- list.files("export", pattern = "[.]rds$", full.names = TRUE)
+print(data.frame(file = basename(rds_files), MB = round(file.size(rds_files) / 1e6, 2)))
+sizes <- report_object_sizes(rds_files)
+if (sum(file.size(rds_files)) > 9e6) warning("export/*.rds total ", round(sum(file.size(rds_files)) / 1e6, 1), " MB; zip may exceed 10 MB", call. = FALSE)
 
 message("\nDone. Copy the export/ folder to the render machine, then run `quarto render`.")
