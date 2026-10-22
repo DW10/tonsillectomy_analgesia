@@ -60,6 +60,12 @@ if (!inline_render_mode) {
   mod    <- function(i) models[[i + 1]]
 }
 
+# Opioid strategies (strong opioids: fentanyl and/or morphine); take a data frame
+fent_only <- function(d) d$intra_op_fentanyl_given == 1 & d$intra_op_morphine_sulfate_given == 0
+morph_only <- function(d) d$intra_op_fentanyl_given == 0 & d$intra_op_morphine_sulfate_given == 1
+both_opioids <- function(d) d$intra_op_fentanyl_given == 1 & d$intra_op_morphine_sulfate_given == 1
+no_opioids <- function(d) d$intra_op_fentanyl_given == 0 & d$intra_op_morphine_sulfate_given == 0
+
 # ---- formatters -----------------------------------------------------------------------------
 n_true <- function(x) sum(x == TRUE, na.rm = TRUE)
 N <- function(x) comma(n_true(x))
