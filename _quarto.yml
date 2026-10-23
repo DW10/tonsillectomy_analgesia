@@ -46,6 +46,7 @@ author:
       - Conceptualization
       - Data curation
       - Formal analysis
+      - Methodology
       - Visualization
       - Writing - original draft
       - Writing - review & editing
@@ -54,13 +55,15 @@ author:
       - ref: aff2
   - id: aut2
     name:
-      given: Yogini
-      family: H Jani
-    orcid: 0000-0001-5927-5429
+      given: Matthew
+      family: Wilson
+    orcid: 0000-0002-5001-0253
     attributes:
       corresponding: false
     roles:
+      - Conceptualization
       - Funding acquisition
+      - Supervision
       - Writing - review & editing
     affiliations:
       - ref: aff3
@@ -69,103 +72,27 @@ author:
     name:
       given: Steve
       family: Harris
-    orcid: 0000-0002-5001-0253
-    attributes:
-      corresponding: false
-    roles:
-      - Funding acquisition
-      - Supervision
-      - Writing - review & editing
-    affiliations:
-      - ref: aff2
-      - ref: aff5
-  - id: aut4
-    name:
-      given: Peter
-      family: Thomas
-    attributes:
-      corresponding: false
-    roles:
-      - Writing - review & editing
-    affiliations:
-      - ref: aff6
-  - id: aut5
-    name:
-      given: Alison
-      family: Carter
-    attributes:
-      corresponding: false
-    roles:
-      - Data curation
-      - Validation
-      - Writing - review & editing
-    affiliations:
-      - ref: aff7
-  - id: aut6
-    name:
-      given: James
-      family: Bedford
-    orcid: 0000-0002-6045-3226
-    attributes:
-      corresponding: false
-    roles:
-      - Data curation
-      - Validation
-      - Writing - review & editing
-    affiliations:
-      - ref: aff8
-  - id: aut7
-    name:
-      given: Ramani
-      family: Moonesinghe
-    orcid: 0000-0002-6730-5824
-    attributes:
-      corresponding: false
-    roles:
-      - Writing - review & editing
-    affiliations:
-      - ref: aff8
-      - ref: aff9
-  - id: aut8
-    name:
-      given: Matthew
-      family: Wilson
-    orcid: 0000-0002-5001-0253
+    orcid: 0000-0001-5927-5429
     attributes:
       corresponding: false
     roles:
       - Conceptualization
-      - Data curation
       - Funding acquisition
       - Supervision
-      - Writing - original draft
       - Writing - review & editing
     affiliations:
-      - ref: aff8
-      - ref: aff9
+      - ref: aff1
+      - ref: aff2
 affiliations:
   - id: aff1
-    name: NIHR University College London Hospitals Biomedical Research Centre
+    name: Institute of Health Informatics, University College London, London, United
+      Kingdom
   - id: aff2
     name: Department of Critical Care, University College London Hospitals NHS Foundation
       Trust, London, United Kingdom
   - id: aff3
-    name: Centre for Medicines Optimisation and Research, University College London
-      Hospitals NHS Foundation Trust
-  - id: aff4
-    name: School of Pharmacy, University College London
-  - id: aff5
-    name: Institute of Health Informatics, University College London, London, United
-      Kingdom
-  - id: aff6
-    name: Department of Anaesthesia, Royal National Throat, Nose and Ear Hospital,
-      University College London Hospitals NHS Foundation Trust
-  - id: aff7
-    name: Department of Surgery, Royal National Throat, Nose and Ear Hospital, University
-      College London Hospitals NHS Foundation Trust
-  - id: aff8
     name: Department of Anaesthesia and Perioperative Medicine, University College
-      London Hospitals NHS Foundation Trust
-  - id: aff9
+      London Hospitals NHS Foundation Trust, London, United Kingdom
+  - id: aff4
     name: Division of Surgery and Interventional Science, University College London,
       London, United Kingdom
