@@ -7,24 +7,24 @@ Code and manuscript source for a retrospective electronic patient record (EPR) c
 ## What is (and is not) in this repo
 
 | In the repo | Not in the repo (contact [Dylan](https://github.com/DW10)) |
-|------------------------------------|------------------------------------|
+|----|----|
 | Manuscript and supplementary text, figure/table code, rendering set-up | The dataset |
 | Dataset construction and analysis scripts | EPR extraction/cleaning pipeline (contains the EPR provider's IP) |
 |  | `IMPACTfunctions` helper package (in development) |
 
 ## Workflow: three stages on three machines
 
-```
+```         
  1. Hospital TRE            2. Research TRE              3. Render machine
  dataset.qmd, anon.qmd      run_analysis.R               quarto render
  -> data/anon_*.rds   --->  -> export/ (results only) --->  -> _book/, _submission/
 ```
 
 | Stage | Where | Run | Needs | Produces |
-|---|---|---|---|---|
-| 1. Dataset | Hospital TRE | `scripts/peri_op_med_dataset.qmd`, then `scripts/peri_op_med_anon.qmd` | Source data, `IMPACTfunctions`, `scripts/settings.R` | `data/`: the anonymised dataset and sensitivity files (`anon_*.rds`) |
-| 2. Analysis | Research TRE | `Rscript run_analysis.R` | the `data/anon_*.rds` files, `IMPACTfunctions`, `scripts/settings.R` | `export/`: tables, plots, quoted numbers, package citations |
-| 3. Render | Any machine | `quarto render` | the repo plus the `export/` folder; **no patient-level data** | `_book/` (and `_submission/`) |
+|----|----|----|----|----|
+| 1\. Dataset | Hospital TRE | `scripts/peri_op_med_dataset.qmd`, then `scripts/peri_op_med_anon.qmd` | Source data, `IMPACTfunctions`, `scripts/settings.R` | `data/`: the anonymised dataset and sensitivity files (`anon_*.rds`) |
+| 2\. Analysis | Research TRE | `Rscript run_analysis.R` | the `data/anon_*.rds` files, `IMPACTfunctions`, `scripts/settings.R` | `export/`: tables, plots, quoted numbers, package citations |
+| 3\. Render | Any machine | `quarto render` | the repo plus the `export/` folder; **no patient-level data** | `_book/` (and `_submission/`) |
 
 **What moves between stages**
 
@@ -40,7 +40,7 @@ Code and manuscript source for a retrospective electronic patient record (EPR) c
 ### Stage 2 products (`export/`)
 
 | File | Content |
-|---|---|
+|----|----|
 | `main_objects.rds`, `supp_objects_analysis.rds`, `supp_objects_extra.rds` | `gt` tables and `ggplot`s, named after their figure/table label |
 | `upset_adult.png`, `upset_paed.png` | UpSet plots |
 | `supp_stats.rds` | Numbers quoted in the supplementary text |
@@ -76,7 +76,7 @@ Optional switches for `pre_render.R`, all off by default: `REFRESH_AUTHORS=true`
 ## Repo map
 
 | Path | Purpose |
-|------------------------------------|------------------------------------|
+|----|----|
 | `index.qmd`, `abstract.qmd`, `manuscript.qmd`, `supplementary_*.qmd`, `references.qmd` | Book source (abstract, manuscript, supplement, references) |
 | `_quarto.yml` | Shared settings, cross-reference numbering, authors |
 | `run_analysis.R` | Stage 2 coordinator |
@@ -107,14 +107,14 @@ Optional switches for `pre_render.R`, all off by default: `REFRESH_AUTHORS=true`
 - **Label prefixes** (the prefix decides the numbering):
 
   | Prefix | Where | Caption option | Cite with | Renders as |
-  |---------------|---------------|---------------|---------------|---------------|
+  |----|----|----|----|----|
   | `fig-` / `tbl-` | main manuscript | `fig-cap` / `tbl-cap` | `@fig-x` / `@tbl-x` | Figure 1 / Table 1 |
   | `sfig-` / `stbl-` | supplementary (on a Div, see below) | caption = last paragraph of the Div | `@sfig-x` / `@stbl-x` | Figure S1 / Table S1 |
   | `sec-` | headings (`## Title {#sec-x}`) |  | `@sec-x` | "Supplementary materials 1.1" (prefix set by `crossref-sec-prefix` in `_quarto.yml`; fixed text in the manuscript via `submission/xref-map.yml`) |
 
 - **Supplementary floats** are Quarto *custom cross-reference types*, which only work on a Div (not on chunk options). The Div carries the label, the chunk inside is named `chunk-<label>` (so `show_float()` can find the object), and the caption is the last paragraph:
 
-  ````
+  ````         
   ::: {#sfig-venn-paed}
   ```{r}
   #| label: chunk-sfig-venn-paed
@@ -126,6 +126,7 @@ Optional switches for `pre_render.R`, all off by default: `REFRESH_AUTHORS=true`
   **Short title.** Description, abbreviations.
   :::
   ````
+
 - **Add or move a figure/table:** (1) compute it in the relevant `scripts/` file and add it to the saved list under the label with `-` -\> `_`; (2) add a labelled chunk with a caption where it should appear. Order and numbering update automatically.
 
 - Captions use the form `**Short title.** Description.` and must exist for every float. Chunks whose caption still reads `TODO: caption to be supplied by the authors.` need one.
@@ -135,7 +136,7 @@ Optional switches for `pre_render.R`, all off by default: `REFRESH_AUTHORS=true`
 ## Render profiles
 
 | Command | Output |
-|---|---|
+|----|----|
 | `quarto render` | General render (`website` profile, the default): the all-in-one book as HTML, `tonsillectomy_manuscript.pdf` and `tonsillectomy_manuscript.docx` in `_book/` |
 | `quarto render --profile submission` | Journal submission files in `_submission/`: `cover-letter.docx`, `manuscript.docx` (title page, no figures or tables), `figures-tables.docx` (all figures and tables with lists), `supplement.docx`, and `figures/` (300 dpi PNG named `Figure_1`, `Figure_S1`, ... with `figure_index.txt` mapping them to labels) |
 
@@ -170,4 +171,5 @@ Inside the container, copy the stage inputs into `data/` (stage 2) or `export/` 
 - `IMPACTfunctions` is not public: put its scripts in the folder named by `functions_paths` in `settings.R`.
 - A TRE usually has no internet. Build the image outside and import it, or use an approved package mirror; `quarto install tinytex` and `devtools::install_github()` need access.
 - Everything is located relative to the repo (`here::here()`, marked by `.here`), so clone the repo anywhere.
+- To test a render against a RAM budget, use `bash scripts/render_limited.sh [--to docx]` (`MEM_GB=1.5` to change the cap; default 2). It sets `R_MAX_VSIZE`, which caps R's memory only. For a hard limit on everything (pandoc, LaTeX, Chrome), run the container with `docker run --memory=2g --memory-swap=2g ...`. Quarto has no memory setting of its own.
 - Rendering (stage 3) is the memory-hungry step, which is why it runs apart from the analysis. If a render looks stale, try `quarto render --cache-refresh`.

@@ -1,3 +1,16 @@
+---
+show-authors: true
+---
+
+::: {.content-visible when-profile="website"}
+```{=html}
+<style>
+/* show the author block on the cover letter only */
+header#title-block-header .quarto-title-meta { display: grid !important; }
+header#title-block-header .quarto-title-meta-author { display: grid !important; }
+</style>
+```
+:::
 
 ::: {.content-visible when-profile="website"}
 # Cover letter {.unnumbered}

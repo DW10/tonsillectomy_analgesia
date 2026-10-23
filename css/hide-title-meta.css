@@ -1,0 +1,7 @@
+/* Website profile: hide the author/affiliation block under every chapter title.
+   index.qmd (the cover letter) restores it with its own <style> override. */
+header#title-block-header .quarto-title-meta,
+header#title-block-header .quarto-title-meta-author,
+header#title-block-header .quarto-title-meta-container {
+  display: none !important;
+}

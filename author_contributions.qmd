@@ -1,8 +1,4 @@
-# Ethics approval and consent to participate
-
-Ethical approval for the study was granted by the UCLH Data Access Process for Research (IRAS ID 299136).  Patients and the public contributed to study conception and design through a wider programme of research sponsored by the National Institute for Health and Care Research Central London Patient Safety Research Collaboration (CL-PSRC).  
-
-# Author contributions
+# Author contributions {.unnumbered}
 ```{r}
 #| echo: false
 #| message: false
@@ -36,6 +32,10 @@ The authors declare that they have no conflict of interest
 # Declaration of Generative AI and AI-assisted technologies in the writing process
 
 During the preparation of this work the authors used Anthropic's Claude Opus 5 in order to produce virtual peer review. After using this tool, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
+
+# Ethics approval and consent to participate
+
+Ethical approval for the study was granted by the UCLH Data Access Process for Research (IRAS ID 299136).  Patients and the public contributed to study conception and design through a wider programme of research sponsored by the National Institute for Health and Care Research Central London Patient Safety Research Collaboration (CL-PSRC).  
 
 # Funding 
 
