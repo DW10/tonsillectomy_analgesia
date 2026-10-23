@@ -1,0 +1,49 @@
+---
+show-authors: true
+---
+
+::: {.content-visible when-profile="website"}
+```{=html}
+<style>
+/* show the author block on the cover letter only */
+header#title-block-header .quarto-title-meta { display: grid !important; }
+header#title-block-header .quarto-title-meta-author { display: grid !important; }
+</style>
+```
+:::
+
+::: {.content-visible when-profile="website"}
+# Cover letter {.unnumbered}
+:::
+
+::: {.content-visible when-profile="website"}
+::: {.callout-important title="Note to the authors"}
+This version is the final draft of the manuscript formatted for the BJA Open. 
+
+Access the online version [at this link](https://projects.dylanwhitaker.co.uk) using the username and password of `ucl_hal` where you can highlight and comment collaboratively. You can also download copies of the PDF or word doc by clicking the download arrow in the top left corner if you prefer.
+
+To edit your author information please update your row in [this spreadsheet (tonsillectomy tab)](https://docs.google.com/spreadsheets/d/123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY/edit?usp=sharing)
+:::
+:::
+
+::: {.flushright custom-style="Address" data-latex=""}
+Dr. Susan Goobie, MD, FRCPC,\
+Harvard Medical School,\
+Boston,\
+MA,\
+USA\
+:::
+
+Dear Dr Goobie,
+We thank you for the consideration of our **Clinical investigation** manuscript titled *“Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study”* to the BJA Open. 
+
+Tonsillectomy is one of the most common surgical procedures in the UK, severe postoperative pain remains an important cause of delayed discharge, representation to the emergency department and secondary bleeding. Current PROSPECT guidance recommends paracetamol, an NSAID and dexamethasone, but it gives no recommendation on intraoperative opioids and notes the lack of evidence.
+
+Our study is a large, single-centre review of routinely collected electronic patient record data for over 3,000 adult and paediatric patients. We believe our detailed descriptive analysis of real world practice allows us to capture and understand the nature and degree of variation across a wide range of co-variants. Associational modeling under covered an interesting hypothesis of utilising multiple opioids to provide effective analgesia and ensure patient recovery and discharge flow. 
+
+We hope the work will demonstrate the utility of perioperative data pipelines and help define the question for a future randomised trial of intraoperative opioid strategy in tonsillectomy.
+
+Preliminary results were presented as an abstract at the World Airway Management Meeting, Florence, Italy on 5-8th November 2025. We can confirm that none of this work is under consideration at any other journal and is not posted as a preprint.
+
+Many thanks,\
+The authors

@@ -1,0 +1,6 @@
+---
+# The cover letter is a plain letter: no author block
+author: []
+---
+
+{{< include ../index.qmd >}}

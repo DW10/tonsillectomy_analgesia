@@ -1,0 +1,42 @@
+# Author contributions {.unnumbered}
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| output: asis
+#| eval: false
+
+tbl_authors <- googlesheets4::read_sheet("123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY",sheet = 3)
+aut <- plume::Plume$new(tbl_authors, dotted_initials = F)
+aut$get_contributions(roles_first = T)
+```
+
+Conceptualization: DW and MW
+Data curation: DW, AC, JB and MW\
+Formal analysis: DW\
+Funding acquisition: YHJ, SH and MW\
+Supervision: SH and MW\
+Validation: AC and JB\
+Visualization: DW\
+Writing - original draft: DW and MW\
+Writing - review & editing: DW, YHJ, SH, PT, AC, JB, RM and MW\
+
+# Acknowledgements
+
+The authors wish to thank the following for their support: University College London Hospitals National Health Service Foundation Trust Critical Care Special Interest Project Scheme and the University College London Health Algorithm Laboratory.
+
+# Disclosure of interests
+
+The authors declare that they have no conflict of interest
+
+# Declaration of Generative AI and AI-assisted technologies in the writing process
+
+During the preparation of this work the authors used Anthropic's Claude Opus 5 in order to produce virtual peer review. After using this tool, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
+
+# Ethics approval and consent to participate
+
+Ethical approval for the study was granted by the UCLH Data Access Process for Research (IRAS ID 299136).  Patients and the public contributed to study conception and design through a wider programme of research sponsored by the National Institute for Health and Care Research Central London Patient Safety Research Collaboration (CL-PSRC).  
+
+# Funding 
+
+DW is supported by the Engineering and Physical Sciences Research Council (EP/Y034929/1). MW and SH are supported by the National Institute for Health Research (NIHR) Central London Patient Safety Research Collaboration (NIHR 204297). SH and DW are supported by the NIHR University College London Hospitals National Health Service Foundation Trust and University College London Biomedical Research Centre. The views expressed in this study are those of the authors and do not necessarily reflect those of the NIHR or the Department of Health and Social Care.

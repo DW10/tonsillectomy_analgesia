@@ -1,0 +1,27 @@
+project:
+  type: default
+  output-dir: _submission
+  execute-dir: project
+  post-render: submission/post-render.R
+  render:
+    - submission/cover-letter.qmd
+    - submission/manuscript.qmd
+    - submission/figures-tables.qmd
+    - submission/supplement.qmd
+
+filters:
+  - at: pre-ast
+    path: title-page.lua
+  - at: pre-quarto
+    path: xref-hardcode.lua
+  - at: pre-quarto
+    path: float-order.lua
+  - at: post-quarto
+    path: submission-split.lua
+
+format:
+  docx:
+    toc: false
+    reference-doc: submission/reference.docx
+    fig-align: center
+    fig-dpi: 300

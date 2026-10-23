@@ -1,0 +1,51 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: 'Variation in Intraoperative Opioid Use for Adult and Paediatric Tonsillectomy: A Retrospective Electronic Patient Record Cohort Study'
+  sidebar:
+    title: 'Variation in Tonsillectomy Analgesia'
+  downloads: [pdf, docx]
+  chapters:
+    - index.qmd
+    - abstract.qmd
+    - manuscript.qmd
+    - author_contributions.qmd
+    - references.qmd
+  appendices:
+    - supplementary_tables_and_figures.qmd
+    - supplementary_materials.qmd
+
+# The book has one reference list: main references plus the R package citations
+bibliography:
+  - references.bib
+  - export/packages/grateful-refs.bib
+
+filters:
+  - at: pre-ast
+    path: hide-authors.lua
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    fig-align: center
+    fig-dpi: 150
+    css: css/hide-title-meta.css
+    comments:
+      hypothesis: true
+  pdf:
+    documentclass: scrreprt
+    toc: true
+    fig-align: center
+    fig-pos: H
+    fig-dpi: 300
+    include-in-header: submission/pdf-page-numbers.tex
+    output-file: tonsillectomy_manuscript.pdf
+  docx:
+    toc: true
+    reference-doc: submission/reference.docx
+    fig-align: center
+    fig-dpi: 300
+    output-file: tonsillectomy_manuscript

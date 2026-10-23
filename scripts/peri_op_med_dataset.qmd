@@ -11,11 +11,11 @@ library(cli)
 library(stringr)
 library(gt)
 
-source("~/data/dwhitake/tonsillectomy_analgesia/scripts/settings.R")
+source(here::here("scripts", "settings.R"))
 sapply(functions_paths, source, verbose=FALSE)
 
 data_set_details <- load_dataset(data_set = data_set,
-                                 root_path = root_path,
+                                 root_path = here::here(),
                                  output_folder_path = dataset_path)
 
 ```
@@ -746,10 +746,10 @@ readmit_sensititvity_df <- readmissions %>%
 
 ```{r write dataset}
 
-saveRDS(df, file=paste0(root_path, "/data/id_dataset.rds"))
+saveRDS(df, file=here::here("data/id_dataset.rds"))
 
-saveRDS(opioid_sensititvity_df, file=paste0(root_path, "/data/id_opioid_sensititvity_df.rds"))
+saveRDS(opioid_sensititvity_df, file=here::here("data/id_opioid_sensititvity_df.rds"))
 
-saveRDS(readmit_sensititvity_df, file=paste0(root_path, "/data/id_readmit_sensititvity_df.rds"))
+saveRDS(readmit_sensititvity_df, file=here::here("data/id_readmit_sensititvity_df.rds"))
 
 ```

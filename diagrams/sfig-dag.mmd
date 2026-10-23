@@ -1,0 +1,87 @@
+flowchart LR
+    classDef dashedNode stroke-dasharray: 5 5
+
+    AT>Anaesthetic technique]
+    TIVA((TIVA))
+    MD((Morphine dose))
+    FD((Fentanyl dose))
+    WT((Weight))
+    HT((Height))
+   
+    OC((Previous opioid use))
+    ETH(Ethnicity)
+    OAC((Opioid concentration)):::dashedNode
+    SE((Surgeon Exp))
+    SS((Surgical skill)):::dashedNode
+    SI((Surgical site))
+    SHD((Surgical harm damage)):::dashedNode
+    COB((Coblation))
+    LOSurg((Length of surgery))
+    SED((Sedation)):::dashedNode
+    NAU((Nausea)):::dashedNode
+    PAIN((Pain)):::dashedNode
+    TOD(Time of day)
+    ON[Overnight stay]
+    LOS[LOS]
+    LIR[Length in recovery]
+    RR[Rescue analgesia]
+    RD((Remifentanil Dose))
+    PD((Propofol dose))
+
+    subgraph PV[Patient variables]
+        WT((Weight))
+        HT((Height))
+        ETH(Ethnicity)
+        OC
+    end
+
+
+    subgraph PV2[Anaesthesia variables]
+    TIVA
+    MD
+    FD
+    RD
+    RD
+    end
+
+      subgraph PV3[Surgical variables]
+    SS
+    SI
+    SE
+    SHD
+    COB
+    LOSurg
+    end
+
+    AT --> TIVA
+    AT --> MD
+    AT --> OAC
+
+    TIVA --> RD
+    RD --> OAC
+    TIVA --> PD
+    PD --> SED
+
+    MD --> OAC
+    FD --> OAC
+    WT --> OAC
+    HT --> OAC
+    OC --> OAC
+    ETH --> OAC
+    OAC --> SED
+    OAC --> NAU
+    OAC --> PAIN
+    SE --> SS
+    SS --> SHD
+    SI --> SHD
+    COB --> SHD
+    LOSurg --> SHD
+    SHD --> PAIN
+    PAIN --> RR
+    RR --> LIR
+    SED --> LOS
+    SED --> LIR
+    NAU --> LOS
+    NAU --> LIR
+    TOD ---> ON
+    LOS --> ON

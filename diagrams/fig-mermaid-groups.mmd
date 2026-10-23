@@ -1,0 +1,30 @@
+---
+config:
+  theme: redux
+  layout: dagre
+---
+flowchart LR
+
+A["Study population"] --> B{"Received standard simple analgesia?<br>(paracetamol + NSAID + dexamethasone)"}
+
+B -- No --> C["EXCLUDED"]
+
+B -- Yes --> D{"Received adjuncts?<br> (ketamine, magnesium or clonidine)"}
+
+D -- Yes --> C
+
+D -- No --> F{"Opioid received?"}
+
+F -- no opioids --> G["Treatment group 1:<br>Simple analgesia only"]
+
+F -- morphine only --> H["Treatment group 2:<br>Simple analgesia + morphine"]
+
+F -- fentanyl only --> I["Treatment group 3:<br>Simple analgesia + fentanyl"]
+
+F -- morphine and fentanyl --> J["Treatment group 4:<br>Simple analgesia + morphine + fentanyl"]
+
+style C fill:#ffbcbc
+style G fill:#abc0e7
+style H fill:#f9d2a8
+style I fill:#c791ca
+style J fill:#9fd3cd

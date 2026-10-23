@@ -9,10 +9,33 @@
 *.png
 *.html
 *.docx
-
 data/*
 !data/placeholder.md
-
 scripts/settings.R
 functions/*
 .positai
+/.quarto/
+**/*.quarto_ipynb
+core*
+.Rapp.history
+_book/
+*_files/
+
+# export/ holds the analysis products (stage 2) and the render dump: never commit it.
+export/*
+!export/.gitkeep
+
+# Render artefacts (caches, intermediate LaTeX/Typst, submission output)
+*_cache/
+index.aux
+index.log
+index.tex
+index.toc
+index.typ
+*.log
+_submission/
+
+# Tracked despite the global image/Word ignores above
+!figures/*.png
+!submission/reference.docx
+.DS_Store
