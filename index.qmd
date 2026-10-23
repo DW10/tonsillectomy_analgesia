@@ -17,12 +17,12 @@ header#title-block-header .quarto-title-meta-author { display: grid !important; 
 :::
 
 ::: {.content-visible when-profile="website"}
-::: {.callout-important title="Reviwer Notes"}
+::: {.callout-important title="Note to the authors"}
 This version is the final draft of the manuscript formatted for the BJA Open. 
-Access the online version here: [https://projects.dylanwhitaker.co.uk](https://projects.dylanwhitaker.co.uk).
-On the online version you can highlight and comment directly on the website. You can also download copies of the PDF or word doc here: 
 
-To edit your author information please update your row in [this spreadsheet](https://docs.google.com/spreadsheets/d/123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY/edit?usp=sharing)
+Access the online version [at this link](https://projects.dylanwhitaker.co.uk) using the password `ucl_hal` where you can highlight and comment collaboratively. You can also download copies of the PDF or word doc by clicking the download arrow in the top left corner if you prefer.
+
+To edit your author information please update your row in [this spreadsheet (tonsillectomy tab)](https://docs.google.com/spreadsheets/d/123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY/edit?usp=sharing)
 :::
 :::
 
