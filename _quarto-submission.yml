@@ -9,6 +9,10 @@ project:
     - submission/figures-tables.qmd
     - submission/supplement.qmd
 
+resource-path:
+  - .
+  - ..
+
 filters:
   - at: pre-ast
     path: title-page.lua

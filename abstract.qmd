@@ -11,7 +11,7 @@ Severe pain following tonsillectomy is common and an important cause of delays t
 
 ## Methods
 
-A retrospective cohort study was performed to identify all patients undergoing tonsillectomy, adenoidectomy or combined adenotonsillectomy over a 7-year period using routinely collected data from the electronic patient record. Medication exposure and outcomes were extracted, and patients grouped on analgesic exposure to simple analgesia (paracetamol, dexamethasone and diclofenac), plus or minus additional morphine, fentanyl or both. Descriptive analysis of the analgesic exposure, treatment groups and multilevel modelling was performed. 
+A retrospective cohort study nested within electronic patient records was performed to identify all patients undergoing tonsillectomy, adenoidectomy or combined adenotonsillectomy over a 7-year period. Medication exposure and outcomes were extracted, and patients grouped on analgesic exposure to simple analgesia (paracetamol, dexamethasone and diclofenac), plus or minus additional morphine, fentanyl or both. Descriptive analysis of the analgesic exposure, treatment groups and multilevel modelling was performed. 
 
 ## Results
 
@@ -19,7 +19,7 @@ A retrospective cohort study was performed to identify all patients undergoing t
 
 ## Conclusions
 
-Intraoperative opioid strategies varied for adults undergoing tonsillectomy procedures, but were more homogeneous in paediatric patients. When accounting for patient, surgical and anaesthetic factors, a combined opioid regime of fentanyl and morphine with complete simple analgesia was associated with significantly reduced time in recovery and a non-significant but increased odds ratio of same day discharge admission. Further work to address the limitations of data quality and possible causality is needed to build evidence for intra-operative opioids in tonsillectomy. 
+Intraoperative opioid strategies varied for adults undergoing tonsillectomy procedures, but were more homogeneous in paediatric patients. When accounting for patient, surgical and anaesthetic factors, a combined opioid regime of fentanyl and morphine with complete simple analgesia was associated with significantly reduced time in recovery and a non-significant but increased odds ratio of same day discharge. Further work to address the limitations of data quality and possible causality is needed to build evidence for optimal intraoperative opioid strategies for patients undergoing tonsillectomy.
 
 ::: {.content-visible when-profile="website"}
 ## Keywords:
