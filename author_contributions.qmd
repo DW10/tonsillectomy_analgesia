@@ -6,7 +6,7 @@
 #| output: asis
 #| eval: false
 
-tbl_authors <- googlesheets4::read_sheet("123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY",sheet = 3)
+tbl_authors <- googlesheets4::read_sheet("123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY",sheet = 1)
 aut <- plume::Plume$new(tbl_authors, dotted_initials = F)
 aut$get_contributions(roles_first = T)
 ```

@@ -14,7 +14,7 @@
 
 refresh_authors <- function(file = "_quarto.yml",
                             sheet_id = "123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY",
-                            sheet = 3,
+                            sheet = 1,
                             google_email = "dylanwhitaker10@gmail.com") {
   if (!identical(tolower(Sys.getenv("REFRESH_AUTHORS")), "true")) {
     message("Author YAML not refreshed (set REFRESH_AUTHORS=true to update it from the plume sheet)")

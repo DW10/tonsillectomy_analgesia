@@ -1,3 +1,14 @@
+# IMPACT LHS project group collaborators {.unnumbered}
+
+Tim Baker,\
+James Bedford,\
+Susanna Ritchie-McLean,\
+Amaki Sogbodjor,\
+Daniel Stubbs,\
+Dylan Whitaker\
+Danny Lee,\
+Gareth Painter\
+
 # References {.unnumbered}
 
 ::: {#refs}
