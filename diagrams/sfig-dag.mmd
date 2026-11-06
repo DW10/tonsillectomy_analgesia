@@ -2,7 +2,7 @@ flowchart LR
     classDef dashedNode stroke-dasharray: 5 5
 
     AT>Anaesthetic technique]
-    TIVA((TIVA))
+    TIVA((TIVA)):::dashedNode
     MD((Morphine dose))
     FD((Fentanyl dose))
     WT((Weight))
@@ -11,7 +11,7 @@ flowchart LR
     OC((Previous opioid use))
     ETH(Ethnicity)
     OAC((Opioid concentration)):::dashedNode
-    SE((Surgeon Exp))
+    SE((Surgeon experiance)):::dashedNode
     SS((Surgical skill)):::dashedNode
     SI((Surgical site))
     SHD((Surgical harm damage)):::dashedNode
@@ -25,7 +25,7 @@ flowchart LR
     LOS[LOS]
     LIR[Length in recovery]
     RR[Rescue analgesia]
-    RD((Remifentanil Dose))
+    RD((Remifentanil Dose)):::dashedNode
     PD((Propofol dose))
 
     subgraph PV[Patient variables]

@@ -2,7 +2,7 @@
 
 Code and manuscript source for a retrospective electronic patient record (EPR) cohort study of intraoperative opioid choice in adult and paediatric tonsillectomy at UCLH. The paper is written as a **Quarto book**: the prose, each figure and table, the supplementary material and all cross-references are rendered from this repository to HTML, Word (docx) and PDF.
 
-> **Submission status:** pending
+> **Submission status:** submitted to BJA Open; currently under review
 
 ## What is (and is not) in this repo
 

@@ -20,10 +20,10 @@ supp_stats <- load_stats()
 
 ### Surgical procedure classification {#sec-sm-data-spec-procedures}
 
-Surgical technique was assessed using the procedure codes recorded for each case using the OPSC-4.9 version as described in @stbl-surgical-criteria.
+Surgical technique was assessed using the procedure codes recorded for each case using the OPCS-4.9 version as described in @stbl-surgical-criteria.
 
 ::: {#stbl-surgical-criteria}
-| Surgical Group | Eligible OPSC codes | Exclusion OPSC codes |
+| Surgical Group | Eligible OPCS codes | Exclusion OPCS codes |
 | :--- | :--- | :--- |
 | Tonsillectomy | F34, F35 | E20, F0:F33, F36:F99 |
 | Adenoidectomy | E20 | F34, F35, F0:F33, F36:F99 |
@@ -34,14 +34,14 @@ Surgical technique was assessed using the procedure codes recorded for each case
 **Criteria for surgical cohort eligibility.**
 :::
 
-For each case, the procedure was included into a group if one of the eligible OPSC codes was identified (Inclusive of all 3-digit codes within each 2-digit code) and then subsequently removed if an exclusion code was also present.
+For each case, the procedure was included into a group if one of the eligible OPCS codes was identified (Inclusive of all 3-digit codes within each 2-digit code) and then subsequently removed if an exclusion code was also present.
 To exclude concurrent procedures within the mouth where the tonsils may additionally be removed (such as a glossectomy or mandibular resection), the remainder of the F chapter was excluded across the simple procedure groups.
 The use of coblation and electrocautery were determined with the same method and then added as a feature to each procedure.
 The three surgical groups were checked to ensure mutual exclusivity.
 
-Only where a technique is explicitly coded by the codeing department review of operation notes, is it auditable.
-For example, all ENT procedures are set up with electrocautery (diathermy) as standard, but only in cases where explicit mention is made in the surgical operation note are the coded then captures and auditable.
-Thus, surgical technical may be significantly underestimating the true prevalence.
+Only where a technique is explicitly coded by the coding department's review of operation notes, is it auditable.
+For example, all ENT procedures are set up with electrocautery (diathermy) as standard, but only in cases where explicit mention is made in the surgical operation note are the codes then captures and auditable.
+Thus, surgical technique may be significantly underestimating the true prevalence.
 
 ### Past medical history {#sec-sm-data-spec-pmh}
 
@@ -60,12 +60,15 @@ For a patient to be considered as ‘positive’ for a previous medical conditio
 :::
 
 
-### Intra-operative medications {#sec-sm-data-spec-intra-op-meds}
+### In-hospital medications {#sec-sm-data-spec-intra-op-meds}
 
-Intraoperative medication were grouped as per @stbl-intra-op-formulations.
+For each medication, route of administration and dose were extracted across three phases of care: 1) Preoperatively – four hours before procedure start, 2) Intraoperatively – start of anaesthesia to end of procedure, and 3) Postoperatively – from entry into recovery area to time of hospital discharge.
+
+Intraoperative medications were grouped as per @stbl-intra-op-formulations.
 Broadly the majority of preparations provided on the intra-operative MAR were intravenous preparations but there are a few examples of oral medications being given.
-All medication doses in theatre were converted to mg and if given in discrete doses within a theatre episode where pooled to produce the total intra-operative dose.
+All medication doses in theatre were converted to mg and if given in discrete doses within a theatre episode were pooled to produce the total intra-operative dose.
 
+Due to the range of formulations the Preoperative and postoperative the full list of eligible preparations are not provided within these supplementary materials but are available upon reasonable request. 
 
 ::: {#stbl-intra-op-formulations}
 | Medication group (if applicable) | Medication | Medication preparation |
@@ -91,7 +94,7 @@ A review of Aspirin, Naproxen, Celecoxib and ibuprofen revealed no intra-operati
 
 ### Discharge medications {#sec-sm-data-spec-discharge}
 
-Discharge medications were counted if there were prescribed on the discharge paperwork, regardless if they were dispensed from hospital pharmacy, sent to the community pharmacy or patients were instructed to purchase over the counter.
+Discharge medications were counted if they were prescribed on the discharge paperwork, regardless if they were dispensed from hospital pharmacy, sent to the community pharmacy or patients were instructed to purchase over the counter.
 Specific formulations of discharge medications have not been provided as clinicians will prescribe a generic medication and dose regime and, the formulation details are not provided on the discharge paperwork.
 
 
@@ -128,7 +131,7 @@ show_float(supp)
 
 ## Oral morphine equivalence {#sec-sm-ome}
 
-For each medication the routes were grouped and a conversion value attributed using the standard equivalence table provided by Neilsen et al. @nielsenSynthesisOralMorphine2016
+For each medication the routes were grouped and a conversion value attributed using the standard equivalence table provided by Nielsen et al. @nielsenSynthesisOralMorphine2016
 Oral morphine equivalence (OME) was then calculated as a weighted sum using the standard OME equation.
 $$
 \begin{aligned}
@@ -138,7 +141,7 @@ $$
 &&d_{\text{ref}} = \text{dose of reference medication} \\
 &&d_{i} = \text{dose of medication} \\
 &&c_{i} = \text{conversion value of medication} \\
-&&{N} = \text{non-referance medications}
+&&{N} = \text{non-reference medications}
 \end{aligned}
 $$
 Distributions and mean dose sum of each opioid within each treatment group are described within the results.
@@ -167,8 +170,8 @@ knitr::kable(pkgs, format = "pipe", row.names = FALSE)
 
 ### Rescue opioid administration {#sec-sm-sensitivity-opioid}
 
-The time to first post-operative opioid was extracted for all patients, and a sensitivity analysis was performed to establish the best cut off time as show in the @stbl-sens-rescue-opioid and @sfig-sens-rescue-opioid.
-A threshold time of 3 hours was selected given the clinical rational of any inter-operative analgesia plan would include adequate analgesic for this period and any opioids administered within 3 hours would represent inadequate analgesic effect.
+The time to first post-operative opioid was extracted for all patients, and a sensitivity analysis was performed to establish the best cut off time shown the @stbl-sens-rescue-opioid and @sfig-sens-rescue-opioid.
+A threshold time of 3 hours was selected given the clinical rationale of any intra-operative analgesia plan would include adequate analgesic for this period and any opioids administered within 3 hours would represent inadequate analgesic effect.
 
 
 ::: {#stbl-sens-rescue-opioid}
@@ -288,15 +291,15 @@ show_float(supp, width = 8, height = 5, scale = 1.8)
 
 ### Directed acyclic graph {#sec-sm-modelling-dag}
 
-A direct acyclic graph was generated using expert domain konwledge to understand and specific the suitable co-variants for the associational model. 
+A directed acyclic graph was generated using expert domain knowledge to understand and specify the suitable covariates for the associational model. 
 
-![**Directed Acyclic Graph of variables.** A Directed Acyclic Graph of causal relationships between variables extracted in the study. Non-observable variables shown with dotted edges. Coloured boxed show the three overall areas of co-variants (surgical, anaesthetic and patient).](figures/sfig-dag.png){#sfig-dag}
+![**Directed Acyclic Graph of variables.** A Directed Acyclic Graph of causal relationships between variables extracted in the study. Non-observable variables shown with dotted edges. Coloured boxed show the three overall areas of covariates (surgical, anaesthetic and patient).](figures/sfig-dag.png){#sfig-dag}
 
-### Models parameters {#sec-sm-model-parameters}
+### Model parameters {#sec-sm-model-parameters}
 
 
 ::: {#stbl-model-parameters}
-| Model Number | Cohort | Outcome | Multi-level by primary anaesthetist | Co-variants | Notes |
+| Model Number | Cohort | Outcome | Multi-level by primary anaesthetist | Covariates | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 0 | Adult | Recovery opioids | No | Nil | |
 | 1 | Adults | Recovery opioids | Yes | Nil | |
@@ -318,7 +321,7 @@ The following secondary outcomes were not modelled with the associated justifica
 
 -  Discharge medications – Medication prescriptions at the point of discharge likely represent the variation in discharging clinician rather than anaesthetic clinician
 
--  Return to theatre– Lack of distribution of outcome
+-  Return to theatre – Lack of distribution of outcome
 
 -  Re-presentation – Lack of distribution of outcome
 
@@ -371,7 +374,7 @@ show_float(supp, width = 6, height = 3, scale = 1)
 
 ### Results of Model 2 {#sec-sm-model-2}
 
-In Model 1 the variance explained by the anaesthetist ID was `r supp_stats$model_2_variance`
+In Model 2 the variance explained by the anaesthetist ID was `r supp_stats$model_2_variance`
 
 
 ::: {#stbl-model-2-fixed}
