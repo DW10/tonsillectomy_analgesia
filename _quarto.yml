@@ -148,7 +148,7 @@ author:
     name:
       given: IMPACT LHS
       family: project group
-    note: Full group collaborator list appears  within manuscript.
+    note: Full group collaborator list appears within manuscript.
     attributes:
       corresponding: false
     roles: {}
@@ -161,8 +161,8 @@ affiliations:
     name: Department of Critical Care, University College London Hospitals NHS Foundation
       Trust, London, United Kingdom
   - id: aff3
-    name: Centre for Medicines Optimisation and Research, University College London
-      Hospitals NHS Foundation Trust, London, United Kingdom
+    name: Centre for Medicines Optimisation Research and Education, University College
+      London Hospitals NHS Foundation Trust, London, United Kingdom
   - id: aff4
     name: School of Pharmacy, University College London, London, United Kingdom
   - id: aff5

@@ -16,16 +16,6 @@ header#title-block-header .quarto-title-meta-author { display: grid !important; 
 # Cover letter {.unnumbered}
 :::
 
-::: {.content-visible when-profile="website"}
-::: {.callout-important title="Note to the authors"}
-This version is the final draft of the manuscript formatted for the BJA Open. 
-
-Access the online version [at this link](https://projects.dylanwhitaker.co.uk) using the username and password of `ucl_hal` where you can highlight and comment collaboratively. You can also download copies of the PDF or word doc by clicking the download arrow in the top left corner if you prefer.
-
-To edit your author information please update your row in [this spreadsheet (tonsillectomy tab)](https://docs.google.com/spreadsheets/d/123JiCxSHvA7Wiaz6tU25B7Wq27Ty_cV7n6UUqlhyvrY/edit?usp=sharing)
-:::
-:::
-
 ::: {.flushright custom-style="Address" data-latex=""}
 Dr. Susan Goobie, MD, FRCPC,\
 Harvard Medical School,\
@@ -39,7 +29,7 @@ We thank you for the consideration of our **Clinical investigation** manuscript 
 
 Tonsillectomy is one of the most common surgical procedures in the UK; severe postoperative pain remains an important cause of delayed discharge, representation to the emergency department and secondary bleeding. Current PROSPECT guidance recommends paracetamol, an NSAID and dexamethasone, but it gives no recommendation on intraoperative opioids and notes the lack of evidence.
 
-Our study is a large, single-centre cohort study of routinely collected electronic patient record data for over 3,000 adult and paediatric patients. We believe our detailed descriptive analysis of real world practice allows us to capture and understand the nature and degree of variation in exsisting clinical practice. We explicitly examined variation in opioid use within tonsillectomy patients, observing an association between using a combined opioid strategy and improved short-term patient outcomes versus single opioid strategies. 
+Our study is a large, single-center cohort study of routinely collected electronic patient record data for over 3,000 adult and paediatric patients. We believe our detailed descriptive analysis of real world practice allows us to capture and understand the nature and degree of variation in existing clinical practice. We explicitly examined variation in opioid use within tonsillectomy patients, observing an association between using a combined opioid strategy and improved short-term patient outcomes versus single opioid strategies. 
 
 We hope the work will demonstrate the utility of perioperative data pipelines and help define the question for a future randomised trial of intraoperative opioid strategy in tonsillectomy.
 
