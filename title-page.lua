@@ -1,6 +1,7 @@
 -- Builds a separate title page (BJA house style) from the title, author,
 -- affiliations and keywords metadata, followed by a page break. The corresponding
--- author line gives only the e-mail address.
+-- author line gives only the e-mail address. ORCID iDs are listed under their own
+-- heading (BJA Open requirement); an individual author without one is reported on stderr.
 -- Runs only when the document sets `title-page: true`. Quarto copies the
 -- full author records to `authors` and reduces `author` to names.
 
@@ -52,8 +53,14 @@ local function build(meta)
     return aff_num[text]
   end
 
-  local author_inlines, corresponding = pandoc.Inlines({}), {}
+  local author_inlines, corresponding, orcids = pandoc.Inlines({}), {}, {}
   for i, a in ipairs(as_list(meta.authors or meta.author)) do
+    -- ORCID iDs (BJA Open). A group author has no affiliations and is expected to have none.
+    if a.orcid and str(a.orcid) ~= "" then
+      table.insert(orcids, { name = author_name(a), id = str(a.orcid) })
+    elseif #as_list(a.affiliations) > 0 then
+      io.stderr:write("[title-page] WARNING: no ORCID iD for " .. author_name(a) .. "\n")
+    end
     local marks = {}
     for _, ref in ipairs(as_list(a.affiliations)) do
       local key = type(ref) == "table" and ref.ref and str(ref.ref) or nil
@@ -90,6 +97,14 @@ local function build(meta)
     if a.email then
       blocks:insert(pandoc.Para({ pandoc.Str("*Corresponding author email:"), pandoc.Space(),
         pandoc.Link(str(a.email), "mailto:" .. str(a.email)) }))
+    end
+  end
+
+  if #orcids > 0 then
+    blocks:insert(pandoc.Header(1, "ORCID iDs", { class = "unnumbered" }))
+    for _, o in ipairs(orcids) do
+      local url = "https://orcid.org/" .. o.id
+      blocks:insert(pandoc.Para({ pandoc.Str(o.name .. ":"), pandoc.Space(), pandoc.Link(url, url) }))
     end
   end
 

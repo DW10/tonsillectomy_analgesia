@@ -13,6 +13,12 @@ keywords:
   - Multi-level modelling
 ---
 
+<!-- BJA Open: the abstract follows the title page directly (title-page.lua puts the title
+     page in front of everything below) and the main text starts on a new page. -->
+{{< include ../abstract.qmd >}}
+
+{{< pagebreak >}}
+
 {{< include ../manuscript.qmd >}}
 
 {{< include ../author_contributions.qmd >}}
